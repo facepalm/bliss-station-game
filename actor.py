@@ -1,6 +1,6 @@
 from tasks import Task, TaskTracker
 from needs import Need, need_from_task
-from equipment import EquipmentSearch
+from equipment import EquipmentSearch, Storage
 from clutter import Stowage
 from pathing import PathingWidget
 import uuid

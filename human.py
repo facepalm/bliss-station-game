@@ -1,5 +1,8 @@
 from actor import Actor
-
+from equipment import EquipmentSearch, Storage
+from tasks import Task, TaskTracker
+from needs import Need, need_from_task
+import equipment
 
 class Human(Actor):
     def __init__(self, name='Buzz Kerman'):
@@ -23,24 +26,48 @@ class Human(Actor):
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Potable Water').search)
+        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Potable Water',check_storage=True).search)
         return t
         
     def new_dinner_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = 1800, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Food').search)
+        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = 1800, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Edible Food',check_storage=True).search)
         return t         
 
     def update(self, dt):
         Actor.update(self,dt)               
+                       
+    def task_finished(self,task):
+        if not task: return
+        need = need_from_task(task.name)
+        if need:             
+            if need == 'Food' and self.needs['Food'].severity == 'HIGH':
+                amt=self.needs[need].amt
+                self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/600.0, self.new_dinner_task, self.hunger_hit)
+                self.needs[need].amt=amt
+            elif need == 'Water' and self.needs['Water'].severity == 'HIGH':
+                amt=self.needs[need].amt
+                self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/600.0, self.new_drink_task, self.dehydration_hit)
+                self.needs[need].amt=amt
+            elif need == 'WasteCapacitySolid' and isinstance(task.target,equipment.UniversalToilet):
+                task.target.solid_waste += self.needs[need].max_amt - self.needs[need].amt
+                self.needs[need].set_to_severity('IGNORABLE')     
+            if need in ['WasteCapacityLiquid', 'WasteCapacitySolid'] and isinstance(task.target,equipment.UniversalToilet):
+                task.target.liquid_waste += self.needs['WasteCapacityLiquid'].max_amt - self.needs['WasteCapacityLiquid'].amt
+                self.needs['WasteCapacityLiquid'].set_to_severity('IGNORABLE')  
                                         
     def task_work_report(self,task,dt):
         if not task: return
         need = need_from_task(task.name)
+        need_pristines = {  'Food':'Edible Food', 
+                            'Water':'Potable Water'}
         
-        if need == 'Food':
-            pass
-            #TODO take from food locker
-            #available = 0 if not hasattr(task.target, 'charge') else max(task.target.charge,0)
-            #used=self.needs['Charge'].supply( available, dt )
-            #task.target.charge -= used
+        if need in need_pristines.keys():
+            target=task.target
+            if isinstance(task.target, Storage):
+                target = task.target.stowage.find_resource(ClutterFilter(need_pristines[need]).compare)
+            if not target: return
+            
+            #"eat" - TODO make a more detailed nutrition model for things like scurvy            
+            eaten = self.needs[need].supply( target.mass , dt )
+            target.mass -= eaten
             

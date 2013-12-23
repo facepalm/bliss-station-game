@@ -52,5 +52,9 @@ class Need():
         self.amt += _amt            
         return _amt
         
+    def set_to_severity(self,severity='IGNORABLE'):
+        mult = 0.2 if severity=='HIGH' else 0.5 if severity=='MODERATE' else 0.7 if severity=='LOW' else 1.0
+        self.amt = mult*self.max_amt
+        
     def status(self):
         return [self.amt/self.max_amt, self.severity]

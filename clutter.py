@@ -6,7 +6,7 @@ common_densities =   {  'Food' : 714.33,
                         'Oxygen Candles' : 2420.0 }
                         
 common_qualities = {    'Water' : {'Contaminants' : 0.0, 'Salt': 0.0, 'pH' : 7.0 }, #distilled water
-                        'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Decay': 0.99998, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] } #Bland but very nutritious and long-lasting space food
+                        'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Perishable': 0.00002, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] } #Bland but very nutritious and long-lasting space food
                    }                        
 
 gather_rate = 0.001 #m^3/s - rate of grabbing a handful of something and putting it somewhere else
@@ -113,4 +113,7 @@ class ClutterFilter(object):
         if self.target=='Potable Water': 
             if obj.name == 'Water' and 'Contaminants' in obj.quality and 'Salt' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1
+        elif self.target=='Edible Food': 
+            if obj.name == 'Food' and 'Contaminants' in obj.quality:
+                return obj.quality['Contaminants'] <= 0.05
         return equals(self.target, obj.name)
