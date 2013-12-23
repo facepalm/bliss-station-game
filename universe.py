@@ -34,6 +34,9 @@ if __name__ == "__main__":
     ernie.location = modA.node('hall0')
     ernie.xyz = modA.location
     
+    ernie.needs['WasteCapacityLiquid'].amt=0.1
+    ernie.needs['Water'].amt=0.1
+    
       
     #modA.berth('CBM0', modB, 'CBM0')
     for m in station.modules.values(): print m.id, m.location

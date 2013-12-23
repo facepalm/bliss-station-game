@@ -20,12 +20,13 @@ class EquipmentSearch():
     def compare(self,obj):
         if isinstance(self.target,str):
             if self.target in self.equipment_targets: 
-                return isinstance( obj, self.equipment_targets [ self.target ] )                     
+                return isinstance( obj, self.equipment_targets [ self.target ] )    
+            print self.target                 
             return clutter.equals(self.target, obj.name) #must be clutter
         elif isinstance(self.target, clutter.ClutterFilter):
             if self.check_storage and isinstance( obj, Storage ):
                 return obj.stowage.find_resource(self.target.compare)
-            return self.target.compare(obj) #must be clutter
+            return self.target.compare(obj) 
         else:
             return obj is self.target
         return False

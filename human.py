@@ -3,6 +3,7 @@ from equipment import EquipmentSearch, Storage
 from tasks import Task, TaskTracker
 from needs import Need, need_from_task
 import equipment
+import clutter
 
 class Human(Actor):
     def __init__(self, name='Buzz Kerman'):
@@ -26,11 +27,11 @@ class Human(Actor):
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Potable Water',check_storage=True).search)
+        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch(clutter.ClutterFilter('Potable Water'),self.station,check_storage=True).search)
         return t
         
     def new_dinner_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = 1800, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Edible Food',check_storage=True).search)
+        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = 1800, severity=severity, fetch_location_method=EquipmentSearch(clutter.ClutterFilter('Edible Food'),self.station,check_storage=True).search)
         return t        
         
     def number_1_task(self,timeout,severity):
