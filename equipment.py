@@ -9,20 +9,21 @@ DOCK_EQUIPMENT = ['CBM']
 
 class EquipmentSearch():    
     
-    def __init__(self, target, station, extra=''):
+    def __init__(self, target, station, extra='', check_storage=False):
         self.target=target
         self.station=station
         self.equipment_targets = { 'Battery' : Battery }
+        self.check_storage = check_storage #if True, will search inside storage equipment as well as loose clutter
         self.extra = extra
     
     def compare(self,obj):
         if isinstance(self.target,str):
             if self.target in self.equipment_targets: 
-                return isinstance( obj, self.equipment_targets [ self.target ] )            
-            if self.target == 'Storage':
-                return isinstance( obj, Storage ) and obj.filter == self.extra           
+                return isinstance( obj, self.equipment_targets [ self.target ] )                     
             return clutter.equals(self.target, obj.name) #must be clutter
         elif isinstance(self.target, clutter.ClutterFilter):
+            if self.check_storage and isinstance( obj, Storage ):
+                return obj.stowage.find_resource(self.target.compare)
             return self.target.compare(obj) #must be clutter
         else:
             return obj is self.target
@@ -32,8 +33,11 @@ class EquipmentSearch():
         if self.target in self.equipment_targets or isinstance(self.target,Equipment):
             return self.station.find_resource('Equipment',check = self.compare) 
         else:            
-            return self.station.find_resource('Clutter',check = self.compare)
-        
+            tar,loc = self.station.find_resource('Clutter',check = self.compare)
+            if not ( tar or loc) and self.check_storage:
+                #no free objects, check stored stuff
+                tar, loc = self.station.find_resource('Equipment',check = self.compare)  
+            return tar, loc
         
 class Equipment(object):
     def __init__(self, installed=None):

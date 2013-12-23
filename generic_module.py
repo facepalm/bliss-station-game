@@ -37,7 +37,7 @@ class BasicModule():
         self.orientation = np.array([ math.pi/4 , 0 ])
         self.location = np.array([ 0 , 0 , 0 ])
         self.composition = {'Al' : 14500}      
-        self.package_material = False #if a list of filters, material put in this will not be removed
+        self.package_material = [] #if a list of filters, material put in this will not be removed
         self.station = None
         
         self.atmo = Atmosphere()
@@ -50,7 +50,6 @@ class BasicModule():
         self.nodes=dict()
      
     def find_resource(self, resource_type = None, check = lambda x: True):
-        #if self.package_material: return None, None
         if resource_type == "Equipment":
             eq=[]
             eq.extend([[self.equipment[e][3], self.node( e ) ]  for e in self.equipment.keys() if self.equipment[e][3] and check(self.equipment[e][3]) ])
