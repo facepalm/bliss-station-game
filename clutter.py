@@ -9,7 +9,7 @@ common_qualities = {    'Water' : {'Contaminants' : 0.0, 'Salt': 0.0, 'pH' : 7.0
                         'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Decay': 0.99998, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] } #Bland but very nutritious and long-lasting space food
                    }                        
 
-gather_rate = 0.05 #m^3/s - rate of grabbing a handful of something and putting it somewhere else
+gather_rate = 0.001 #m^3/s - rate of grabbing a handful of something and putting it somewhere else
 
 def equals(type1,type2):
     if not type1 and not type2: return True
