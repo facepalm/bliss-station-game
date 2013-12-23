@@ -31,7 +31,21 @@ class Human(Actor):
         
     def new_dinner_task(self,timeout,severity):
         t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = 1800, severity=severity, fetch_location_method=EquipmentSearch('Storage',self.station,'Edible Food',check_storage=True).search)
-        return t         
+        return t        
+        
+    def number_1_task(self,timeout,severity):
+        return Task(''.join(['Satisfy WasteCapacityLiquid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Toilet',self.station).search)
+
+    def number_2_task(self,timeout,severity):
+        return Task(''.join(['Satisfy WasteCapacitySolid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Toilet',self.station).search)
+ 
+    def code_brown(self):
+        #you have shit your pants.  This might be too goddamn realistic even for me.
+        pass
+        
+    def code_yellow(self):
+        #you have pissed your pants.  And all the spaghetti fell out of your pocket
+        pass        
 
     def update(self, dt):
         Actor.update(self,dt)               

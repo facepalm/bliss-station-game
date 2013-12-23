@@ -12,7 +12,8 @@ class EquipmentSearch():
     def __init__(self, target, station, extra='', check_storage=False):
         self.target=target
         self.station=station
-        self.equipment_targets = { 'Battery' : Battery }
+        self.equipment_targets = {  'Battery' : Battery,
+                                    'Toilet' : UniversalToilet }
         self.check_storage = check_storage #if True, will search inside storage equipment as well as loose clutter
         self.extra = extra
     
