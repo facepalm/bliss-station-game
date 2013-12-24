@@ -35,7 +35,8 @@ if __name__ == "__main__":
     ernie.xyz = modA.location
     
     ernie.needs['WasteCapacityLiquid'].amt=0.1
-    ernie.needs['Water'].amt=0.1
+    ernie.needs['Food'].amt=0.05
+    ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
     
       
     #modA.berth('CBM0', modB, 'CBM0')
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         #print 'Robot task:', None if not rob.task else (rob.task.name,rob.location,rob.task.severity)
         #print 'robot tasks:', [t.name for t in rob.my_tasks.tasks]
         print 'Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        print 'human tasks:', [[t.name, t.severity] for t in ernie.my_tasks.tasks]        
+        #print 'human tasks:', [[t.name, t.severity] for t in ernie.my_tasks.tasks]        
         print 'station tasks:', [[t.name, t.severity] for t in station.tasks.tasks]
         #print 'Dragon free storage: ',modDrag.stowage.contents
         #print station.resources.resources['Electricity'].previously_available , station.resources.resources['Electricity'].available
