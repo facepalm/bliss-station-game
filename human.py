@@ -18,6 +18,7 @@ class Human(Actor):
         self.health = 1.0
         self.hygiene = 1.0
         self.activity_state = 'IDLE'
+        self.suffocation = 0.0
         
     def hunger_hit(self):
         self.health -= 0.02 #TODO model malnutrition better later
@@ -52,7 +53,31 @@ class Human(Actor):
         pass        
 
     def update(self, dt):
-        Actor.update(self,dt)               
+        Actor.update(self,dt)
+        
+        #breathe
+        module = self.station.get_module_from_loc(self.location)       
+        if not module or module.atmo.pressure < 15: #below 15 kPa, you really can't even breathe 
+            self.suffocate(dt)
+        else:
+            O2_pp = module.atmo.partial_pressure('O2')
+            breath = module.atmo.extract('volume',.5/3*dt) #avg rate of human breath
+            CO2_frac = breath['O2']*0.05
+            breath['O2'] -= CO2_frac
+            breath['CO2'] += CO2_frac
+            module.atmo.inject(breath)
+            if O2_pp < 15 or O2_pp > 300: 
+                self.suffocate(dt) 
+            else: 
+                self.suffocation = 0
+                                        
+    def suffocate(self, dt):
+        ''' Suffocation, this is suffocation!  
+            Suffocation, an easy game to play '''
+        self.suffocation += dt
+        #test for suffocation
+        if self.suffocation > 240: #u ded nao
+            self.health -= 1  
                        
     def task_finished(self,task):
         if not task: return

@@ -10,7 +10,7 @@ class Atmosphere():
             
         self.temperature=273        
         
-        self.composition={'O2' : 0, 'N2' : 0, 'CO2':0 , 'Aromatics':0, 'Fragrants':0, 'Particulates':0}    
+        self.composition={'O2' : 0, 'N2' : 0, 'CO2':0, 'H2O':0 , 'Aromatics':0, 'Fragrants':0, 'Particulates':0} #in moles   
     
     def initialize(self, composition="Air"):        
         #PV=nRT
@@ -28,6 +28,10 @@ class Atmosphere():
             
     def total_moles(self):
         return sum(self.composition.values())
+
+    def partial_pressure(self,gas='O2'):
+        if not gas in self.composition: return 0
+        return self.composition[ gas ] * GAS_R * self.temperature / self.volume
             
     def get_pressure(self): return self.total_moles() * GAS_R * self.temperature / self.volume        
     pressure = property(get_pressure, None, None, "Pressure reading" ) 

@@ -71,6 +71,12 @@ class Station():
     def xyz_to_module(self, xyz):
         pass      #needs collision detection
         
+    def get_module_from_loc(self, loc):
+        [ node, name ] = separate_node( loc )
+        module = [ self.modules[ m ] for m in self.modules if self.modules[ m ].id == node ]        
+        if not module: return None
+        return module[ 0 ]
+        
                                       
 if __name__ == "__main__":
     from time import sleep    
