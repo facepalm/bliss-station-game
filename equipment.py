@@ -68,6 +68,9 @@ class Equipment(object):
             return kilowattage*dt/3600
         return 0
         
+class Window(Equipment): #might even be too basic for equipment, but ah well.
+    def __init__(self):
+        super(Window, self).__init__()                              
         
 class Machinery(Equipment): #TODO eventual ancestor class for things that need regular maintenance
     def __init__(self):
@@ -112,7 +115,7 @@ class Storage(Equipment):
         self.update(0)         
 
 #delicate equipment        
-class UniversalToilet(Equipment):
+class UniversalToilet(Machinery):
     def __init__(self):   
         super(UniversalToilet, self).__init__() 
         self.solid_waste = 0
