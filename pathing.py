@@ -4,6 +4,7 @@
 
 import networkx as nx
 import numpy as np
+from util import separate_node
 
 class PathingWidget(object):
     def __init__(self, owner, node_graph, start, end, pos = None):
@@ -27,6 +28,9 @@ class PathingWidget(object):
             #move to new node, recurse
             remainder_dist = dist - dist_to_node
             self.current_coords = self.owner.station.loc_to_xyz( self.path_list[0] ) 
+            mod_call = self.owner.station.get_module_from_loc 
+            if mod_call( self.owner.location ) != mod_call( self.path_list[0] ):
+                self.owner.transfer_node( self.path_list[0] )            
             self.owner.location = self.path_list.pop( 0 )                       
             if not self.path_list: 
                 self.completed = True

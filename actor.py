@@ -5,7 +5,7 @@ from clutter import Stowage
 from pathing import PathingWidget
 import uuid
 import numpy as np
-
+from util import separate_node
 
 class Actor(object):
     def __init__(self,name='Place Holder'):
@@ -74,6 +74,12 @@ class Actor(object):
                     if not new_path.valid: assert False, "ERROR: some kind of pathing error!"
                     self.path = new_path
                     self.path.traverse_step(dt*self.speed)
+                    
+    def transfer_node(self, new_loc ):
+        '''moving to new node, exchange air flow'''
+        my_mod = self.station.get_module_from_loc( self.location )
+        new_mod = self.station.get_module_from_loc( new_loc )
+        my_mod.atmo.mix( new_mod.atmo, 1 )        
        
         
 class Robot(Actor):

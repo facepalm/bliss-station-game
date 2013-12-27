@@ -7,3 +7,10 @@ def seconds(time=1,units='minutes'):
                                          else time*86400 if units=='days' \
                                          else time*2592000 if units=='months' \
                                          else 10    
+                                         
+                                         
+def separate_node(node):
+    if not '|' in node: return False, False
+    n=node.split('|')
+    return n
+                                         
