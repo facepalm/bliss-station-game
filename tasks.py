@@ -120,7 +120,7 @@ class TaskSequence(Task):
         
     def update(self,dt):
         if not self.task_list and (not self.current_task or self.current_task.status == 'COMPLETED'): 
-            self.flag('COMPLETED')
+            self.flag('COMPLETED')            
             return
         if not self.current_task or self.current_task.status == 'COMPLETED': 
             [ self.current_task, self.current_task_required ] = self.task_list.pop(0) 
@@ -136,7 +136,9 @@ class TaskSequence(Task):
         self.current_task.update(dt)
         
     def do_work(self,dt): 
-        self.update(0)        
+        loc=self.location
+        self.update(0)   
+        if self.location != loc: return     
         if dt <= 0: return                  
         if self.task_ended(): return    
         

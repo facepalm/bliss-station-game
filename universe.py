@@ -35,7 +35,7 @@ if __name__ == "__main__":
     ernie.xyz = modA.location
     
     ernie.needs['WasteCapacityLiquid'].amt=0.1
-    ernie.needs['Food'].amt=0.05
+    #ernie.needs['Food'].amt=0.05
     ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
     
       
