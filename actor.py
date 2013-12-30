@@ -81,6 +81,9 @@ class Actor(object):
         new_mod = self.station.get_module_from_loc( new_loc )
         my_mod.atmo.mix( new_mod.atmo, 1 )        
        
+    def summarize_needs(self):
+        return [[n, self.needs[n].current_severity()] for n in self.needs.keys()]
+       
         
 class Robot(Actor):
     def __init__(self, name='Wally'):

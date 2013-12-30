@@ -28,7 +28,7 @@ if __name__ == "__main__":
     rob.location = modB.node('hall0')
     rob.xyz = modB.location'''
     
-    ernie= Human('Ernesto')
+    ernie= Human('Bela Lugosi')
     ernie.station = station
     station.actors[ernie.id] = ernie
     ernie.location = modA.node('hall0')
@@ -47,9 +47,10 @@ if __name__ == "__main__":
         sleep(1/20.0)
         #print 'Robot task:', None if not rob.task else (rob.task.name,rob.location,rob.task.severity)
         #print 'robot tasks:', [t.name for t in rob.my_tasks.tasks]
-        print 'Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
+        print i/20.0*24,': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
+        print ernie.summarize_needs()
         #print 'human tasks:', [[t.name, t.severity] for t in ernie.my_tasks.tasks]        
-        print 'station tasks:', [[t.name, t.severity] for t in station.tasks.tasks]
+        #print 'station tasks:', [[t.name, t.severity] for t in station.tasks.tasks]
         #print 'Dragon free storage: ',modDrag.stowage.contents
         #print station.resources.resources['Electricity'].previously_available , station.resources.resources['Electricity'].available
         #print station.tasks.tasks

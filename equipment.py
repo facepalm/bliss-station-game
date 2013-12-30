@@ -86,7 +86,7 @@ class Storage(Equipment):
         self.space_trigger = 0.1 #free volume
         
     def update(self,dt):
-        print 'Available storage: ',self.available_space
+        #print 'Available storage: ',self.available_space
         super(Storage, self).update(dt)
         self.stowage.update(dt)
         if self.installed and (not self.task or self.task.task_ended()) and \

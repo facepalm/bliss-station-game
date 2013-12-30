@@ -53,8 +53,11 @@ class Human(Actor):
         pass        
 
     def update(self, dt):
-        Actor.update(self,dt)
+        if self.health <= 0: 
+            print self.name, "'s dead!-------------------"
+            return
         
+        Actor.update(self,dt)                        
         #breathe
         module = self.station.get_module_from_loc(self.location)       
         if not module or module.atmo.pressure < 15: #below 15 kPa, you really can't even breathe 
@@ -75,6 +78,7 @@ class Human(Actor):
         ''' Suffocation, this is suffocation!  
             Suffocation, an easy game to play '''
         self.suffocation += dt
+        print self.name," is suffocationg!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         #test for suffocation
         if self.suffocation > 240: #u ded nao
             self.health -= 1  

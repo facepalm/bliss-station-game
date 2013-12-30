@@ -26,11 +26,7 @@ class Need():
             self.on_fail()
             return
                                 
-        _need_ratio = self.amt/self.max_amt
-        if self.severity == 'VARIABLE':
-            _need_severity = 'HIGH' if _need_ratio < 0.2 else 'MODERATE' if _need_ratio < 0.5 else 'LOW' if _need_ratio < 0.7 else 'IGNORABLE'
-        else:
-            _need_severity = self.severity
+        _need_severity = self.current_severity()
         
         _need_task = None
         _need_task = self.owner.my_tasks.find_task(''.join(['Satisfy ',self.name]))
@@ -46,6 +42,12 @@ class Need():
             
         self.amt -= dt*self.depletion_rate
 
+    def current_severity(self):        
+        if self.severity == 'VARIABLE':
+            _need_ratio = self.amt/self.max_amt
+            return 'HIGH' if _need_ratio < 0.2 else 'MODERATE' if _need_ratio < 0.5 else 'LOW' if _need_ratio < 0.7 else 'IGNORABLE'
+        else:
+            return self.severity
             
     def supply(self, available_amt, dt):
         _amt = min( available_amt, dt*self.replenish_rate, self.max_amt - self.amt )
@@ -58,3 +60,5 @@ class Need():
         
     def status(self):
         return [self.amt/self.max_amt, self.severity]
+        
+        
