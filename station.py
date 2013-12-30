@@ -18,7 +18,7 @@ class Station():
         self.actors=dict()
         if initial_module: self.berth_module(None,None,initial_module,None)                        
                        
-    def berth_module(self, my_module, my_dock, module, mod_dock):        
+    def berth_module(self, my_module, my_dock, module, mod_dock, instant = False):        
         if module and not self.modules:
             self.modules[module.id]=module
             module.station = self
@@ -33,7 +33,7 @@ class Station():
         print my_dock, mod_dock        
                 
         #attempt docking
-        assert module.berth(mod_dock, my_module, my_dock)
+        assert module.berth(mod_dock, my_module, my_dock, instant)
         
         #merge resources
         self.resources.grow()

@@ -70,7 +70,15 @@ class Equipment(object):
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
-        super(Window, self).__init__()                              
+        super(Window, self).__init__()     
+        
+    def update(self,dt):
+        super(Window, self).update(dt)        
+        if self.installed and not self.task or self.task.task_ended():
+            #stellar observations
+            self.task = Task(''.join(['Collect Observational Data']), owner = self, timeout=86400, task_duration = 1800, severity='IGNORABLE', fetch_location_method=EquipmentSearch(self,self.installed.station).search)
+            self.installed.station.tasks.add_task(self.task)  
+                                   
         
 class Machinery(Equipment): #TODO eventual ancestor class for things that need regular maintenance
     def __init__(self):
@@ -138,15 +146,16 @@ class UniversalToilet(Machinery):
             proc_amt = max( 0, self.liquid_waste - self.processing_speed)
             if self.gray_water_capacity - self.gray_water < proc_amt: return # water tank is full
             self.liquid_waste -= proc_amt
-            self.gray_water += proc_amt    
+            self.gray_water += proc_amt
         
 #docking equipment        
 class DockingRing(Equipment):
     def __init__(self):   
         super(DockingRing, self).__init__()     
-        self.docked = None
+        self.docked = None #a pointer to the module we've docked to
         self.open = False
         self.in_vaccuum = True
+        self.partner = None #a pointer to the docking equipment partner
         
     #these two need to generate tasks for unpowered rings
     def open_(self):
@@ -157,15 +166,33 @@ class DockingRing(Equipment):
     def close_(self):
         self.open=False
         
-    def dock(self, target):
+    def dock(self, target, instant = False):
         self.docked=target        
-        self.open_()  #TODO replace with "open" task
+        if instant: 
+            self.open_()
+        else:
+            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search)
+            self.installed.station.tasks.add_task(self.task)
         self.in_vaccuum = False
                 
-    def undock(self):
-        if self.open: self.close_() #TODO replace with "close" task
+    def undock(self, instant = False):
+        if self.open: 
+            if instant:
+                self.close_()
+            else:
+                #TODO check and add a task for disconnecting the pipes
+                self.task = Task(''.join(['Close Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search)
+                self.installed.station.tasks.add_task(self.task)
         self.docked = None
         self.in_vaccuum = True
+        
+    def task_finished(self,task):
+        if task.name == 'Close Hatch': 
+            #TODO check for someone in the other module
+            self.close_()
+        elif task.name == 'Open Hatch':
+            self.open_()
+            #TODO add a task to connect pipes, open other side
         
 class CBM(DockingRing):
     def __init__(self):   

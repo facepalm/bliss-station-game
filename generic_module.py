@@ -97,7 +97,7 @@ class BasicModule():
         if not docks: assert False, "Module has no free dockable ports!"
         return random.choice(docks)    
             
-    def berth(self, my_node, neighbor, their_node):
+    def berth(self, my_node, neighbor, their_node, instant=False):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
         if not my_node in self.equipment or not their_node in neighbor.equipment: return False, "Docking cancelled: wrong module, I guess?"
         if not self.equipment[my_node][2] in DOCK_EQUIPMENT or not neighbor.equipment[their_node][2] in DOCK_EQUIPMENT: return False, "Docking cancelled: requested interface(s) are not docking equipment!"
@@ -116,8 +116,8 @@ class BasicModule():
         #collision detection
 
         #dock, finally
-        self.equipment[my_node][3].dock( neighbor )
-        neighbor.equipment[their_node][3].dock( self )
+        self.equipment[my_node][3].dock( neighbor, instant)
+        neighbor.equipment[their_node][3].dock( self, instant )
         
         # map graphs together
         
