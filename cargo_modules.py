@@ -11,8 +11,9 @@ import numpy as np
 class DragonCargoModule(BasicModule):
     """ Modeled after SpaceX's Dragon capsule.  Mostly empty space for cargo. """
     def __init__(self):   
-        BasicModule.__init__(self) 
         self.size = np.array([ 6.1 , 3.7 , 3.7 ])
+        BasicModule.__init__(self) 
+        
         self.interior_space = 10 #m^3
         self.stowage.capacity=14
         self.composition = {'Composite' : 4200}

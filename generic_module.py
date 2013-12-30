@@ -29,7 +29,7 @@ class BasicModule():
     '''Basic Module: literally just a tin can'''
     def __init__(self):
         self.id = str(uuid.uuid4())        
-        self.size = np.array([ 3 , 2 , 2 ])
+        if not hasattr(self,'size'): self.size = np.array([ 3 , 2 , 2 ])
         self.stowage = Stowage(10) #things floating around in the module
         self.exterior_stowage = Stowage(0) #things strapped to the outside of the module
         self.sprite = None 
@@ -170,8 +170,9 @@ class DestinyModule(BasicStationModule):
     """ Modeled using the ISS Destiny module, this is a large module with
         plenty of equipment space and fore/aft docks. """
     def __init__(self):   
-        BasicStationModule.__init__(self) 
         self.size = np.array([ 8.53 , 4.27 , 4.27 ])
+        BasicStationModule.__init__(self) 
+        
         
         new_nodes={ self.node('hall0'): np.array([ -0.75, 0 , 0 ]),
                     self.node('hall1'): np.array([ -0.45, 0 , 0 ]),

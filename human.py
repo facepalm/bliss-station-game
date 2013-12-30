@@ -64,12 +64,12 @@ class Human(Actor):
             self.suffocate(dt)
         else:
             O2_pp = module.atmo.partial_pressure('O2')
-            breath = module.atmo.extract('volume',.5/3*dt) #avg rate of human breath
+            breath = module.atmo.extract('volume',.0005/3*dt) #avg rate of human breath
             CO2_frac = breath['O2']*0.05
             breath['O2'] -= CO2_frac
             breath['CO2'] += CO2_frac
             module.atmo.inject(breath)
-            if O2_pp < 15 or O2_pp > 300: 
+            if O2_pp < 7.5 or O2_pp > 300: #Everest vs oxygen toxicity
                 self.suffocate(dt) 
             else: 
                 self.suffocation = 0

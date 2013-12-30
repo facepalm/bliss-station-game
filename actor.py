@@ -79,7 +79,7 @@ class Actor(object):
         '''moving to new node, exchange air flow'''
         my_mod = self.station.get_module_from_loc( self.location )
         new_mod = self.station.get_module_from_loc( new_loc )
-        my_mod.atmo.mix( new_mod.atmo, 1 )        
+        my_mod.atmo.mix( new_mod.atmo, 1.0 )             
        
     def summarize_needs(self):
         return [[n, self.needs[n].current_severity()] for n in self.needs.keys()]
