@@ -1,4 +1,6 @@
 
+time_factor=24
+
 def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)
     
@@ -13,4 +15,5 @@ def separate_node(node):
     if not '|' in node: return False, False
     n=node.split('|')
     return n
+                                         
                                          
