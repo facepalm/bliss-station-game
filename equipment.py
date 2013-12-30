@@ -120,7 +120,9 @@ class UniversalToilet(Machinery):
         super(UniversalToilet, self).__init__() 
         self.solid_waste = 0
         self.liquid_waste = 0 
+        self.gray_water = 0
         self.capacity = 1 # m^3, shared between both
+        self.gray_water_capacity = 0.25 #m^3
         self.processing_speed = 0.01
 
     def deposit(self,amt1,amt2):
@@ -134,9 +136,9 @@ class UniversalToilet(Machinery):
         if self.installed and self.liquid_waste > 0:
             if not self.draw_power(0.03,dt): return
             proc_amt = max( 0, self.liquid_waste - self.processing_speed)
+            if self.gray_water_capacity - self.gray_water < proc_amt: return # water tank is full
             self.liquid_waste -= proc_amt
-            self.installed.station.resources.resources['Gray Water'].available += proc_amt
-    
+            self.gray_water += proc_amt    
         
 #docking equipment        
 class DockingRing(Equipment):
