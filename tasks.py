@@ -1,4 +1,4 @@
-
+import random
 
 TASK_STATUS = {'NEW':0, 'Open':1, 'Assigned':2, 'COMPLETED':3, 'Closed':4 }
 TASK_SEVERITY_VALUE = { 'CRITICAL'  :   10,
@@ -91,7 +91,8 @@ class Task(object):
         
     def __cmp__(self, other):
         if not other: return 1
-        assert isinstance(other, Task)         
+        assert isinstance(other, Task)
+        if cmp(self.task_value(),other.task_value()) == 0: return random.choice([-1,1])         
         return cmp(self.task_value(),other.task_value())        
       
         

@@ -45,3 +45,5 @@ class ResourceBundle():
     def update(self,dt):
         for k in self.resources:
             self.resources[k].update(dt)
+            
+            
