@@ -48,9 +48,10 @@ if __name__ == "__main__":
         sleep(1/20.0)
         #print 'Robot task:', None if not rob.task else (rob.task.name,rob.location,rob.task.severity)
         #print 'robot tasks:', [t.name for t in rob.my_tasks.tasks]
+        print
         print util.TIME_FACTOR*i/20.0,': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        #for m in station.modules.values():
-        #    print m.location, m.atmo.partial_pressure('O2')
+        for m in station.modules.values():
+            print m.location, m.atmo.partial_pressure('O2'), m.atmo.partial_pressure('CO2')
         print ernie.summarize_needs()
         #print 'human tasks:', [[t.name, t.severity] for t in ernie.my_tasks.tasks]        
         #print 'station tasks:', [[t.name, t.severity] for t in station.tasks.tasks]

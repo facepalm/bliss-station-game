@@ -41,7 +41,7 @@ class ZvezdaModule(BasicStationModule):
         self.add_edge(self.node('Toilet1'),self.node('hall1'))
         self.add_edge(self.node('Window01'),self.node('hall1'))
         self.add_edge(self.node('Window02'),self.node('hall1'))
-        self.add_edge(self.node('Window12'),self.node('hall1'))
+        self.add_edge(self.node('Window11'),self.node('hall1'))
         self.add_edge(self.node('Window12'),self.node('hall1'))
         self.add_edge(self.node('Window21'),self.node('hall1'))
         self.add_edge(self.node('Window22'),self.node('hall1'))

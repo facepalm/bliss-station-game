@@ -64,12 +64,13 @@ class Human(Actor):
             self.suffocate(dt)
         else:
             O2_pp = module.atmo.partial_pressure('O2')
+            CO2_pp = module.atmo.partial_pressure('CO2')
             breath = module.atmo.extract('volume',.0005/3*dt) #avg rate of human breath
             CO2_frac = breath['O2']*0.05
             breath['O2'] -= CO2_frac
             breath['CO2'] += CO2_frac
             module.atmo.inject(breath)
-            if O2_pp < 7.5 or O2_pp > 300: #Everest vs oxygen toxicity
+            if O2_pp < 7.5 or O2_pp > 300.0 or CO2_pp > 7.0: #Everest vs oxygen toxicity
                 self.suffocate(dt) 
             else: 
                 self.suffocation = 0
@@ -111,7 +112,7 @@ class Human(Actor):
         if need in need_pristines.keys():
             target=task.target
             if isinstance(task.target, Storage):
-                target = task.target.stowage.find_resource(ClutterFilter(need_pristines[need]).compare)
+                target = task.target.stowage.find_resource(clutter.ClutterFilter(need_pristines[need]).compare)
             if not target: return                        
                 
             #"eat" - TODO make a more detailed nutrition model for things like scurvy            
