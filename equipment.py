@@ -9,20 +9,30 @@ DOCK_EQUIPMENT = ['CBM']
 
 class EquipmentSearch():    
     
-    def __init__(self, target, station, extra='', check_storage=False):
+    def __init__(self, target, station, check_storage=False, resource_obj=None, storage_filter='Any'):
         self.target=target
         self.station=station
         self.equipment_targets = {  'Battery' : Battery,
-                                    'Toilet' : UniversalToilet }
+                                    'Toilet' : UniversalToilet,
+                                    'Storage': Storage }
         self.check_storage = check_storage #if True, will search inside storage equipment as well as loose clutter
-        self.extra = extra
+        self.required_resource = resource_obj #if not None, will require w/e to be in a station sharing the res obj
+        self.storage_filter = storage_filter # will check the filter of any storage eq
     
     def compare(self,obj):
-        if isinstance(self.target,str):
+        if self.required_resource: #if we're looking to draw or give via a specific resource, check for that
+            if hasattr(obj,'installed'):
+                if not obj.installed: return False
+                if not obj.installed.station: return False
+                if not obj.installed.station.resources == self.required_resource: return False
+                
+        if isinstance(self.target, str): #TODO pull this out into a separate EquipmentFilter, a la ClutterFilter
+            if self.target == 'Storage' and isinstance( obj, Storage):
+                return obj.filter.target == self.storage_filter or self.storage_filter == 'Any'
             if self.target in self.equipment_targets: 
                 return isinstance( obj, self.equipment_targets [ self.target ] )    
-            print self.target                 
-            return clutter.equals(self.target, obj.name) #must be clutter
+            #print self.target                 
+            #return clutter.equals(self.target, obj.name) #must be clutter
         elif isinstance(self.target, clutter.ClutterFilter):
             if self.check_storage and isinstance( obj, Storage ):
                 return obj.stowage.find_resource(self.target.compare)
@@ -143,10 +153,26 @@ class UniversalToilet(Machinery):
         super(UniversalToilet, self).update(dt)    
         if self.installed and self.liquid_waste > 0:
             if not self.draw_power(0.03,dt): return
-            proc_amt = max( 0, self.liquid_waste - self.processing_speed)
+            proc_amt = max( 0, min( self.liquid_waste, self.processing_speed*dt ) )
             if self.gray_water_capacity - self.gray_water < proc_amt: return # water tank is full
             self.liquid_waste -= proc_amt
             self.gray_water += proc_amt
+        
+class WaterPurifier(Machinery):
+    '''Converts gray water into potable water.  Basically an abstracted still'''
+    def __init__(self):   
+        super(WaterPurifier, self).__init__()          
+        self.processing_speed = 0.001
+        
+    def update(self,dt):
+        super(WaterPurifier, self).update(dt)              
+        if self.installed and self.draw_power(0.03,dt): #TODO replace with actual distillation power use
+            gray_source, discard = EquipmentSearch('Toilet',self.installed.station,resource_obj=self.installed.station.resources).search()
+            pure_dest, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Potable Water').search()
+            proc_amt = max( 0, min( gray_source.gray_water, self.processing_speed*dt ) )
+            if pure_dest.available_space > proc_amt:
+                gray_source.gray_water -= proc_amt
+                pure_dest.stowage.add( clutter.Clutter( 'Water', proc_amt ) )
         
 #docking equipment        
 class DockingRing(Equipment):
