@@ -52,7 +52,7 @@ if __name__ == "__main__":
         print util.TIME_FACTOR*i/20.0,': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
         for m in station.modules.values():
             print m.location, m.atmo.partial_pressure('O2'), m.atmo.partial_pressure('CO2')
-        print ernie.summarize_needs()
+        print ernie.summarize_needs(), ernie.health
         #print 'human tasks:', [[t.name, t.severity] for t in ernie.my_tasks.tasks]        
         #print 'station tasks:', [[t.name, t.severity] for t in station.tasks.tasks]
         #print 'Dragon free storage: ',modDrag.stowage.contents

@@ -59,7 +59,7 @@ class Task(object):
         self.flag('OPEN')                          
         self.assigned_to = None   
         self.location = None
-        self.touched = 60
+        self.touched = 300
         if self.task_reset: self.task_duration_remaining = self.task_duration   
 
     def assign(self, ass): #tee hee, I said "ass"

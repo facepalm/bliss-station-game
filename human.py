@@ -26,8 +26,8 @@ class Human(Actor):
         self.needs['Food'].severity='HIGH'
 
     def dehydration_hit(self):
-        self.health -= 0.05 #TODO model malnutrition better later
-        self.needs['Water']=Need('Water', self, 0.1, 0.1/86400.0, 0.1/600.0, self.new_drink_task, self.dehydration_hit)
+        self.health -= 0.2 #TODO model malnutrition better later
+        self.needs['Water']=Need('Water', self, 0.1, 0.1/43200.0, 0.1/600.0, self.new_drink_task, self.dehydration_hit)
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
@@ -92,7 +92,7 @@ class Human(Actor):
                 amt=self.needs[need].amt
                 self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit)
                 self.needs[need].amt=amt
-            elif need == 'Water' and self.needs['Water'].severity == 'HIGH':
+            elif need == 'Water' and self.needs['Water'].severity == 'CRITICAL':
                 amt=self.needs[need].amt
                 self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/60.0, self.new_drink_task, self.dehydration_hit)
                 self.needs[need].amt=amt
