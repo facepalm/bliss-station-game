@@ -2,7 +2,14 @@
 GAS_R = 0.0083144621 # m^3 * kPa / K * mol
 
 #def Pressure2Moles(total_volume, total_pressure, temperature):
-    
+
+def decompose_h2o( amt_kg ):
+    '''Breaks down a specified amount of water into H2 and O2'''
+    gasses = dict()
+    moles_h2o = amt_kg * 1000 / (15.9994+2*1.008)
+    gasses['O2'] = moles_h2o / 2
+    gasses['H2'] = moles_h2o
+    return gasses    
 
 class Atmosphere():
     def __init__(self, volume=1):
