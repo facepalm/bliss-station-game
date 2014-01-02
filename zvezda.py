@@ -1,7 +1,8 @@
 
 
 from generic_module import BasicStationModule
-from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, UniversalToilet, Window, WaterPurifier
+from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window
+from lifesupport import UniversalToilet, WaterPurifier
 
 import math
 import numpy as np

@@ -1,6 +1,8 @@
 
 TIME_FACTOR = 240 # 120# 24
 
+equipment_targets = dict()
+
 def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)
     
