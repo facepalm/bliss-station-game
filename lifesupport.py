@@ -62,12 +62,29 @@ class OxygenElectrolyzer(Machinery):
             if O2_content < 21.27:   #sea-level pp of oxygen.  
                 #*Technically* we should also check for total pp, and release more O2 until like 40 kPa
                 pure_src, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Potable Water').search()
-                if pure_src and self.draw_power(0.03,dt):
+                if pure_src and self.draw_power(self.power_draw,dt):
                     water = pure_src.stowage.remove('Water',self.process_rate*dt)
                     for w in water:
                         gasses = atmospherics.decompose_h2o(w.mass) #handle contaminated detritus somehow?
-                        gasses['H2'] = 0 #H2 is "vented" into space
+                        gasses['H2'] = 0 #H2 is "vented" into space, TODO check for storage container
                         self.installed.atmo.inject(gasses)
-                
+
+class RegenerableCO2Filter(Machinery):
+    '''Collects excess (>0.4 kPa) CO2 and ejects it into space.  A bit magic atm, but we can fill in the details later'''
+    def __init__(self):
+        super(RegenerableCO2Filter, self).__init__()
+        self.airflow = 0.001 #m^3 per second
+        self.extraction_fraction = 0.5
+        self.power_draw = .2 # kW
+        self.pp_trigger = 0.4 #CO2 pp at sea level
+
+    def update(self,dt):
+        super(RegenerableCO2Filter, self).update(dt)              
+        if self.installed and self.draw_power(0.001,dt): #idling power use
+            CO2_content = self.installed.atmo.partial_pressure('CO2')            
+            if CO2_content > self.pp_trigger and self.draw_power(self.power_draw,dt):
+                air_in = self.installed.atmo.extract('volume',self.airflow*dt)
+                air_in['CO2'] = air_in[ 'CO2' ] * (1.0 - self.extraction_fraction)
+                self.installed.atmo.inject(air_in)                                        
 
 util.equipment_targets['Toilet'] = UniversalToilet

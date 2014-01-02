@@ -2,7 +2,7 @@
 
 from generic_module import BasicStationModule
 from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window
-from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer
+from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
 
 import math
 import numpy as np
@@ -30,6 +30,7 @@ class ZvezdaModule(BasicStationModule):
                     self.node('Window22'): np.array([ 0.5, -0.1 , -0.1 ]),
                     self.node('H2OStill'): np.array([ -0.2,  -0.35 , 0 ]),
                     self.node('Electrolyzer'): np.array([ -0.2,  0.35 , 0 ]),
+                    self.node('CO2Filter'): np.array([ -0.3,  0.35 , 0 ]),
                     }
                     
         # merging n dicts with a generator comprehension
@@ -50,6 +51,7 @@ class ZvezdaModule(BasicStationModule):
         self.add_edge(self.node('Window22'),self.node('hall1'))
         self.add_edge(self.node('H2OStill'),self.node('hall0'))
         self.add_edge(self.node('Electrolyzer'),self.node('hall0'))        
+        self.add_edge(self.node('CO2Filter'),self.node('hall0'))       
         
         self.equipment['CBM2']= [ np.array([ 0.8 , -1 , 0 ]), np.array([ math.pi/2 , 0]), 'CBM', CBM().install(self)]
         self.equipment['CBM3']= [ np.array([ 0.8 , 1 , 0 ]), np.array([ -math.pi/2 , 0]), 'CBM', CBM().install(self)]        
@@ -69,6 +71,7 @@ class ZvezdaModule(BasicStationModule):
         
         self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', WaterPurifier().install(self)]
         self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', OxygenElectrolyzer().install(self)]
+        self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
         
         self.equipment['Solars0'][3].extended=True
         self.equipment['Solars1'][3].extended=True        
