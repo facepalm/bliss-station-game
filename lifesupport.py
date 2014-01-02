@@ -57,7 +57,7 @@ class OxygenElectrolyzer(Machinery):
 
     def update(self,dt):
         super(OxygenElectrolyzer, self).update(dt)              
-        if self.installed and self.draw_power(0.001,dt): #idling power use
+        if self.installed and self.draw_power(self.idle_draw,dt): #idling power use
             O2_content = self.installed.atmo.partial_pressure('O2')            
             if O2_content < 21.27:   #sea-level pp of oxygen.  
                 #*Technically* we should also check for total pp, and release more O2 until like 40 kPa
@@ -80,7 +80,7 @@ class RegenerableCO2Filter(Machinery):
 
     def update(self,dt):
         super(RegenerableCO2Filter, self).update(dt)              
-        if self.installed and self.draw_power(0.001,dt): #idling power use
+        if self.installed and self.draw_power(self.idle_draw,dt): #idling power use
             CO2_content = self.installed.atmo.partial_pressure('CO2')            
             if CO2_content > self.pp_trigger and self.draw_power(self.power_draw,dt):
                 air_in = self.installed.atmo.extract('volume',self.airflow*dt)

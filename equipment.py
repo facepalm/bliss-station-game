@@ -92,7 +92,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
 class Machinery(Equipment): #TODO eventual ancestor class for things that need regular maintenance
     def __init__(self):
         super(Machinery, self).__init__()              
-        
+        self.idle_draw = 0.001 #kW
         
 #miscellaneous equipment
 class Storage(Equipment):
