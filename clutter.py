@@ -92,7 +92,7 @@ class Stowage(object):
         
     
 class JanitorMon(object):
-    def __init__(self,target='All'):    
+    def __init__(self,target= ['All']):    
         self.target=target
         
     def task_work_report(self,task,dt):
@@ -105,15 +105,22 @@ class JanitorMon(object):
             task.assigned_to.inventory.add(obj)
             
 class ClutterFilter(object):
-    def __init__(self,target='All'):    
+    def __init__(self,target=['All']):    
         self.target=target                
             
     def compare(self,obj):
         if not isinstance(obj,Clutter): return False
-        if self.target=='Potable Water': 
-            if obj.name == 'Water' and 'Contaminants' in obj.quality and 'Salt' in obj.quality:
+        if 'Potable Water' in self.target and obj.name == 'Water': 
+            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1
-        elif self.target=='Edible Food': 
-            if obj.name == 'Food' and 'Contaminants' in obj.quality:
+        elif 'Edible Food' in self.target and obj.name == 'Food': 
+            if 'Contaminants' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.05
         return equals(self.target, obj.name)
+        
+    def target_string(self):
+        out = ''
+        for et,t in enumerate(self.target):
+            if et > 0: out = ''.join([out,'/'])
+            out = ''.join([out,t])
+        return out

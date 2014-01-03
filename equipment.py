@@ -27,7 +27,7 @@ class EquipmentSearch():
                 
         if isinstance(self.target, str): #TODO pull this out into a separate EquipmentFilter, a la ClutterFilter
             if self.target == 'Storage' and isinstance( obj, Storage):
-                return obj.filter.target == self.storage_filter or self.storage_filter == 'Any'
+                return self.storage_filter in obj.filter.target or self.storage_filter == 'Any'
             if self.target in self.equipment_targets: 
                 return isinstance( obj, self.equipment_targets [ self.target ] )    
             #print self.target                 
@@ -99,21 +99,22 @@ class Storage(Equipment):
     def __init__(self):
         super(Storage, self).__init__()         
         self.stowage = clutter.Stowage(1) #things floating around in the rack
-        self.filter = clutter.ClutterFilter('All')
+        self.filter = clutter.ClutterFilter(['All'])
         self.space_trigger = 0.1 #free volume
         
     def update(self,dt):
-        #print 'Available storage: ',self.available_space
+        #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
         super(Storage, self).update(dt)
-        self.stowage.update(dt)
+        self.stowage.update(dt)        
         if self.installed and (not self.task or self.task.task_ended()) and \
                             self.get_available_space() >= self.space_trigger:
             #find stuff to store    
             #sequence! 
             #Task 1: find stuff to store, go to, pick up  #Task 2: find self, go to, deposit
-            self.task = TaskSequence(name = ''.join(['Store ',self.filter.target]), severity = "LOW")
-            self.task.add_task(Task(name = ''.join(['Pick Up ',self.filter.target]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target)))
-            self.task.add_task(Task(name = ''.join(['Put Away ',self.filter.target]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self,self.installed.station).search, owner=self))
+            filter_str = self.filter.target_string()
+            self.task = TaskSequence(name = ''.join(['Store ',filter_str]), severity = "LOW")
+            self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target)))
+            self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self,self.installed.station).search, owner=self))
             self.installed.station.tasks.add_task(self.task)
         
     def get_available_space(self): return self.stowage.free_space       
@@ -254,13 +255,13 @@ class BatteryBank(Rack, Battery):
 class WaterTank(Storage):
     def __init__(self):   
         super(WaterTank, self).__init__()         
-        self.filter = clutter.ClutterFilter('Potable Water')
+        self.filter = clutter.ClutterFilter(['Potable Water'])
         self.stowage.capacity = 0.5
 
 class FoodStorageRack(Storage,Rack):
     def __init__(self):   
         super(FoodStorageRack, self).__init__()         
-        self.filter = clutter.ClutterFilter('Food')
+        self.filter = clutter.ClutterFilter(['Edible Food'])
         self.space_trigger = 0.5 #free volume, m^3   
 
 class WaterStorageRack(WaterTank,Rack):

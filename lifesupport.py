@@ -8,6 +8,7 @@ import atmospherics
 class UniversalToilet(Machinery):
     def __init__(self):   
         super(UniversalToilet, self).__init__() 
+        self.tank = clutter.Stowage(1)
         self.solid_waste = 0
         self.liquid_waste = 0 
         self.gray_water = 0
@@ -22,7 +23,7 @@ class UniversalToilet(Machinery):
             pass #TODO replace with bad things happening
         
     def update(self,dt):
-        super(UniversalToilet, self).update(dt)    
+        super(UniversalToilet, self).update(dt)   
         if self.installed and self.liquid_waste > 0:
             if not self.draw_power(0.03,dt): return
             proc_amt = max( 0, min( self.liquid_waste, self.processing_speed*dt ) )
