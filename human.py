@@ -98,10 +98,10 @@ class Human(Actor):
                 self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/60.0, self.new_drink_task, self.dehydration_hit)
                 self.needs[need].amt=amt
             elif need == 'WasteCapacitySolid' and isinstance(task.target,lifesupport.UniversalToilet):
-                task.target.solid_waste += self.needs[need].max_amt - self.needs[need].amt
+                task.target.deposit(amt2 = self.needs[need].max_amt - self.needs[need].amt)
                 self.needs[need].set_to_severity('IGNORABLE')     
             if need in ['WasteCapacityLiquid', 'WasteCapacitySolid'] and isinstance(task.target,lifesupport.UniversalToilet):
-                task.target.liquid_waste += self.needs['WasteCapacityLiquid'].max_amt - self.needs['WasteCapacityLiquid'].amt
+                task.target.deposit(amt1 = self.needs['WasteCapacityLiquid'].max_amt - self.needs['WasteCapacityLiquid'].amt)
                 self.needs['WasteCapacityLiquid'].set_to_severity('IGNORABLE')  
                                         
     def task_work_report(self,task,dt):

@@ -9,27 +9,28 @@ class UniversalToilet(Machinery):
     def __init__(self):   
         super(UniversalToilet, self).__init__() 
         self.tank = clutter.Stowage(1)
-        self.solid_waste = 0
-        self.liquid_waste = 0 
-        self.gray_water = 0
-        self.capacity = 1 # m^3, shared between both
-        self.gray_water_capacity = 0.25 #m^3
+        self.tank.target_1 = clutter.ClutterFilter('Waste Water')
         self.processing_speed = 0.01
 
-    def deposit(self,amt1,amt2):
-        self.solid_waste += amt2
-        self.liquid_waste += amt1
-        if self.solid_waste/714.33 + self.liquid_waste/1000 > self.capacity: #ohhhh shiiiiii
-            pass #TODO replace with bad things happening
+    def deposit(self, amt1=0, amt2=0):
+        print amt1, amt2
+        if amt1: self.tank.add( clutter.Clutter( "Waste Water", amt1 ) )
+        if amt2: self.tank.add( clutter.Clutter( "Solid Waste", amt2, 714.0 ) )
         
     def update(self,dt):
         super(UniversalToilet, self).update(dt)   
-        if self.installed and self.liquid_waste > 0:
-            if not self.draw_power(0.03,dt): return
-            proc_amt = max( 0, min( self.liquid_waste, self.processing_speed*dt ) )
-            if self.gray_water_capacity - self.gray_water < proc_amt: return # water tank is full
-            self.liquid_waste -= proc_amt
-            self.gray_water += proc_amt
+        p = self.tank.find_resource( self.tank.target_1.compare )
+        if self.installed and p and self.draw_power(0.03,dt):
+            gray_dest, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Gray Water').search()
+            #print 'gray dest', gray_dest
+            if not gray_dest: return            
+            proc_amt = max( 0, min( gray_dest.available_space, p.mass , self.processing_speed*dt ) )
+            #print 'proc amt', proc_amt, p
+            new_p = p.split(proc_amt)
+            if not new_p: return
+            new_p.quality['Contaminants'] = 0.09
+            new_p.quality['Salt'] = 0.09
+            gray_dest.stowage.add(new_p)
         
 class WaterPurifier(Machinery):
     '''Converts gray water into potable water.  Basically an abstracted still'''
@@ -40,13 +41,15 @@ class WaterPurifier(Machinery):
     def update(self,dt):
         super(WaterPurifier, self).update(dt)              
         if self.installed and self.draw_power(0.03,dt): #TODO replace with actual distillation power use
-            gray_source, discard = EquipmentSearch('Toilet',self.installed.station,resource_obj=self.installed.station.resources).search()
+            gray_source, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Gray Water').search()
             pure_dest, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Potable Water').search()
             if not gray_source or not pure_dest: return
-            proc_amt = max( 0, min( gray_source.gray_water, self.processing_speed*dt ) )
-            if pure_dest.available_space > proc_amt:
-                gray_source.gray_water -= proc_amt
-                pure_dest.stowage.add( clutter.Clutter( 'Water', proc_amt ) )
+            water = gray_source.stowage.remove('Water',min( self.processing_speed*dt, pure_dest.available_space ) )
+            if not water: return
+            for w in water:
+                w.quality['Contaminants'] = 0.0
+                w.quality['Salt'] = 0.0
+                pure_dest.stowage.add( w )
 
 class OxygenElectrolyzer(Machinery):
     '''Converts purified water to O2 (and disappears the H2 to space, presumably)'''

@@ -27,6 +27,7 @@ class EquipmentSearch():
                 
         if isinstance(self.target, str): #TODO pull this out into a separate EquipmentFilter, a la ClutterFilter
             if self.target == 'Storage' and isinstance( obj, Storage):
+                #print self.storage_filter, obj.filter.target
                 return self.storage_filter in obj.filter.target or self.storage_filter == 'Any'
             if self.target in self.equipment_targets: 
                 return isinstance( obj, self.equipment_targets [ self.target ] )    

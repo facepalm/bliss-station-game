@@ -6,8 +6,11 @@ common_densities =   {  'Food' : 714.33,
                         'Oxygen Candles' : 2420.0 }
                         
 common_qualities = {    'Water' : {'Contaminants' : 0.0, 'Salt': 0.0, 'pH' : 7.0 }, #distilled water
+                        'Waste Water' : {'Contaminants' : 2.0, 'Salt': 3.0, 'pH' : 7.0 }, #distilled water
                         'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Perishable': 0.00002, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] } #Bland but very nutritious and long-lasting space food
                    }                        
+
+common_subtypes = {     'Waste Water' : 'Water' }
 
 gather_rate = 0.001 #m^3/s - rate of grabbing a handful of something and putting it somewhere else
 
@@ -22,8 +25,9 @@ class Clutter(object):
     def __init__(self, name='Trash', mass=0.1, density=0.1, quality=None):    
         self.name = name
         self.mass = mass
-        self.density = common_densities[self.name] if self.name in common_densities.keys() else density
         self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None
+        if self.name in common_subtypes: self.name = common_subtypes[self.name]
+        self.density = common_densities[self.name] if self.name in common_densities.keys() else density
         
     def get_volume(self): return self.mass/self.density
     volume = property(get_volume, None, None, "Clutter volume" )  
@@ -35,6 +39,7 @@ class Clutter(object):
         return Clutter(self.name, curr_amt, self.density)
         
     def merge(self, other):
+        #TODO merge qualities as well, if water
         if not isinstance(other, Clutter): assert False, 'Requested merge a nonClutter object. Denied.'
         if not equals(self.name,other.name): return False
         self.mass += other.mass
@@ -74,7 +79,9 @@ class Stowage(object):
     def add (self, stuff=None):
         #if not ( isinstance(stuff,Clutter) or isinstance(stuff,Equipment)): return False
         if not stuff: return True
-        if stuff.volume > self.free_space: return False
+        if stuff.volume > self.free_space: 
+            print "Storage overflow!"
+            return False
         if stuff in self.contents: return False
         if isinstance(stuff, Clutter): 
             for v in self.contents:
@@ -112,7 +119,13 @@ class ClutterFilter(object):
         if not isinstance(obj,Clutter): return False
         if 'Potable Water' in self.target and obj.name == 'Water': 
             if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
+                return obj.quality['Contaminants'] <= 0.01 and obj.quality['Salt'] <= 0.01
+        elif 'Gray Water' in self.target and obj.name == 'Water': 
+            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1
+        elif 'Waste Water' in self.target and obj.name == 'Water': 
+            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
+                return obj.quality['Contaminants'] > 0.1 or obj.quality['Salt'] > 0.1                
         elif 'Edible Food' in self.target and obj.name == 'Food': 
             if 'Contaminants' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.05

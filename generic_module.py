@@ -150,6 +150,11 @@ class BasicModule():
         for e in range(1,len(edges)):            
             self.add_edge( self.node( edges[ e - 1 ] ), self.node( edges[ e ] ) )
         
+    def add_equipment(self, eq_node, eq_obj, eq_coords, hall_node, eq_orientation=np.array([ 0 , 0]), eq_type='MISC' ):
+        node_coords = self.nodes[ self.node( hall_node ) ] + 0.8 * ( eq_coords - self.nodes[ self.node( hall_node ) ] ) 
+        self.nodes[self.node(eq_node)] = node_coords
+        self.add_edge( self.node(hall_node), self.node(eq_node) )
+        self.equipment[ eq_node ] = [ eq_coords, eq_orientation, eq_type, eq_obj]
 
 class BasicStationModule(BasicModule):
     """ Basic as ISS modules get, this is pretty much a tube with CBM docks at each end """
