@@ -5,6 +5,7 @@ from atmospherics import Atmosphere
 from tasks import Task, TaskSequence
 import clutter
 import util
+import random
 
 DOCK_EQUIPMENT = ['CBM']
 
@@ -60,6 +61,7 @@ class Equipment(object):
         self.powered = False
         self.in_vaccuum = False #if True, requires EVA to service
         self.volume = 1.3 #m^3
+        self.name = 'Equipment'
         #basic health stats and such go here, as well as hooking into the task system
         pass
       
@@ -72,11 +74,17 @@ class Equipment(object):
         return self             
         
     def draw_power(self,kilowattage,dt): #kilowatts in per seconds
-        if self.installed:            
+        if self.installed and (not hasattr(self,'broken') or not self.broken): #it's installed, not broken or can't break          
             self.installed.station.resources.resources['Electricity'].available -= kilowattage*dt/3600
             #TODO add equivalent heat into module
             return kilowattage*dt/3600
         return 0
+        
+    def task_finished(self,task):
+        pass        
+
+    def task_failed(self,task):
+        pass     
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
@@ -94,6 +102,41 @@ class Machinery(Equipment): #TODO eventual ancestor class for things that need r
     def __init__(self):
         super(Machinery, self).__init__()              
         self.idle_draw = 0.001 #kW
+        self.maint_timer = random.randrange(0, util.seconds(6,'months') )
+        self.maint_task = None
+        self.wear = 1.0
+        self.broken = False
+                
+    def update(self,dt):
+        super(Machinery, self).update(dt)           
+        if self.broken:
+            if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
+                self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=EquipmentSearch(self,self.installed.station).search)
+                self.installed.station.tasks.add_task(self.maint_task)
+        if self.maint_timer < 0 and ( not self.maint_task or self.maint_task.task_ended() ):
+            self.maint_task = Task(''.join(['Maintain ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(1,'hours'), severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search)
+            print self.maint_task.timeout,self.maint_task.task_duration
+            self.installed.station.tasks.add_task(self.maint_task)
+        
+        self.maint_timer -= dt
+        
+    def task_finished(self,task): #TODO add supply usage
+        super(Machinery, self).task_finished(task) 
+        if not task: return
+        if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
+            self.maint_task = None
+            self.maint_timer = random.randrange(int (util.seconds(1,'months') * self.wear), int( util.seconds(6,'months') * self.wear ) )
+        elif task.name == ''.join(['Repair ',self.name]) and task.target == self:
+            self.broken = False
+            self.wear += (1 - self.wear) / 2        
+
+    def task_failed(self,task):
+        super(Machinery, self).task_failed(task)
+        if not task: return
+        if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
+            self.wear -= 0.05
+            if random.random() > self.wear:
+                self.broken = True
         
 #miscellaneous equipment
 class Storage(Equipment):

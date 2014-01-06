@@ -1,5 +1,5 @@
 
-TIME_FACTOR = 24 # 120# 24
+TIME_FACTOR = 240 # 120# 24
 
 equipment_targets = dict()
 
@@ -7,9 +7,10 @@ def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)
     
 def seconds(time=1,units='minutes'):
-    return time*60 if units == 'minutes' else time*3600 if units == 'hours' \
-                                         else time*86400 if units=='days' \
-                                         else time*2592000 if units=='months' \
+    return time*60 if units == 'minutes' or units == 'minute' \
+                                         else time*3600 if units == 'hours' or units == 'hour' \
+                                         else time*86400 if units=='days' or units == 'day' \
+                                         else time*2592000 if units=='months' or units == 'month' \
                                          else 10    
                                          
                                          
