@@ -107,12 +107,15 @@ class BasicModule():
         if not slots: return None
         return random.choice(slots)
             
-    def remove_equipment(self,equip):
+    def uninstall_equipment(self,equip):
         for f in self.equipment.keys():
             if self.equipment[f][3] == equip:
                 self.equipment[f][3] = None
-                return equip
-        return None                            
+                self.stowage.add( equip )
+                return True
+        return False                            
+        
+    
             
     def berth(self, my_node, neighbor, their_node, instant=False):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
@@ -225,7 +228,7 @@ class DestinyModule(BasicStationModule):
         self.equipment['starboard5'][3]=BatteryBank().install(self)              
         self.equipment['starboard3'][3]=FoodStorageRack().install(self) 
         
-        stuffrack = GenericStorageRack().install(self) 
+        stuffrack = GenericStorageRack() 
         stuffrack.filter = clutter.ClutterFilter(['Supplies'])
         self.stowage.add( stuffrack )
         #self.equipment['nadir0'][3]=MysteryBoxRack().install(self)              

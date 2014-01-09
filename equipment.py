@@ -78,12 +78,11 @@ class Equipment(object):
         if loc: self.installed.equipment[loc][3] = self
         return self             
 
-    def uninstall(self,home):
+    def uninstall(self):
         if not self.installed: return None # "Can't install the same thing twice!"
-        #TODO remove self from module, if necessary
-        self.installed.remove_equipment(self)
+        worked = self.installed.uninstall_equipment(self)
         self.installed=None
-        return self
+        return worked
         
     def draw_power(self,kilowattage,dt): #kilowatts in per seconds
         if self.installed and (not hasattr(self,'broken') or not self.broken): #it's installed, not broken or can't break          
@@ -99,8 +98,7 @@ class Equipment(object):
                 self.installed.equipment[task.target.split('|')[1]][3] = self      
             elif task.name == 'Pick Up':
                 if self.installed: 
-                    self.installed = None
-                    
+                    assert self.uninstall(), 'Unknown error after uninstallation'
                 else:
                     pass
 
