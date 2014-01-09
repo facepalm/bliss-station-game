@@ -19,7 +19,7 @@ TASK_SEVERITY_VALUE = { 'CRITICAL'  :   10,
     #'NEW' or 'OPEN' task is never finished, or flagged 'IGNORED', times out
     # tasks fail and close themselves
 class Task(object):
-    def __init__(self, name = 'GENERIC TASK', owner = None, assigned_to = None, severity = "LOW", timeout = 86400, task_duration = 1800, fetch_location_method=None):
+    def __init__(self, name = 'GENERIC TASK', owner = None, assigned_to = None, severity = "LOW", timeout = 86400, task_duration = 1800, fetch_location_method=None, station=None):
         self.owner = owner
         self.assigned_to = assigned_to
         self.target = None
@@ -34,6 +34,7 @@ class Task(object):
         self.touched = 0
         self.description = 'NONE'
         self.status = 'NEW'
+        self.station = station
         
     def update(self,dt):
         self.timeout -= dt        

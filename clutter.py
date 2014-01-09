@@ -60,6 +60,7 @@ class Stowage(object):
         
     def update(self, dt):
         for c in self.contents:
+            if hasattr(c,'update'): c.update(dt)
             if c.mass == 0:
                 self.contents.remove(c)
         

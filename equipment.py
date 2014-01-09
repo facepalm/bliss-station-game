@@ -44,7 +44,11 @@ class EquipmentSearch():
         
     def search(self):
         if self.target in self.equipment_targets or isinstance(self.target,Equipment):
-            return self.station.find_resource('Equipment',check = self.compare) 
+            tar,loc = self.station.find_resource('Equipment',check = self.compare) 
+            if not ( tar or loc) and self.check_storage:
+                #no installed eq, check free objects
+                tar, loc = self.station.find_resource('Clutter',check = self.compare)  
+            return tar, loc
         else:            
             tar,loc = self.station.find_resource('Clutter',check = self.compare)
             if not ( tar or loc) and self.check_storage:
@@ -68,10 +72,18 @@ class Equipment(object):
     def update(self,dt):
         pass
 
-    def install(self,home):
+    def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
         self.installed=home
+        if loc: self.installed.equipment[loc][3] = self
         return self             
+
+    def uninstall(self,home):
+        if not self.installed: return None # "Can't install the same thing twice!"
+        #TODO remove self from module, if necessary
+        self.installed.remove_equipment(self)
+        self.installed=None
+        return self
         
     def draw_power(self,kilowattage,dt): #kilowatts in per seconds
         if self.installed and (not hasattr(self,'broken') or not self.broken): #it's installed, not broken or can't break          
@@ -81,10 +93,28 @@ class Equipment(object):
         return 0
         
     def task_finished(self,task):
-        pass        
+        if task:
+            if task.name == "Install" and not self.installed:
+                self.installed = task.station.get_module_from_loc(task.target)
+                self.installed.equipment[task.target.split('|')[1]][3] = self      
+            elif task.name == 'Pick Up':
+                if self.installed: 
+                    self.installed = None
+                    
+                else:
+                    pass
 
     def task_failed(self,task):
         pass     
+        
+    def install_task(self,station):
+        if self.installed or not station: return
+        self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW")
+        self.task.station = station
+        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station), owner=self, check_storage=True)
+        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station), owner=self)
+        station.tasks.add_task(self.task)
+        
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
@@ -307,6 +337,12 @@ class FoodStorageRack(Storage,Rack):
         super(FoodStorageRack, self).__init__()         
         self.filter = clutter.ClutterFilter(['Edible Food'])
         self.space_trigger = 0.5 #free volume, m^3   
+
+class GenericStorageRack(Storage,Rack):
+    def __init__(self):   
+        super(GenericStorageRack, self).__init__()         
+        self.filter = clutter.ClutterFilter(['Any'])
+        self.space_trigger = 0.5 #free volume, m^3  
 
 class WaterStorageRack(WaterTank,Rack):
     def __init__(self):   

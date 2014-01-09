@@ -38,7 +38,7 @@ if __name__ == "__main__":
     ernie.needs['WasteCapacityLiquid'].amt=0.1
     #ernie.needs['Food'].amt=0.05
     ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
-    modB.equipment['Electrolyzer'][3].broken=True
+    #modB.equipment['Electrolyzer'][3].broken=True
     
       
     #modA.berth('CBM0', modB, 'CBM0')

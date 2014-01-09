@@ -2,8 +2,9 @@
 #from pygraph.classes.graph import graph
 import networkx as nx
 from atmospherics import Atmosphere
-from equipment import CBM, O2TankRack, FoodStorageRack, BatteryBank, MysteryBoxRack, DOCK_EQUIPMENT
+from equipment import CBM, O2TankRack, FoodStorageRack, BatteryBank, MysteryBoxRack, DOCK_EQUIPMENT, GenericStorageRack, Equipment
 from clutter import Stowage
+import clutter
 
 import uuid
 from module_resources import ResourceBundle
@@ -90,12 +91,28 @@ class BasicModule():
                 self.equipment[e][3].update( dt )
         self.stowage.update(dt)
         self.exterior_stowage.update(dt)
+        if 'Equipment' not in self.package_material:
+            for c in self.stowage.contents:
+                if isinstance(c,Equipment) and not c.installed:
+                    c.install_task(self.station)
                 
         
     def get_random_dock(self):
         docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked]
         if not docks: assert False, "Module has no free dockable ports!"
         return random.choice(docks)    
+            
+    def get_empty_slot(self,slot_type='LSS'):
+        slots = [s for s in self.equipment.keys() if ( self.equipment[s][2] == slot_type or slot_type=='ANY' ) and not self.equipment[s][3]]
+        if not slots: return None
+        return random.choice(slots)
+            
+    def remove_equipment(self,equip):
+        for f in self.equipment.keys():
+            if self.equipment[f][3] == equip:
+                self.equipment[f][3] = None
+                return equip
+        return None                            
             
     def berth(self, my_node, neighbor, their_node, instant=False):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
@@ -207,6 +224,10 @@ class DestinyModule(BasicStationModule):
         self.equipment['port1'][3]=O2TankRack().install(self)              
         self.equipment['starboard5'][3]=BatteryBank().install(self)              
         self.equipment['starboard3'][3]=FoodStorageRack().install(self) 
+        
+        stuffrack = GenericStorageRack().install(self) 
+        stuffrack.filter = clutter.ClutterFilter(['Supplies'])
+        self.stowage.add( stuffrack )
         #self.equipment['nadir0'][3]=MysteryBoxRack().install(self)              
         
                                       
