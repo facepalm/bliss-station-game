@@ -109,8 +109,8 @@ class Equipment(object):
         if self.installed or not station: return
         self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW")
         self.task.station = station
-        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station), owner=self, check_storage=True)
-        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station), owner=self)
+        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=EquipmentSearch(self,station,check_storage=True).search,station=station))
+        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station))
         station.tasks.add_task(self.task)
         
         
