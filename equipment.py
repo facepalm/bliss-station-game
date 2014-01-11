@@ -94,13 +94,16 @@ class Equipment(object):
     def task_finished(self,task):
         if task:
             if task.name == "Install" and not self.installed:
-                self.installed = task.station.get_module_from_loc(task.target)
-                self.installed.equipment[task.target.split('|')[1]][3] = self      
+                if task.assigned_to.held == self:
+                    self.assigned_to.held = None
+                    self.installed = task.station.get_module_from_loc(task.target)
+                    self.installed.equipment[task.target.split('|')[1]][3] = self      
             elif task.name == 'Pick Up':
                 if self.installed: 
-                    assert self.uninstall(), 'Unknown error after uninstallation'
-                else:
-                    pass
+                    assert self.uninstall(), 'Unknown error after uninstallation'                
+                module = task.station.get_module_from_loc(task.target)
+                assert module.stowage.remove(self), 'Equipment not found in targeted module'
+                task.held=self
 
     def task_failed(self,task):
         pass     

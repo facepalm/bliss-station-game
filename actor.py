@@ -21,14 +21,17 @@ class Actor(object):
         self.station = None
         self.inventory = Stowage(0.5)
         self.path=None
+        self.held=None
         self.xyz = np.array([ 0, 0, 0 ])
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
+    def drop(self):
+        pass #TODO drop held item        
+        
     def new_idle_task(self,timeout,severity):
         t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = 1500, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location)
         return t     
-
         
     def update(self,dt):
         self.my_tasks.update(dt)

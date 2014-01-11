@@ -64,7 +64,8 @@ class Stowage(object):
             if c.mass == 0:
                 self.contents.remove(c)
         
-    def remove (self, target, amt):
+    def remove (self, target, amt=1):
+        if not isinstance(target, str): return self.remove_obj(target)
         if amt <= 0: return None
         out=[]
         cum_amt=0
@@ -76,6 +77,14 @@ class Stowage(object):
                 if v.mass <= 0: self.contents.remove(v) 
             if cum_amt >= amt: break
         return out
+        
+    def remove_obj(self,target):
+        for v in self.contents:
+            if v == target:
+                self.contents.remove(v)
+                return [v]
+        return []
+        
                 
     def add (self, stuff=None):
         #if not ( isinstance(stuff,Clutter) or isinstance(stuff,Equipment)): return False
