@@ -60,6 +60,13 @@ class BasicModule():
                 random.shuffle(eq)
                 return eq[0][0], eq[0][1]
             return None, None
+        elif resource_type == "Equipment Slot":
+            eq=[]
+            eq.extend([[self.equipment[e][2], self.node( e ) ]  for e in self.equipment.keys() if not self.equipment[e][3] and check(self.equipment[e][2]) ])
+            if eq:
+                random.shuffle(eq)
+                return eq[0][0], eq[0][1]
+            return None, None        
         else:
             stuff=self.stowage.find_resource(check)
             if stuff:
@@ -93,7 +100,7 @@ class BasicModule():
         self.exterior_stowage.update(dt)
         if 'Equipment' not in self.package_material:
             for c in self.stowage.contents:
-                if isinstance(c,Equipment) and not c.installed:
+                if isinstance(c,Equipment) and not c.installed and not c.task:
                     c.install_task(self.station)
                 
         

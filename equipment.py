@@ -30,8 +30,10 @@ class EquipmentSearch():
             if self.target == 'Storage' and isinstance( obj, Storage):
                 #print self.storage_filter, obj.filter.target
                 return self.storage_filter in obj.filter.target or self.storage_filter == 'Any'
-            if self.target in self.equipment_targets: 
+            elif self.target in self.equipment_targets: 
                 return isinstance( obj, self.equipment_targets [ self.target ] )    
+            elif self.target == 'Equipment Slot':
+                return obj == self.storage_filter              
             #print self.target                 
             #return clutter.equals(self.target, obj.name) #must be clutter
         elif isinstance(self.target, clutter.ClutterFilter):
@@ -45,16 +47,16 @@ class EquipmentSearch():
     def search(self):
         if self.target in self.equipment_targets or isinstance(self.target,Equipment):
             tar,loc = self.station.find_resource('Equipment',check = self.compare) 
-            if not ( tar or loc) and self.check_storage:
-                #no installed eq, check free objects
-                tar, loc = self.station.find_resource('Clutter',check = self.compare)  
-            return tar, loc
+            if not ( tar or loc) and self.check_storage: #no installed eq, check free objects
+                tar, loc = self.station.find_resource('Clutter',check = self.compare)              
+            print "Task location",tar,loc, self.target
+        elif self.target == 'Equipment Slot':
+            tar,loc = self.station.find_resource('Equipment Slot',check = self.compare)             
         else:            
             tar,loc = self.station.find_resource('Clutter',check = self.compare)
-            if not ( tar or loc) and self.check_storage:
-                #no free objects, check stored stuff
+            if not ( tar or loc) and self.check_storage: #no free objects, check stored stuff
                 tar, loc = self.station.find_resource('Equipment',check = self.compare)  
-            return tar, loc
+        return tar, loc
         
 class Equipment(object):
     def __init__(self, installed=None):
@@ -66,11 +68,12 @@ class Equipment(object):
         self.in_vaccuum = False #if True, requires EVA to service
         self.volume = 1.3 #m^3
         self.name = 'Equipment'
+        self.type = 'Misc'
         #basic health stats and such go here, as well as hooking into the task system
         pass
       
     def update(self,dt):
-        pass
+        if self.task and self.task.task_ended(): self.task = None
 
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
@@ -99,9 +102,12 @@ class Equipment(object):
                     self.installed = task.station.get_module_from_loc(task.target)
                     self.installed.equipment[task.target.split('|')[1]][3] = self      
             elif task.name == 'Pick Up':
+                
                 if self.installed: 
-                    assert self.uninstall(), 'Unknown error after uninstallation'                
-                module = task.station.get_module_from_loc(task.target)
+                    assert self.uninstall(), 'Unknown error after uninstallation'             
+                print task.location   
+                module = task.station.get_module_from_loc(task.location)
+                print module.stowage.contents
                 assert module.stowage.remove(self), 'Equipment not found in targeted module'
                 task.held=self
 
@@ -113,7 +119,7 @@ class Equipment(object):
         self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW")
         self.task.station = station
         self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=EquipmentSearch(self,station,check_storage=True).search,station=station))
-        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch(self,station).search,station=station))
+        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch("Equipment Slot",station,storage_filter=self.type).search,station=station))
         station.tasks.add_task(self.task)
         
         
@@ -205,6 +211,7 @@ class Storage(Equipment):
             self.stowage.add(obj)       
             
     def task_finished(self,task):
+        super(Storage, self).task_finished(task) 
         self.update(0)         
 
         
@@ -247,6 +254,7 @@ class DockingRing(Equipment):
         self.in_vaccuum = True
         
     def task_finished(self,task):
+        super(DockingRing, self).task_finished(task) 
         if task.name == 'Close Hatch': 
             #TODO check for someone in the other module
             self.close_()
@@ -299,6 +307,7 @@ class Rack(Equipment):
     def __init__(self):   
         super(Rack, self).__init__()                    
         self.mass=104
+        self.type='RACK'
        
     def update(self,dt):
         pass
