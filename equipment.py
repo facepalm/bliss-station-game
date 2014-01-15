@@ -49,7 +49,7 @@ class EquipmentSearch():
             tar,loc = self.station.find_resource('Equipment',check = self.compare) 
             if not ( tar or loc) and self.check_storage: #no installed eq, check free objects
                 tar, loc = self.station.find_resource('Clutter',check = self.compare)              
-            print "Task location",tar,loc, self.target
+            #print "Task location",tar,loc, self.target
         elif self.target == 'Equipment Slot':
             tar,loc = self.station.find_resource('Equipment Slot',check = self.compare)             
         else:            

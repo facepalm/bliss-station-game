@@ -3,14 +3,19 @@
 
 common_densities =   {  'Food' : 714.33,
                         'Water' : 1000.0,
-                        'Oxygen Candles' : 2420.0 }
+                        'Oxygen Candles' : 2420.0,
+                        'Supplies' : 1000.0 }
                         
 common_qualities = {    'Water' : {'Contaminants' : 0.0, 'Salt': 0.0, 'pH' : 7.0 }, #distilled water
                         'Waste Water' : {'Contaminants' : 2.0, 'Salt': 3.0, 'pH' : 7.0 }, #distilled water
-                        'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Perishable': 0.00002, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] } #Bland but very nutritious and long-lasting space food
-                   }                        
+                        'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Perishability': 0.00002, 'Spoilage':0.0, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] }, #Bland, nutritious, lasting food
+                        'Supplies' : {'Medical':0.0, 'Tools':0.0, 'Spare Parts':0.0, 'Chemicals':0.0, 'Electronics':0.0 }
+                   }
 
-common_subtypes = {     'Waste Water' : 'Water' }
+common_subtypes = {     'Waste Water' : 'Water', 
+                        'Medical Supplies':'Supplies', 
+                        'Mechanical Supplies':'Supplies',
+                        'General Supplies':'Supplies' }
 
 gather_rate = 0.001 #m^3/s - rate of grabbing a handful of something and putting it somewhere else
 
@@ -26,23 +31,29 @@ class Clutter(object):
         self.name = name
         self.mass = mass
         self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None
+        if isinstance(self.quality,dict):
+            if self.name == 'Medical Supplies': self.quality['Medical'] = self.mass
+            if self.name == 'Mechanical Supplies': self.quality['Spare Parts'] = self.mass
+            if self.name == 'General Supplies': 
+                for q in self.quality.keys():
+                    self.quality[q] = self.mass / len(self.quality.keys())
         if self.name in common_subtypes: self.name = common_subtypes[self.name]
         self.density = common_densities[self.name] if self.name in common_densities.keys() else density
         
     def get_volume(self): return self.mass/self.density
     volume = property(get_volume, None, None, "Clutter volume" )  
     
-    def split(self,amt):
+    def split(self, amt, subtype=None):
         if amt < 0: assert False, 'Requested to split a negative amount. Denied.'
         curr_amt = min(amt, self.mass)   
         self.mass -= curr_amt
         return Clutter(self.name, curr_amt, self.density)
         
-    def merge(self, other):
-        #TODO merge qualities as well, if water
+    def merge(self, other):        
         if not isinstance(other, Clutter): assert False, 'Requested merge a nonClutter object. Denied.'
         if not equals(self.name,other.name): return False
         self.mass += other.mass
+        #TODO merge qualities as well, if water
         return True
         
     
@@ -137,8 +148,8 @@ class ClutterFilter(object):
             if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
                 return obj.quality['Contaminants'] > 0.1 or obj.quality['Salt'] > 0.1                
         elif 'Edible Food' in self.target and obj.name == 'Food': 
-            if 'Contaminants' in obj.quality:
-                return obj.quality['Contaminants'] <= 0.05
+            if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
+                return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05
         return equals(self.target, obj.name)
         
     def target_string(self):
