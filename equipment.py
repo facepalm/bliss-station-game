@@ -98,9 +98,11 @@ class Equipment(object):
         if task:
             if task.name == "Install" and not self.installed:
                 if task.assigned_to.held == self:
-                    self.assigned_to.held = None
-                    self.installed = task.station.get_module_from_loc(task.target)
-                    self.installed.equipment[task.target.split('|')[1]][3] = self      
+                    task.assigned_to.held = None
+                else:
+                    print "Object not held!"
+                self.installed = task.station.get_module_from_loc(task.location)
+                self.installed.equipment[task.location.split('|')[1]][3] = self      
             elif task.name == 'Pick Up':
                 
                 if self.installed: 
@@ -109,7 +111,7 @@ class Equipment(object):
                 module = task.station.get_module_from_loc(task.location)
                 print module.stowage.contents
                 assert module.stowage.remove(self), 'Equipment not found in targeted module'
-                task.held=self
+                task.assigned_to.held=self
 
     def task_failed(self,task):
         pass     
@@ -187,6 +189,7 @@ class Storage(Equipment):
         #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
         super(Storage, self).update(dt)
         self.stowage.update(dt)        
+        #if self.task: print self.task.name
         if self.installed and (not self.task or self.task.task_ended()) and \
                             self.get_available_space() >= self.space_trigger:
             #find stuff to store    
