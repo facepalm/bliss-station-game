@@ -1,5 +1,8 @@
 from tasks import Task
 
+need_severity_profile = {'VARIABLE' : {0.0:'HIGH', 0.2:'MODERATE', 0.5:'LOW',0.7:'IGNORABLE'}, 
+                         'HUMAN_BIOLOGICAL': {0.0:'HIGH',0.1:'MODERATE',0.2:'LOW',0.3:'IGNORABLE'} }
+
 def need_from_task(taskname):
     if taskname.startswith('Satisfy '):
         return taskname.split('Satisfy ')[1]
@@ -7,7 +10,7 @@ def need_from_task(taskname):
         return None
 
 class Need():
-    def __init__(self,name,owner,max_amt,depletion_rate,replenish_rate,on_task,on_fail):
+    def __init__(self,name,owner,max_amt,depletion_rate,replenish_rate,on_task,on_fail,severity='VARIABLE'):
         self.name = name
         self.owner = owner
         self.amt = max_amt
@@ -16,7 +19,7 @@ class Need():
         self.replenish_rate = replenish_rate
         self.on_task = on_task
         self.on_fail = on_fail
-        self.severity = 'VARIABLE'
+        self.severity = severity
         self.touched = 0
         
     def update(self,dt):
@@ -43,9 +46,12 @@ class Need():
         self.amt -= dt*self.depletion_rate
 
     def current_severity(self):        
-        if self.severity == 'VARIABLE':
+        if self.severity in need_severity_profile.keys():
             _need_ratio = self.amt/self.max_amt
-            return 'HIGH' if _need_ratio < 0.2 else 'MODERATE' if _need_ratio < 0.5 else 'LOW' if _need_ratio < 0.7 else 'IGNORABLE'
+            profile = need_severity_profile[self.severity]
+            for f in sorted(profile.keys(),reverse=True):
+                if _need_ratio > f:
+                    return profile[f]                
         else:
             return self.severity
             
@@ -54,7 +60,7 @@ class Need():
         self.amt += _amt            
         return _amt
         
-    def set_to_severity(self,severity='IGNORABLE'):
+    def set_amt_to_severity(self,severity='IGNORABLE'):
         mult = 0.2 if severity=='HIGH' else 0.5 if severity=='MODERATE' else 0.7 if severity=='LOW' else 1.0
         self.amt = mult*self.max_amt
         

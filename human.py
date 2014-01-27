@@ -10,8 +10,8 @@ import util
 class Human(Actor):
     def __init__(self, name='Buzz Kerman'):
         super(Human, self).__init__(name)
-        self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit)
-        self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/600.0, self.new_drink_task, self.dehydration_hit)
+        self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit,severity='HUMAN_BIOLOGICAL')
+        self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/600.0, self.new_drink_task, self.dehydration_hit,severity='HUMAN_BIOLOGICAL')
         self.needs['WasteCapacitySolid']=Need('WasteCapacitySolid', self, 0.22, 0.22/192800.0, 0.22/300.0, self.number_2_task, self.code_brown)
         self.needs['WasteCapacityLiquid']=Need('WasteCapacityLiquid', self, 3.87, 3.87/21600.0, 3.87/30.0, self.number_1_task, self.code_yellow)       
         
@@ -91,18 +91,18 @@ class Human(Actor):
         if need:             
             if need == 'Food' and self.needs['Food'].severity == 'HIGH':
                 amt=self.needs[need].amt
-                self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit)
+                self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit,severity='HUMAN_BIOLOGICAL')
                 self.needs[need].amt=amt
             elif need == 'Water' and self.needs['Water'].severity == 'CRITICAL':
                 amt=self.needs[need].amt
-                self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/60.0, self.new_drink_task, self.dehydration_hit)
+                self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/60.0, self.new_drink_task, self.dehydration_hit,severity='HUMAN_BIOLOGICAL')
                 self.needs[need].amt=amt
             elif need == 'WasteCapacitySolid' and isinstance(task.target,lifesupport.UniversalToilet):
                 task.target.deposit(amt2 = self.needs[need].max_amt - self.needs[need].amt)
-                self.needs[need].set_to_severity('IGNORABLE')     
+                self.needs[need].set_amt_to_severity('IGNORABLE')     
             if need in ['WasteCapacityLiquid', 'WasteCapacitySolid'] and isinstance(task.target,lifesupport.UniversalToilet):
                 task.target.deposit(amt1 = self.needs['WasteCapacityLiquid'].max_amt - self.needs['WasteCapacityLiquid'].amt)
-                self.needs['WasteCapacityLiquid'].set_to_severity('IGNORABLE')  
+                self.needs['WasteCapacityLiquid'].set_amt_to_severity('IGNORABLE')  
                                         
     def task_work_report(self,task,dt):
         if not task: return
