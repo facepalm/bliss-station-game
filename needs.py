@@ -50,7 +50,7 @@ class Need():
             _need_ratio = self.amt/self.max_amt
             profile = need_severity_profile[self.severity]
             for f in sorted(profile.keys(),reverse=True):
-                if _need_ratio > f:
+                if _need_ratio >= f:
                     return profile[f]                
         else:
             return self.severity
@@ -61,8 +61,11 @@ class Need():
         return _amt
         
     def set_amt_to_severity(self,severity='IGNORABLE'):
-        mult = 0.2 if severity=='HIGH' else 0.5 if severity=='MODERATE' else 0.7 if severity=='LOW' else 1.0
-        self.amt = mult*self.max_amt
+        if not self.severity in need_severity_profile.keys(): return #can't do much if we don't have a profile
+        profile = need_severity_profile[self.severity]
+        for k in profile.keys():
+            if severity == profile[k]:
+                self.amt = (k+0.03)*self.max_amt #TODO walk through and grab the next value up instead of padding
         
     def status(self):
         return [self.amt/self.max_amt, self.severity]

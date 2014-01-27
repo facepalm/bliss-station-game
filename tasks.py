@@ -87,7 +87,8 @@ class Task(object):
         return self.status == 'COMPLETED' or self.status == 'CLOSED'    
         
     def task_value(self):
-        if self.task_ended(): return 0  
+        if self.task_ended(): return 0 
+        #print self.name, self.severity
         return TASK_SEVERITY_VALUE[self.severity]#/self.timeout#(self.task_duration_remaining/self.task_duration)
         
     def __cmp__(self, other):
