@@ -27,7 +27,7 @@ class Task(object):
         self.location = None
         if fetch_location_method: self.fetch_location = fetch_location_method 
         self.severity = severity
-        self.timeout = timeout
+        self.timeout = timeout #Setting timeout to None will result in a task that never ends
         self.task_duration = task_duration #30 minutes
         self.task_duration_remaining = task_duration        
         self.task_reset = False #False: task work is not lost if abandoned. True: task resets if dropped
@@ -39,11 +39,11 @@ class Task(object):
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if self.owner else util.generic_logger
         
     def update(self,dt):
-        self.timeout -= dt        
+        if self.timeout: self.timeout -= dt        
         if self.touched > 0: 
             self.touched -= dt
-            self.logger.info(''.join(["Current delay:",str(self.touched)]))
-        if self.timeout < 0 and not (self.status == 'COMPLETED' or self.status == 'CLOSED'): 
+            self.logger.debug(''.join(["Current delay:",str(self.touched)]))
+        if self.timeout and self.timeout < 0 and not (self.status == 'COMPLETED' or self.status == 'CLOSED'): 
             self.flag('CLOSED')
 
     def chosen_location(self, loc):

@@ -20,7 +20,7 @@ def separate_node(node):
     n=node.split('|')
     return n
 
-generic_logger=logging.getLogger("Unspecified Log")
+generic_logger=logging.getLogger("SystemLog")
 generic_logger.setLevel(logging.DEBUG)
 #DEBUG INFO WARNING ERROR CRITICAL
 #create console handler and set level to debug

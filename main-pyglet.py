@@ -32,7 +32,7 @@ if __name__ == "__main__":
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
     #create formatter
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
     #add formatter to ch
     ch.setFormatter(formatter)
     #add ch to logger
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     def status_update(dt):
         print
         print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        print 'FPS is %f' % clock.get_fps()
+        util.generic_logger.info('FPS is %f' % clock.get_fps())
         for m in station.modules.values():
             logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
         ernie.log_status()
@@ -83,9 +83,10 @@ if __name__ == "__main__":
         global tot_time
         tot_time += dt        
         
-    clock.set_fps_limit(60)
+    clock.set_fps_limit(30)
     clock.schedule_interval(status_update,1)
     clock.schedule(system_tick)
-    while True:
-        clock.tick()    
+    
+    pyglet.app.run()
+
     

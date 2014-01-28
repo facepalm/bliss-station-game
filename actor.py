@@ -33,7 +33,7 @@ class Actor(object):
         pass #TODO drop held item        
         
     def new_idle_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = 1500, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location,logger=self.logger)
+        t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = None, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location,logger=self.logger)
         return t     
         
     def update(self,dt):
