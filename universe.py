@@ -8,9 +8,23 @@ from station import Station
 from actor import Robot
 from human import Human        
 import util
+import logging
                                       
 if __name__ == "__main__":
     from time import sleep    
+
+    logger=logging.getLogger("Universe")
+    logger.setLevel(logging.DEBUG)
+    #DEBUG INFO WARNING ERROR CRITICAL
+    #create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    #create formatter
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    #add formatter to ch
+    ch.setFormatter(formatter)
+    #add ch to logger
+    logger.addHandler(ch)
 
     modA  = DestinyModule()
     modDock = UnityModule()    
@@ -18,7 +32,7 @@ if __name__ == "__main__":
     modDrag = DragonCargoModule()
     modDrag.setup_simple_resupply()
            
-    station = Station(modDock)
+    station = Station(modDock, 'NewbieStation', logger)
     station.berth_module(modDock,'CBM0',modA, None, True)
     station.berth_module(modDock,'CBM3',modB, None, True)    
     station.berth_module(modA,None,modDrag, None, True)
@@ -42,7 +56,7 @@ if __name__ == "__main__":
     
       
     #modA.berth('CBM0', modB, 'CBM0')
-    for m in station.modules.values(): print m.id, m.location
+    #for m in station.modules.values(): print m.short_id, m.location
     #for n in station.paths.edges(data=True): print n
     for i in range(1,10000):
         station.update(util.TIME_FACTOR/20.0)

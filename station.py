@@ -8,14 +8,19 @@ from cargo_modules import DragonCargoModule
 from module_resources import ResourceBundle
 from tasks import TaskTracker
 import random
+import util
+import logging
 
 class Station():
-    def __init__(self,initial_module=None):
+    def __init__(self,initial_module=None, name=None, logger=None):
         self.modules=dict()
         self.resources=ResourceBundle()
         self.paths=nx.Graph()
         self.tasks=TaskTracker()
         self.actors=dict()
+        self.name = name if name else "GenericStation"
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        
         if initial_module: self.berth_module(None,None,initial_module,None)                        
                        
     def berth_module(self, my_module, my_dock, module, mod_dock, instant = False):        
@@ -28,9 +33,7 @@ class Station():
         if module.id in self.modules: assert False, "Requested new module already part of station"
                 
         if not my_dock: my_dock = my_module.get_random_dock()                 
-        if not mod_dock: mod_dock = module.get_random_dock()                        
-                
-        print my_dock, mod_dock        
+        if not mod_dock: mod_dock = module.get_random_dock()                                        
                 
         #attempt docking
         assert module.berth(mod_dock, my_module, my_dock, instant)
@@ -39,6 +42,7 @@ class Station():
         self.resources.grow()
         
         self.modules[module.id]=module  
+        self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
     def find_resource(self, resource_type = None, check = lambda x: True):
         rnd_mod = self.modules.values()

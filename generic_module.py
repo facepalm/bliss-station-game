@@ -12,6 +12,7 @@ from module_resources import ResourceBundle
 import math
 import numpy as np
 import random
+import string
 
 def absolute_xyz (location, offset, orient, size):
     loc = location
@@ -76,6 +77,9 @@ class BasicModule():
     def get_living_space(self): return self.stowage.free_space       
     living_space = property(get_living_space, None, None, "Living space" ) 
     #exterior_space = self.exterior_stowage.free_space
+        
+    def compute_short_id(self): return string.upper(self.id[0:6])       
+    short_id = property(compute_short_id, None, None, "Short ID" )     
         
     def get_mass(self): return sum([self.composition.values()])        
     mass = property(get_mass, None, None, "Total mass" )     
