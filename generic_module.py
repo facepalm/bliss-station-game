@@ -161,13 +161,16 @@ class BasicModule():
                 self.station.paths.add_nodes_from(self.paths.nodes())
                 self.station.paths.add_edges_from(self.paths.edges(data=True))
                 self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
+                self.refresh_equipment()
                 
         else:             
-            neighbor.station = self.station                        
+            neighbor.station = self.station
+                                    
             if self.station:
                 self.station.paths.add_nodes_from(neighbor.paths.nodes())
                 self.station.paths.add_edges_from(neighbor.paths.edges(data=True))
                 self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
+                neighbor.refresh_equipment()
             
         return True        
         
@@ -186,6 +189,11 @@ class BasicModule():
         self.nodes[self.node(eq_node)] = node_coords
         self.add_edge( self.node(hall_node), self.node(eq_node) )
         self.equipment[ eq_node ] = [ eq_coords, eq_orientation, eq_type, eq_obj]
+
+    def refresh_equipment(self):
+        for e in self.equipment:            
+            if self.equipment[e][3]: 
+                self.equipment[e][3].refresh_station()
 
 class BasicStationModule(BasicModule):
     """ Basic as ISS modules get, this is pretty much a tube with CBM docks at each end """

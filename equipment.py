@@ -5,6 +5,7 @@ from atmospherics import Atmosphere
 from tasks import Task, TaskSequence
 import clutter
 import util
+import logging
 import random
 
 DOCK_EQUIPMENT = ['CBM']
@@ -81,8 +82,15 @@ class Equipment(object):
         if self.installed: return None # "Can't install the same thing twice!"
         self.installed=home
         if loc: self.installed.equipment[loc][3] = self
+        if self.installed.station: self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)
         self.logger.debug(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
-        return self             
+        return self    
+        
+    def refresh_station(self):
+        if self.installed and self.installed.station:
+            self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)             
+        elif self.station:
+            self.logger = logging.getLogger(self.station.logger.name +'.' + self.name)
 
     def uninstall(self):
         if not self.installed: return None # "Can't install the same thing twice!"

@@ -27,6 +27,7 @@ class Station():
         if module and not self.modules:
             self.modules[module.id]=module
             module.station = self
+            module.refresh_equipment()
             self.paths = module.paths.copy()
             return
         if not my_module.id in self.modules: assert False, "Requested module not part of station"
