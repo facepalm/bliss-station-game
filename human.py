@@ -8,8 +8,8 @@ import clutter
 import util
 
 class Human(Actor):
-    def __init__(self, name='Buzz Kerman'):
-        super(Human, self).__init__(name)
+    def __init__(self, name='Buzz Kerman',station=None, logger=None):
+        super(Human, self).__init__(name,station,logger)
         self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit,severity='HUMAN_BIOLOGICAL')
         self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/600.0, self.new_drink_task, self.dehydration_hit,severity='HUMAN_BIOLOGICAL')
         self.needs['WasteCapacitySolid']=Need('WasteCapacitySolid', self, 0.22, 0.22/192800.0, 0.22/300.0, self.number_2_task, self.code_brown)
@@ -55,7 +55,7 @@ class Human(Actor):
 
     def update(self, dt):
         if self.health <= 0: 
-            print self.name, "'s dead!-------------------"
+            self.logger.critical(''.join([self.name, "has died! Cause of death: health ",str(self.health)]))
             return
         
         Actor.update(self,dt)                        
@@ -80,7 +80,7 @@ class Human(Actor):
         ''' Suffocation, this is suffocation!  
             Suffocation, an easy game to play '''
         self.suffocation += dt
-        print self.name," is suffocationg!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        print self.name," is suffocating!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         #test for suffocation
         if self.suffocation > 240: #u ded nao
             self.health -= 1  

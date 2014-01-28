@@ -6,19 +6,21 @@ from pathing import PathingWidget
 import uuid
 import numpy as np
 from util import separate_node
+import util, logging
 
 class Actor(object):
-    def __init__(self,name='Place Holder'):
+    def __init__(self,name='Place Holder',station=None, logger=None):
         self.my_tasks = TaskTracker()
         self.id = str(uuid.uuid4())  
         self.name = name
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
         self.needs = dict()
         self.needs['Idle Curiosity']=Need('Idle Curiosity', self, 100, 0, 0, self.new_idle_task, None)
         self.task = None #currently active task
         self.action = None #placeholder for graphical animation or tweening or w/e
         self.task_abandon_value = 5 #if a task's importance outweighs the current task by this much, we drop and switch
         self.location = None
-        self.station = None
+        self.station = station
         self.inventory = Stowage(0.5)
         self.path=None
         self.held=None
@@ -26,11 +28,12 @@ class Actor(object):
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
+        
     def drop(self):
         pass #TODO drop held item        
         
     def new_idle_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = 1500, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location)
+        t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = 1500, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location,logger=self.logger)
         return t     
         
     def update(self,dt):
@@ -88,15 +91,19 @@ class Actor(object):
         if ret_string:
             out = 'Needs'
             for n in self.needs.keys():
-                print n, self.needs[n].current_severity()
+                #print n, self.needs[n].current_severity()
                 out = ''.join([out,'; ',n,'-',self.needs[n].current_severity()])
             return out #what a huge PITA
         return [[n, self.needs[n].current_severity()] for n in self.needs.keys()]
+        
+    def log_status(self):
+        #TODO log task
+        self.logger.info(self.summarize_needs(True))        
        
         
 class Robot(Actor):
-    def __init__(self, name='Wally'):
-        super(Robot, self).__init__(name)
+    def __init__(self, name='Wally',station=None, logger=None):
+        super(Robot, self).__init__(name,station,logger)
         self.needs['Charge']=Need('Charge', self, 12, 12/86400.0, 12/600.0, self.new_charge_task, self.drained)
         self.needs['Charge'].amt = 12
         self.activity_state = 'IDLE'
@@ -112,7 +119,7 @@ class Robot(Actor):
         
     def new_charge_task(self,timeout,severity):
         #TODO replace with charge sequence, maybe
-        t=Task(''.join(['Satisfy Charge']), owner = self, timeout=timeout, task_duration = 600, severity=severity, fetch_location_method=EquipmentSearch('Battery',self.station).search)
+        t=Task(''.join(['Satisfy Charge']), owner = self, timeout=timeout, task_duration = 600, severity=severity, fetch_location_method=EquipmentSearch('Battery',self.station).search,logger=self.logger)
         return t     
                                         
     def task_work_report(self,task,dt):

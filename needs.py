@@ -1,5 +1,6 @@
 from tasks import Task
 import util
+import logging
 
 need_severity_profile = {'VARIABLE' : {0.2:'HIGH', 0.5:'MODERATE', 0.7:'LOW', 1.0:'IGNORABLE'}, 
                          'HUMAN_BIOLOGICAL': {0.1:'HIGH',0.2:'MODERATE',0.3:'LOW', 1.0:'IGNORABLE'} }
@@ -24,6 +25,7 @@ class Need():
         self.on_fail = on_fail
         self.severity = severity
         self.touched = 0
+        self.logger = logging.getLogger(self.owner.logger.name + '.' + self.name)
         
     def update(self,dt):
         assert(self.owner, "Need has no owner.  This should never happen.")

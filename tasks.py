@@ -1,4 +1,5 @@
 import random
+import util, logging
 
 TASK_STATUS = {'NEW':0, 'Open':1, 'Assigned':2, 'COMPLETED':3, 'Closed':4 }
 TASK_SEVERITY_VALUE = { 'CRITICAL'  :   10,
@@ -19,7 +20,7 @@ TASK_SEVERITY_VALUE = { 'CRITICAL'  :   10,
     #'NEW' or 'OPEN' task is never finished, or flagged 'IGNORED', times out
     # tasks fail and close themselves
 class Task(object):
-    def __init__(self, name = 'GENERIC TASK', owner = None, assigned_to = None, severity = "LOW", timeout = 86400, task_duration = 1800, fetch_location_method=None, station=None):
+    def __init__(self, name = 'GENERIC TASK', owner = None, assigned_to = None, severity = "LOW", timeout = 86400, task_duration = 1800, fetch_location_method=None, station=None, logger=None):
         self.owner = owner
         self.assigned_to = assigned_to
         self.target = None
@@ -35,12 +36,13 @@ class Task(object):
         self.description = 'NONE'
         self.status = 'NEW'
         self.station = station
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if self.owner else util.generic_logger
         
     def update(self,dt):
         self.timeout -= dt        
         if self.touched > 0: 
             self.touched -= dt
-            print "Task touched:", self.name, self.touched
+            self.logger.info(''.join(["Current delay:",str(self.touched)]))
         if self.timeout < 0 and not (self.status == 'COMPLETED' or self.status == 'CLOSED'): 
             self.flag('CLOSED')
 
@@ -56,7 +58,7 @@ class Task(object):
             self.flag('COMPLETED') 
             
     def drop(self):
-        print ''.join([self.name,': task dropped!'])
+        self.logger.info(''.join(["Task dropped!"]))
         self.flag('OPEN')                          
         self.assigned_to = None   
         self.location = None
@@ -73,11 +75,11 @@ class Task(object):
             self.touched = 60
             return self.flag('CLOSED')
         if new_flag == 'CLOSED' and not self.status == 'COMPLETED':
-            print ''.join([self.name,': task failed!'])
+            self.logger.info(''.join(["Task failed!"]))
             self.status = new_flag
             if hasattr(self.owner, 'task_failed'): self.owner.task_failed(self)            
         if new_flag == 'COMPLETED' and not self.status == 'CLOSED':
-            print ''.join([self.name,': task finished!'])
+            self.logger.info(''.join(["Task finished!"]))
             self.status = new_flag
             if hasattr(self.owner, 'task_finished'): self.owner.task_finished(self) 
         self.status = new_flag
