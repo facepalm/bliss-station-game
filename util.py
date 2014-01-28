@@ -1,3 +1,4 @@
+import logging
 
 TIME_FACTOR = 240 # 120# 24
 
@@ -19,3 +20,17 @@ def separate_node(node):
     n=node.split('|')
     return n
 
+generic_logger=logging.getLogger("Unspecified Log")
+generic_logger.setLevel(logging.DEBUG)
+#DEBUG INFO WARNING ERROR CRITICAL
+#create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+#create formatter
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+#add formatter to ch
+ch.setFormatter(formatter)
+#add ch to logger
+generic_logger.addHandler(ch)
+
+generic_logger.debug("Logger initiated.")

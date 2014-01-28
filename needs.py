@@ -1,7 +1,10 @@
 from tasks import Task
+import util
 
-need_severity_profile = {'VARIABLE' : {0.0:'HIGH', 0.2:'MODERATE', 0.5:'LOW',0.7:'IGNORABLE'}, 
-                         'HUMAN_BIOLOGICAL': {0.0:'HIGH',0.1:'MODERATE',0.2:'LOW',0.3:'IGNORABLE'} }
+need_severity_profile = {'VARIABLE' : {0.2:'HIGH', 0.5:'MODERATE', 0.7:'LOW', 1.0:'IGNORABLE'}, 
+                         'HUMAN_BIOLOGICAL': {0.1:'HIGH',0.2:'MODERATE',0.3:'LOW', 1.0:'IGNORABLE'} }
+
+
 
 def need_from_task(taskname):
     if taskname.startswith('Satisfy '):
@@ -48,10 +51,12 @@ class Need():
     def current_severity(self):        
         if self.severity in need_severity_profile.keys():
             _need_ratio = self.amt/self.max_amt
-            profile = need_severity_profile[self.severity]
+            profile = need_severity_profile[self.severity]            
+            sev = 'IGNORABLE'
             for f in sorted(profile.keys(),reverse=True):
-                if _need_ratio >= f:
-                    return profile[f]                
+                if _need_ratio <= f:
+                    sev = profile[f]
+            return sev          
         else:
             return self.severity
             
@@ -65,7 +70,7 @@ class Need():
         profile = need_severity_profile[self.severity]
         for k in profile.keys():
             if severity == profile[k]:
-                self.amt = (k+0.03)*self.max_amt #TODO walk through and grab the next value up instead of padding
+                self.amt = k*self.max_amt
         
     def status(self):
         return [self.amt/self.max_amt, self.severity]

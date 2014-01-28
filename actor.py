@@ -84,7 +84,13 @@ class Actor(object):
         new_mod = self.station.get_module_from_loc( new_loc )
         my_mod.atmo.mix( new_mod.atmo, 1.0 )             
        
-    def summarize_needs(self):
+    def summarize_needs(self, ret_string=False):
+        if ret_string:
+            out = 'Needs'
+            for n in self.needs.keys():
+                print n, self.needs[n].current_severity()
+                out = ''.join([out,'; ',n,'-',self.needs[n].current_severity()])
+            return out #what a huge PITA
         return [[n, self.needs[n].current_severity()] for n in self.needs.keys()]
        
         

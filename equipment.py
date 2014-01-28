@@ -9,6 +9,7 @@ import random
 
 DOCK_EQUIPMENT = ['CBM']
 
+
 class EquipmentSearch():    
     
     def __init__(self, target, station, check_storage=False, resource_obj=None, storage_filter='Any'):
@@ -59,7 +60,7 @@ class EquipmentSearch():
         return tar, loc
         
 class Equipment(object):
-    def __init__(self, installed=None):
+    def __init__(self, installed=None, logger=util.generic_logger):
         self.installed=None #pointer to module if installed, none if loose
         self.mass=100
         self.task=None
@@ -69,6 +70,7 @@ class Equipment(object):
         self.volume = 1.3 #m^3
         self.name = 'Equipment'
         self.type = 'Misc'
+        self.logger=logger
         #basic health stats and such go here, as well as hooking into the task system
         pass
       
@@ -79,6 +81,7 @@ class Equipment(object):
         if self.installed: return None # "Can't install the same thing twice!"
         self.installed=home
         if loc: self.installed.equipment[loc][3] = self
+        self.logger.debug(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
         return self             
 
     def uninstall(self):
