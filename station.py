@@ -87,7 +87,8 @@ class Station():
         if not window: return self.logger.warning("Requested draw to Nonetype.")
         for m in self.modules.values():
             m.draw(window)
-        
+        for a in self.actors:
+            self.actors[a].draw(window)
                     
         
                                       

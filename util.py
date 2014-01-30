@@ -1,6 +1,6 @@
 import logging
 
-TIME_FACTOR = 240 # 120# 24
+TIME_FACTOR = 24 # 120# 24
 
 equipment_targets = dict()
 

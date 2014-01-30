@@ -28,6 +28,16 @@ class Actor(object):
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
+        if not hasattr(self,'imgfile'): self.imgfile = "placeholder_actor.tif"
+        self.refresh_image()
+     
+    def refresh_image(self):
+        self.img = util.load_image(self.imgfile)
+    
+    def draw(self,window):
+        zoom=11
+        l= self.path.current_coords if self.path else self.station.loc_to_xyz( self.location )
+        self.img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)        
         
     def drop(self):
         pass #TODO drop held item        

@@ -216,7 +216,11 @@ class BasicModule():
     def draw(self,window):
         zoom=11
         self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
-        pass                
+        for e in self.equipment.keys():
+            if self.equipment[e][3]:
+                l=self.getXYZ(self.equipment[e][0]) 
+                self.equipment[e][3].img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
+
 
 class BasicStationModule(BasicModule):
     """ Basic as ISS modules get, this is pretty much a tube with CBM docks at each end """

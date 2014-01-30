@@ -73,7 +73,12 @@ class Equipment(object):
         self.type = 'Misc'
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
         #basic health stats and such go here, as well as hooking into the task system
-        pass
+        
+        if not hasattr(self,'imgfile'): self.imgfile = "placeholder_equipment.tif"
+        self.refresh_image()
+     
+    def refresh_image(self):
+        self.img = util.load_image(self.imgfile)       
       
     def update(self,dt):
         if self.task and self.task.task_ended(): self.task = None
