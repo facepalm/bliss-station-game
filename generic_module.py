@@ -14,6 +14,8 @@ import numpy as np
 import random
 import string
 
+import pyglet
+
 def absolute_xyz (location, offset, orient, size):
     loc = location
     off = offset*size
@@ -50,6 +52,22 @@ class BasicModule():
         self.paths = nx.Graph() 
         
         self.nodes=dict()
+        
+        if not hasattr(self,'imgfile'): self.imgfile = "module_placeholder.jpg"
+        self.refresh_image()
+     
+    def refresh_image(self):
+        self.img = pyglet.image.load(self.imgfile).get_texture(rectangle=True)
+        self.img.anchor_x = self.img.width // 2
+        self.img.anchor_y = self.img.height // 2 
+        
+        if math.sin(self.orientation[0]) < 0:
+            pass#self.img = self.img.get_transform(flip_y=True)
+            #TODO replace with different image altogether
+        if math.cos(self.orientation[0]) < 0:
+            self.img = self.img.get_transform(flip_x=True)
+            
+        
      
     def find_resource(self, resource_type = None, check = lambda x: True):
         if resource_type == "Equipment":
@@ -172,6 +190,9 @@ class BasicModule():
                 self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
                 neighbor.refresh_equipment()
             
+        neighbor.refresh_image()    
+        self.refresh_image()
+            
         return True        
         
     def add_edge(self,one,two):
@@ -194,6 +215,11 @@ class BasicModule():
         for e in self.equipment:            
             if self.equipment[e][3]: 
                 self.equipment[e][3].refresh_station()
+                
+    def draw(self,window):
+        zoom=11
+        self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
+        pass                
 
 class BasicStationModule(BasicModule):
     """ Basic as ISS modules get, this is pretty much a tube with CBM docks at each end """
@@ -216,6 +242,7 @@ class DestinyModule(BasicStationModule):
     def __init__(self):   
         self.size = np.array([ 8.53 , 4.27 , 4.27 ])
         BasicStationModule.__init__(self) 
+        
         
         
         new_nodes={ self.node('hall0'): np.array([ -0.75, 0 , 0 ]),

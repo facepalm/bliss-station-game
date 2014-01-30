@@ -17,12 +17,9 @@ if __name__ == "__main__":
     from time import sleep    
 
     
-    #window = pyglet.window.Window(visible=False, resizable=True)
+    window = pyglet.window.Window(visible=False, resizable=True)
 
-    #@window.event
-    #def on_draw():
-    #    background.blit_tiled(0, 0, 0, window.width, window.height)
-    #    img.blit(window.width // 2, window.height // 2, 0)
+
 
 
     logger=logging.getLogger("Universe")
@@ -67,7 +64,7 @@ if __name__ == "__main__":
     
       
     #modA.berth('CBM0', modB, 'CBM0')
-    #for m in station.modules.values(): print m.short_id, m.location
+    for m in station.modules.values(): print m.short_id, m.location, m.orientation
     #for n in station.paths.edges(data=True): print n
     tot_time=0
     def status_update(dt):
@@ -82,11 +79,17 @@ if __name__ == "__main__":
         station.update(dt*util.TIME_FACTOR)
         global tot_time
         tot_time += dt        
+
+    @window.event
+    def on_draw():
+    #    background.blit_tiled(0, 0, 0, window.width, window.height)
+        station.draw(window)
         
     clock.set_fps_limit(30)
     clock.schedule_interval(status_update,1)
     clock.schedule(system_tick)
     
+    window.set_visible()
     pyglet.app.run()
 
     

@@ -45,6 +45,7 @@ class Station():
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
+        
     def find_resource(self, resource_type = None, check = lambda x: True):
         rnd_mod = self.modules.values()
         random.shuffle(rnd_mod)
@@ -81,6 +82,13 @@ class Station():
         module = [ self.modules[ m ] for m in self.modules if self.modules[ m ].id == node ]        
         if not module: return None
         return module[ 0 ]
+        
+    def draw(self, window):
+        if not window: return self.logger.warning("Requested draw to Nonetype.")
+        for m in self.modules.values():
+            m.draw(window)
+        
+                    
         
                                       
 if __name__ == "__main__":
