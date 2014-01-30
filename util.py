@@ -34,3 +34,6 @@ ch.setFormatter(formatter)
 generic_logger.addHandler(ch)
 
 generic_logger.debug("Logger initiated.")
+
+def load_image(filename):
+    generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")

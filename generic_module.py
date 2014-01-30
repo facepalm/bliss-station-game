@@ -13,8 +13,7 @@ import math
 import numpy as np
 import random
 import string
-
-import pyglet
+import util
 
 def absolute_xyz (location, offset, orient, size):
     loc = location
@@ -57,9 +56,7 @@ class BasicModule():
         self.refresh_image()
      
     def refresh_image(self):
-        self.img = pyglet.image.load(self.imgfile).get_texture(rectangle=True)
-        self.img.anchor_x = self.img.width // 2
-        self.img.anchor_y = self.img.height // 2 
+        self.img = util.load_image(self.imgfile)
         
         if math.sin(self.orientation[0]) < 0:
             pass#self.img = self.img.get_transform(flip_y=True)

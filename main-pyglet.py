@@ -12,6 +12,14 @@ import logging
 import pyglet
 from pyglet.gl import *  
 from pyglet import clock
+
+def load_image(filename):
+    img = pyglet.image.load(filename).get_texture(rectangle=True)
+    img.anchor_x = img.width // 2
+    img.anchor_y = img.height // 2 
+    return img
+    
+util.load_image = load_image    
                                       
 if __name__ == "__main__":
     from time import sleep    
