@@ -11,8 +11,9 @@ import clutter
 class ZvezdaModule(BasicStationModule):
     """ Modeled after the Zvezda module of the ISS.  Lots and lots and lots of life support. """
     def __init__(self):   
-        BasicStationModule.__init__(self) 
+        self.imgfile='zvezda_img.tif'
         self.size = np.array([ 13.1 , 4.15 , 4.15 ])
+        BasicStationModule.__init__(self)         
         self.composition = { 'Al' : 20400 }
         
         new_nodes={ self.node('hall0'): np.array([ -0.6, 0 , 0 ]),

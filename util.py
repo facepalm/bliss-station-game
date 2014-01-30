@@ -2,6 +2,8 @@ import logging
 
 TIME_FACTOR = 24 # 120# 24
 
+ZOOM=6
+
 equipment_targets = dict()
 
 def quad_mean(x,y,wx=1,wy=1):

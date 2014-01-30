@@ -30,6 +30,7 @@ class Station():
             module.refresh_equipment()
             self.paths = module.paths.copy()
             return
+        if not my_module: my_module = random.choice( [ self.modules[m] for m in self.modules if self.modules[m].get_random_dock() ] )    
         if not my_module.id in self.modules: assert False, "Requested module not part of station"
         if module.id in self.modules: assert False, "Requested new module already part of station"
                 

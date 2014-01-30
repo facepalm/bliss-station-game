@@ -125,7 +125,7 @@ class BasicModule():
         
     def get_random_dock(self):
         docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked]
-        if not docks: assert False, "Module has no free dockable ports!"
+        if not docks: return None
         return random.choice(docks)    
             
     def get_empty_slot(self,slot_type='LSS'):
@@ -214,7 +214,7 @@ class BasicModule():
                 self.equipment[e][3].refresh_station()
                 
     def draw(self,window):
-        zoom=11
+        zoom=util.ZOOM
         self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
         for e in self.equipment.keys():
             if self.equipment[e][3]:
@@ -242,6 +242,7 @@ class DestinyModule(BasicStationModule):
         plenty of equipment space and fore/aft docks. """
     def __init__(self):   
         self.size = np.array([ 8.53 , 4.27 , 4.27 ])
+        self.imgfile='destiny_img.tif'        
         BasicStationModule.__init__(self) 
         
         

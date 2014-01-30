@@ -35,7 +35,7 @@ class Actor(object):
         self.img = util.load_image(self.imgfile)
     
     def draw(self,window):
-        zoom=11
+        zoom=util.ZOOM
         l= self.path.current_coords if self.path else self.station.loc_to_xyz( self.location )
         self.img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)        
         

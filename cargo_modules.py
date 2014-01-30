@@ -12,6 +12,7 @@ class DragonCargoModule(BasicModule):
     """ Modeled after SpaceX's Dragon capsule.  Mostly empty space for cargo. """
     def __init__(self):   
         self.size = np.array([ 6.1 , 3.7 , 3.7 ])
+        self.imgfile='dragon_img.tif'
         BasicModule.__init__(self) 
         
         self.interior_space = 10 #m^3

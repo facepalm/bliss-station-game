@@ -50,9 +50,9 @@ if __name__ == "__main__":
     modDrag.setup_simple_resupply()
            
     station = Station(modDock, 'NewbieStation', logger)
-    station.berth_module(modDock,'CBM0',modA, None, True)
-    station.berth_module(modDock,'CBM3',modB, None, True)    
-    station.berth_module(modA,None,modDrag, None, True)
+    station.berth_module(None,None,modA, None, True)
+    station.berth_module(None,None,modB, None, True)    
+    station.berth_module(None,None,modDrag, None, True)
     
     '''rob = Robot('Robby')     
     rob.station = station
