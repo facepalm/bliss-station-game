@@ -39,3 +39,6 @@ generic_logger.debug("Logger initiated.")
 
 def load_image(filename):
     generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")
+    
+def load_sprite(filename):
+    generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")    

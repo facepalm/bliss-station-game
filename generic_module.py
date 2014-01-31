@@ -219,7 +219,10 @@ class BasicModule():
         for e in self.equipment.keys():
             if self.equipment[e][3]:
                 l=self.getXYZ(self.equipment[e][0]) 
-                self.equipment[e][3].img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
+                #rotimg=self.equipment[e][3].img.get_transform
+                self.equipment[e][3].sprite.set_position(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2)
+                self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
+                self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
 
 
 class BasicStationModule(BasicModule):

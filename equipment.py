@@ -78,7 +78,11 @@ class Equipment(object):
         self.refresh_image()
      
     def refresh_image(self):
-        self.img = util.load_image(self.imgfile)       
+        anchor_x = self.anchor[0] if hasattr(self,"anchor") else None
+        anchor_y = self.anchor[1] if hasattr(self,"anchor") else None
+        self.sprite = util.load_sprite( self.imgfile, anchor_x, anchor_y )
+        #if hasattr(self,'vert_img_file'):
+        #    self.vert_img = util.load_image(self.vert_img_file)       
       
     def update(self,dt):
         if self.task and self.task.task_ended(): self.task = None
@@ -289,7 +293,10 @@ class CBM(DockingRing):
 #specialized, installed, single-purpose equipment
 class SolarPanel(Equipment):
     def __init__(self):   
-        super(SolarPanel, self).__init__()         
+        self.imgfile = "images/solarpanel_horiz.tif"
+        self.anchor = [ 0 , 5 ]
+        super(SolarPanel, self).__init__()       
+          
         self.extended = False
         self.in_vaccuum = True
         self.capacity= 5 #kW
