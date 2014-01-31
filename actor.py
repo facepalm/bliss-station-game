@@ -28,7 +28,7 @@ class Actor(object):
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
-        if not hasattr(self,'imgfile'): self.imgfile = "placeholder_actor.tif"
+        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_actor.tif"
         self.refresh_image()
      
     def refresh_image(self):

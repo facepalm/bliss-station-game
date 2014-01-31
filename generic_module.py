@@ -52,7 +52,7 @@ class BasicModule():
         
         self.nodes=dict()
         
-        if not hasattr(self,'imgfile'): self.imgfile = "module_placeholder.jpg"
+        if not hasattr(self,'imgfile'): self.imgfile = "images/module_placeholder.jpg"
         self.refresh_image()
      
     def refresh_image(self):
@@ -242,7 +242,7 @@ class DestinyModule(BasicStationModule):
         plenty of equipment space and fore/aft docks. """
     def __init__(self):   
         self.size = np.array([ 8.53 , 4.27 , 4.27 ])
-        self.imgfile='destiny_img.tif'        
+        self.imgfile='images/destiny_img.tif'        
         BasicStationModule.__init__(self) 
         
         

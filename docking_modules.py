@@ -9,7 +9,7 @@ class UnityModule(BasicStationModule):
     """ Modeled after the Unity module of the ISS.  Lots and lots and lots of life support. """
     def __init__(self):   
         self.size = np.array([ 5.47 , 4.57 , 4.57 ])
-        self.imgfile='unity_img.tif'
+        self.imgfile='images/unity_img.tif'
         BasicStationModule.__init__(self) 
         
         self.composition = {'Al' : 11600}
