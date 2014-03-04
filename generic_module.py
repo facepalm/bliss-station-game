@@ -56,6 +56,8 @@ class BasicModule():
         self.refresh_image()
      
     def refresh_image(self):
+        if not util.GRAPHICS: return
+        
         self.img = util.load_image(self.imgfile)
         
         if math.sin(self.orientation[0]) < 0:

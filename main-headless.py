@@ -9,37 +9,19 @@ from actor import Robot
 from human import Human        
 import util
 import logging
-import pyglet
-from pyglet.gl import *  
-from pyglet import clock
 
-util.GRAPHICS = 'pyglet'
-
-def load_image(filename, anchor_x=None, anchor_y=None):
-    img = pyglet.image.load(filename).get_texture(rectangle=True)
-    img.anchor_x = anchor_x if anchor_x else img.width // 2
-    img.anchor_y = anchor_y if anchor_y else img.height // 2 
-    return img
+def load_image(filename, anchor_x=None, anchor_y=None):    
+    return None
     
 util.load_image = load_image    
 
 def load_sprite(filename, anchor_x=None, anchor_y=None):
-    img = pyglet.image.load(filename).get_texture(rectangle=True)
-    img.anchor_x = anchor_x if anchor_x else img.width // 2
-    img.anchor_y = anchor_y if anchor_y else img.height // 2 
-    sprite = pyglet.sprite.Sprite(img)
-    return sprite
+    return None
     
 util.load_sprite = load_sprite
                                       
 if __name__ == "__main__":
-    from time import sleep    
-
-    
-    window = pyglet.window.Window(visible=False, resizable=True)
-
-
-
+    from time import sleep     
 
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -98,18 +80,14 @@ if __name__ == "__main__":
         station.update(dt*util.TIME_FACTOR)
         global tot_time
         tot_time += dt        
-
-    @window.event
-    def on_draw():
-    #    background.blit_tiled(0, 0, 0, window.width, window.height)
-        window.clear()
-        station.draw(window)
-        
-    clock.set_fps_limit(30)
-    clock.schedule_interval(status_update,1)
-    clock.schedule(system_tick)
-    
-    window.set_visible()
-    pyglet.app.run()
-
-    
+            
+    for i in range(1,10000):
+        system_tick(util.TIME_FACTOR/20.0)
+        sleep(1/20.0)
+        #print 'Robot task:', None if not rob.task else (rob.task.name,rob.location,rob.task.severity)
+        #print 'robot tasks:', [t.name for t in rob.my_tasks.tasks]
+        print
+        print util.TIME_FACTOR*i/20.0,': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
+        for m in station.modules.values():
+            logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
+        ernie.log_status()    
