@@ -29,8 +29,8 @@ class UnityModule(BasicStationModule):
         self.add_edge(self.node('hall0'),self.node('CBM3'))
         self.add_edge(self.node('hall0'),self.node('CBM1'))   
         
-        self.equipment['CBM2']= [ np.array([ 0.25 , -1 , 0 ]), np.array([ math.pi/2 , 0]), 'CBM', CBM().install(self)]
-        self.equipment['CBM3']= [ np.array([ 0.25 , 1 , 0 ]), np.array([ -math.pi/2 , 0]), 'CBM', CBM().install(self)]
+        self.equipment['CBM2']= [ np.array([ 0.25 , -1 , 0 ]), np.array([ -math.pi/2 , 0]), 'CBM', CBM().install(self)]
+        self.equipment['CBM3']= [ np.array([ 0.25 , 1 , 0 ]), np.array([ math.pi/2 , 0]), 'CBM', CBM().install(self)]
         
         _sampdict = {'port' : [ -0.5, 0, math.pi, 0 ], 'starboard' : [ 0.5 , 0, -math.pi, 0 ],
                      'nadir' : [0, -0.5, 0, -math.pi], 'zenith' : [ 0 , 0.5, 0, math.pi ]}

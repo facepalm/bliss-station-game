@@ -35,7 +35,7 @@ class Station():
         if module.id in self.modules: assert False, "Requested new module already part of station"
                 
         if not my_dock: my_dock = my_module.get_random_dock()                 
-        if not mod_dock: mod_dock = module.get_random_dock()                                        
+        if not mod_dock: mod_dock = module.get_random_dock(side_port_allowed=False)                                        
                 
         #attempt docking
         assert module.berth(mod_dock, my_module, my_dock, instant)

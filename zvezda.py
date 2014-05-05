@@ -11,7 +11,7 @@ import clutter
 class ZvezdaModule(BasicStationModule):
     """ Modeled after the Zvezda module of the ISS.  Lots and lots and lots of life support. """
     def __init__(self):   
-        self.imgfile='images/zvezda_img.tif'
+        #self.imgfile='images/zvezda_img.tif'
         self.size = np.array([ 13.1 , 4.15 , 4.15 ])
         BasicStationModule.__init__(self)         
         self.composition = { 'Al' : 20400 }
@@ -54,21 +54,21 @@ class ZvezdaModule(BasicStationModule):
         self.add_edge(self.node('Electrolyzer'),self.node('hall0'))        
         self.add_edge(self.node('CO2Filter'),self.node('hall0'))       
         
-        self.equipment['CBM2']= [ np.array([ 0.8 , -1 , 0 ]), np.array([ math.pi/2 , 0]), 'CBM', CBM().install(self)]
-        self.equipment['CBM3']= [ np.array([ 0.8 , 1 , 0 ]), np.array([ -math.pi/2 , 0]), 'CBM', CBM().install(self)]        
+        self.equipment['CBM2']= [ np.array([ 0.7 , -1 , 0 ]), np.array([ -math.pi/2 , 0]), 'CBM', CBM().install(self)]
+        self.equipment['CBM3']= [ np.array([ 0.7 , 1 , 0 ]), np.array([ math.pi/2 , 0]), 'CBM', CBM().install(self)]        
         
-        self.equipment['Solars0']= [ np.array([ 0 , 1 , 0 ]), np.array([ math.pi , 0]), 'SOLAR', SolarPanel().install(self)]
-        self.equipment['Solars1']= [ np.array([ 0 , -1 , 0 ]), np.array([ -math.pi , 0]), 'SOLAR', SolarPanel().install(self)]
+        self.equipment['Solars0']= [ np.array([ 0 , 1 , 0 ]), np.array([ math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
+        self.equipment['Solars1']= [ np.array([ 0 , -1 , 0 ]), np.array([ -math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
         
         self.equipment['Water1']= [ np.array([ 0 , 0.5 , 0 ]), np.array([ math.pi , 0]), 'LSS', WaterTank().install(self)]
-        self.equipment['Toilet1']= [ np.array([ 0 , -0.5 , 0 ]), np.array([ math.pi , 0]), 'LSS', UniversalToilet().install(self)]
+        self.equipment['Toilet1']= [ np.array([ 0 , -0.5 , 0 ]), np.array([ -math.pi , 0]), 'LSS', UniversalToilet().install(self)]
         
         self.equipment['Window01'] = [ np.array([ 0.3 , 0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window02'] = [ np.array([ 0.3 , -0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window11'] = [ np.array([ 0.4 , 0 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window12'] = [ np.array([ 0.1 , 0 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window21'] = [ np.array([ 0.5 , 0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
-        self.equipment['Window22'] = [ np.array([ 0.5 , 0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
+        self.equipment['Window22'] = [ np.array([ 0.5 , -0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         
         self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', WaterPurifier().install(self)]
         self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', OxygenElectrolyzer().install(self)]

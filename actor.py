@@ -37,7 +37,7 @@ class Actor(object):
     def draw(self,window):
         zoom=util.ZOOM
         l= self.path.current_coords if self.path else self.station.loc_to_xyz( self.location )
-        self.img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)        
+        self.img.blit(zoom*l[0], zoom*l[1], 0)        
         
     def drop(self):
         pass #TODO drop held item        

@@ -7,6 +7,8 @@ ZOOM=6
 equipment_targets = dict()
 
 GRAPHICS = None
+GLOBAL_X=0
+GLOBAL_Y=0
 
 def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)
@@ -41,6 +43,12 @@ generic_logger.debug("Logger initiated.")
 
 def load_image(filename):
     generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")
+
+def make_solid_image():
+    generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")
     
 def load_sprite(filename):
-    generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...")    
+    generic_logger.error("No gui handler initialized!  Probably crashing pretty horribly...") 
+    
+def image_to_sprite():
+    pass       

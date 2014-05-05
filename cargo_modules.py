@@ -32,8 +32,8 @@ class DragonCargoModule(BasicModule):
         
         self.equipment['CBM0']= [ np.array([ 1 , 0 , 0 ]), np.array([0 , 0]), 'CBM', CBM().install(self)]
 
-        self.equipment['Solars0']= [ np.array([ 0 , 1 , 0 ]), np.array([ math.pi , 0]), 'SOLAR', SolarPanel().install(self)]
-        self.equipment['Solars1']= [ np.array([ 0 , -1 , 0 ]), np.array([ -math.pi , 0]), 'SOLAR', SolarPanel().install(self)]
+        self.equipment['Solars0']= [ np.array([ 0 , 1 , 0 ]), np.array([ math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
+        self.equipment['Solars1']= [ np.array([ 0 , -1 , 0 ]), np.array([ -math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
         
         self.equipment['Solars0'][3].capacity=1
         self.equipment['Solars0'][3].in_vaccuum=True

@@ -147,6 +147,7 @@ class Equipment(object):
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
+        self.imgfile = "images/small_window.png"
         super(Window, self).__init__()     
         
     def update(self,dt):
@@ -157,8 +158,9 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
             self.installed.station.tasks.add_task(self.task)  
                                    
         
-class Machinery(Equipment): #TODO eventual ancestor class for things that need regular maintenance
+class Machinery(Equipment): #ancestor class for things that need regular maintenance
     def __init__(self):
+        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_machinery.tif"
         super(Machinery, self).__init__()              
         self.idle_draw = 0.001 #kW
         self.maint_timer = random.randrange(0, util.seconds(6,'months') )
@@ -241,6 +243,7 @@ class Storage(Equipment):
 #docking equipment        
 class DockingRing(Equipment):
     def __init__(self):   
+        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_Hatch.tif"
         super(DockingRing, self).__init__()     
         self.docked = None #a pointer to the module we've docked to
         self.open = False
@@ -294,7 +297,7 @@ class CBM(DockingRing):
 class SolarPanel(Equipment):
     def __init__(self):   
         self.imgfile = "images/solarpanel_horiz.tif"
-        self.anchor = [ 0 , 5 ]
+        self.anchor = [ 2 , 5 ]
         super(SolarPanel, self).__init__()       
           
         self.extended = False

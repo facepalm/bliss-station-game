@@ -21,7 +21,15 @@ def load_image(filename, anchor_x=None, anchor_y=None):
     img.anchor_y = anchor_y if anchor_y else img.height // 2 
     return img
     
-util.load_image = load_image    
+util.load_image = load_image      
+    
+def make_solid_image(width,height,color=(128,128,128,128), anchor_x = None, anchor_y = None):
+    img = pyglet.image.SolidColorImagePattern(color).create_image(util.ZOOM*width,util.ZOOM*height).get_texture(rectangle=False)   
+    img.anchor_x = anchor_x if anchor_x else img.width // 2
+    img.anchor_y = anchor_y if anchor_y else img.height // 2 
+    return img
+    
+util.make_solid_image = make_solid_image
 
 def load_sprite(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename).get_texture(rectangle=True)
@@ -31,13 +39,21 @@ def load_sprite(filename, anchor_x=None, anchor_y=None):
     return sprite
     
 util.load_sprite = load_sprite
+
+def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
+    sprite = pyglet.sprite.Sprite(image,x=util.ZOOM*x,y=util.ZOOM*y)
+    sprite.rotation= 90+1 * 180/3.14159 * rot
+    return sprite
+    
+util.image_to_sprite = image_to_sprite
+    
                                       
 if __name__ == "__main__":
     from time import sleep    
 
     
     window = pyglet.window.Window(visible=False, resizable=True)
-
+    
 
 
 
@@ -61,8 +77,8 @@ if __name__ == "__main__":
     modDrag.setup_simple_resupply()
            
     station = Station(modDock, 'NewbieStation', logger)
-    station.berth_module(None,None,modA, None, True)
-    station.berth_module(None,None,modB, None, True)    
+    station.berth_module(None,None,modB, None, True)
+    station.berth_module(None,None,modA, None, True)    
     station.berth_module(None,None,modDrag, None, True)
     
     '''rob = Robot('Robby')     
@@ -103,6 +119,10 @@ if __name__ == "__main__":
     def on_draw():
     #    background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-window.width//2,window.width//2,-window.height//2,window.height//2,0,1);
+        glMatrixMode(GL_MODELVIEW);
         station.draw(window)
         
     clock.set_fps_limit(30)

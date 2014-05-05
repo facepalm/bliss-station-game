@@ -52,19 +52,28 @@ class BasicModule():
         
         self.nodes=dict()
         
-        if not hasattr(self,'imgfile'): self.imgfile = "images/module_placeholder.jpg"
+        
         self.refresh_image()
      
     def refresh_image(self):
-        if not util.GRAPHICS: return
+        if not util.GRAPHICS: return                            
+                
+        if True:#not hasattr(self,'imgfile'):
+            if util.GRAPHICS:
+                self.img = util.make_solid_image(int(2*self.size[0]),int(2*self.size[1]),(128,128,128,255))
+            else: 
+                self.imgfile = "images/module_placeholder.jpg"            
+
+        #if hasattr(self,'imgfile'):
+        #    self.img = util.load_image(self.imgfile)
         
-        self.img = util.load_image(self.imgfile)
-        
-        if math.sin(self.orientation[0]) < 0:
-            pass#self.img = self.img.get_transform(flip_y=True)
+        '''if math.sin(self.orientation[0]) < 0:
+            self.img = self.img.get_transform(flip_y=True)
             #TODO replace with different image altogether
         if math.cos(self.orientation[0]) < 0:
             self.img = self.img.get_transform(flip_x=True)
+           ''' 
+        self.sprite = util.image_to_sprite(self.img,self.location[0],self.location[1], self.orientation[0])
             
         
      
@@ -125,8 +134,8 @@ class BasicModule():
                     c.install_task(self.station)
                 
         
-    def get_random_dock(self):
-        docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked]
+    def get_random_dock(self, side_port_allowed=True):
+        docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ]
         if not docks: return None
         return random.choice(docks)    
             
@@ -217,12 +226,13 @@ class BasicModule():
                 
     def draw(self,window):
         zoom=util.ZOOM
-        self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
+        #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
+        self.sprite.draw()
         for e in self.equipment.keys():
             if self.equipment[e][3]:
                 l=self.getXYZ(self.equipment[e][0]) 
                 #rotimg=self.equipment[e][3].img.get_transform
-                self.equipment[e][3].sprite.set_position(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2)
+                self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])
                 self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
                 self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
 
