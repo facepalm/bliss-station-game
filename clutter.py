@@ -146,7 +146,10 @@ class ClutterFilter(object):
                 return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1
         elif 'Waste Water' in self.target and obj.name == 'Water': 
             if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
-                return obj.quality['Contaminants'] > 0.1 or obj.quality['Salt'] > 0.1                
+                return obj.quality['Contaminants'] > 0.1 or obj.quality['Salt'] > 0.1      
+        elif 'Nonperishable Food' in self.target and obj.name == 'Food': 
+            if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
+                return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05 and obj.quality['Perishability'] <= 0.005
         elif 'Edible Food' in self.target and obj.name == 'Food': 
             if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05

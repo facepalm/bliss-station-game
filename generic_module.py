@@ -2,9 +2,10 @@
 #from pygraph.classes.graph import graph
 import networkx as nx
 from atmospherics import Atmosphere
-from equipment import CBM, O2TankRack, FoodStorageRack, BatteryBank, MysteryBoxRack, DOCK_EQUIPMENT, GenericStorageRack, Equipment
+from equipment import CBM, O2TankRack, FoodStorageRack, BatteryBank, DOCK_EQUIPMENT, GenericStorageRack, Equipment
 from clutter import Stowage
 import clutter
+from equipment_science import MysteryBoxRack
 
 import uuid
 from module_resources import ResourceBundle

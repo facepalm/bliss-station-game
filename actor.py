@@ -108,7 +108,8 @@ class Actor(object):
         
     def log_status(self):
         #TODO log task
-        self.logger.info(self.summarize_needs(True))        
+        #self.logger.info(self.summarize_needs(True))
+        self.logger.info(self.task.name if self.task else "Task: idling")        
        
         
 class Robot(Actor):

@@ -374,7 +374,7 @@ class WaterTank(Storage):
 class FoodStorageRack(Storage,Rack):
     def __init__(self, **kwargs):   
         super(FoodStorageRack, self).__init__(**kwargs)         
-        self.filter = clutter.ClutterFilter(['Edible Food'])
+        self.filter = clutter.ClutterFilter(['Nonperishable Food'])
         self.space_trigger = 0.5 #free volume, m^3   
 
 class GenericStorageRack(Storage,Rack):

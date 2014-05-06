@@ -87,10 +87,15 @@ if __name__ == "__main__":
     rob.location = modB.node('hall0')
     rob.xyz = modB.location'''
     
-    ernie= Human('Bela Lugosi',station=station,logger=station.logger)
+    ernie = Human('Bela Lugosi',station=station,logger=station.logger)
     station.actors[ernie.id] = ernie
     ernie.location = modA.node('hall0')
     ernie.xyz = modA.location
+    
+    bert = Human('Mel Blanc',station=station,logger=station.logger)
+    station.actors[bert.id] = bert
+    bert.location = modB.node('hall0')
+    bert.xyz = modB.location
     
     ernie.needs['WasteCapacityLiquid'].amt=0.1
     ernie.needs['Food'].set_amt_to_severity('HIGH')
@@ -104,11 +109,12 @@ if __name__ == "__main__":
     tot_time=0
     def status_update(dt):
         print
-        print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        util.generic_logger.info('FPS is %f' % clock.get_fps())
+        #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
+        util.generic_logger.info('System time:%d FPS:%f' %(int(util.TIME_FACTOR*tot_time), clock.get_fps()))
         for m in station.modules.values():
             logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
         ernie.log_status()
+        bert.log_status()
         
     def system_tick(dt):    
         station.update(dt*util.TIME_FACTOR)
