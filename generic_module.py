@@ -37,6 +37,8 @@ class BasicModule():
         self.exterior_stowage = Stowage(0) #things strapped to the outside of the module
         self.sprite = None 
         self.gravity = np.array([ 0 , 0 , 0 ])
+        self.max_gravity = 0.01
+        self.min_gravity = 0
         self.orientation = np.array([ math.pi/4 , 0 ])
         self.location = np.array([ 0 , 0 , 0 ])
         self.composition = {'Al' : 14500}      
@@ -44,7 +46,7 @@ class BasicModule():
         self.station = None
         
         self.atmo = Atmosphere()
-        self.atmo.volume= math.pi * self.size[0] * pow (self.size[1] / 2, 2)   
+        self.atmo.volume= math.pi * 2*self.size[0] * pow (self.size[1], 2)   
         self.atmo.initialize('Air')  
         
         self.equipment=dict() #miscellaneous (or unremovable) non-rack equipment
