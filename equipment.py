@@ -65,10 +65,12 @@ class Equipment(object):
         self.installed=None #pointer to module if installed, none if loose
         self.mass=100
         self.task=None
-        self.power_usage = 0 #in kilowatts
+        self.power_usage = 0 #in kilowatts        
         self.powered = False
-        self.in_vaccuum = False #if True, requires EVA to service
+        self.idle_draw = 0 #in kilowatts
+        self.in_vaccuum = False #if True, requires EVA to service        
         self.volume = 1.3 #m^3
+        self.broken = False
         self.name = name
         self.type = 'Misc'
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
@@ -86,6 +88,8 @@ class Equipment(object):
       
     def update(self,dt):
         if self.task and self.task.task_ended(): self.task = None
+        
+        self.powered = self.idle_draw and self.draw_power(self.idle_draw,dt) >= self.idle_draw
 
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
