@@ -26,11 +26,7 @@ class Resource():
 class ResourceBundle():
     def __init__(self):
         self.contributors = 1
-        self.resources = {  'Electricity' : Resource('Electricity', 10, 0), 
-                            'Potable Water' : Resource('Potable Water', 10, 10),
-                            'Gray Water' : Resource('Gray Water', 10, 10),
-                            'Air Out' : Resource('Air Out', 1, 1, Atmosphere),
-                            'Air In' : Resource('Air In', 1, 1, Atmosphere)  }
+        self.resources = {  'Electricity' : Resource('Electricity', 10, 0)} 
                             
     def merge(self, new_resource):
         for (k,v) in self.resources: v.merge(new_resource[k])
