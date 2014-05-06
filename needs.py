@@ -65,7 +65,7 @@ class Need():
     def supply(self, available_amt, dt):
         _amt = min( available_amt, dt*self.replenish_rate, self.max_amt - self.amt )
         self.amt += _amt            
-        return _amt
+        return _amt    
         
     def set_amt_to_severity(self,severity='IGNORABLE'):
         if not self.severity in need_severity_profile.keys(): return #can't do much if we don't have a profile

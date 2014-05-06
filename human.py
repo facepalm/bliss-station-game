@@ -123,3 +123,5 @@ class Human(Actor):
                 #print 'New Nutrition!' ,self.nutrition, target.mass, eaten, self.needs['Food'].max_amt
             target.mass -= eaten
             
+            if self.needs[need].status()[0] > 0.98: task.flag('COMPLETED')
+            
