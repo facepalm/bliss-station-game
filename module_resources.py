@@ -25,7 +25,7 @@ class Resource():
             
     def draw(self,amt):
         if self.name == "Electricity":
-            if self.previously_available < -1*self.peak_capacity: return 0
+            if self.previously_available < -0.9*self.peak_capacity: return 0
         else:
             if self.available < amt: return 0
         self.available -= amt
