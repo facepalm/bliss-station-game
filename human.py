@@ -61,7 +61,7 @@ class Human(Actor):
         Actor.update(self,dt)                        
         #breathe
         module = self.station.get_module_from_loc(self.location)       
-        if not module or module.atmo.pressure < 15: #below 15 kPa, you really can't even breathe 
+        if not module or module.atmo.pressure < 15: #below 15 kPa, you really can't breathe 
             self.suffocate(dt)
         else:
             O2_pp = module.atmo.partial_pressure('O2')
