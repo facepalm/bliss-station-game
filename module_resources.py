@@ -19,9 +19,21 @@ class Resource():
 
     def update(self,dt):
         if self.name == "Electricity":
-            self.previously_available -= min(1,dt)*self.previously_available
-            self.previously_available += min(1,dt)*self.available
-            self.available -= min(1,dt)*self.available
+            self.previously_available *= .5
+            self.previously_available += .5*self.available
+            self.available = 0
+            
+    def draw(self,amt):
+        if self.name == "Electricity":
+            if self.previously_available < -1*self.peak_capacity: return 0
+        else:
+            if self.available < amt: return 0
+        self.available -= amt
+        return amt
+        
+            
+    def status(self):
+        return ' '.join([self.name,str(self.available),str(self.previously_available),str(self.storage_capacity)])            
 
 class ResourceBundle():
     def __init__(self):

@@ -37,8 +37,10 @@ class DragonCargoModule(BasicModule):
         
         self.equipment['Solars0'][3].capacity=1
         self.equipment['Solars0'][3].in_vaccuum=True
+        self.equipment['Solars0'][3].extended=True
         self.equipment['Solars1'][3].capacity=1
         self.equipment['Solars1'][3].in_vaccuum=True
+        self.equipment['Solars1'][3].extended=True
         
     def setup_simple_resupply(self):
         self.stowage.add(Clutter('Food', 90.5 )) #one person-year of food

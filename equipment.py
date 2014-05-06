@@ -87,9 +87,9 @@ class Equipment(object):
         #    self.vert_img = util.load_image(self.vert_img_file)       
       
     def update(self,dt):
-        if self.task and self.task.task_ended(): self.task = None
+        if self.task and self.task.task_ended(): self.task = None        
         
-        self.powered = self.idle_draw and self.draw_power(self.idle_draw,dt) >= self.idle_draw
+        self.powered = self.idle_draw and self.draw_power(self.idle_draw,dt) > 0
 
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
@@ -113,9 +113,9 @@ class Equipment(object):
         
     def draw_power(self,kilowattage,dt): #kilowatts in per seconds
         if self.installed and (not hasattr(self,'broken') or not self.broken): #it's installed, not broken or can't break          
-            self.installed.station.resources.resources['Electricity'].available -= kilowattage*dt/3600
+            #self.installed.station.resources.resources['Electricity'].available -= kilowattage*dt/3600            
             #TODO add equivalent heat into module
-            return kilowattage*dt/3600
+            return self.installed.station.resources.resources['Electricity'].draw(kilowattage*dt/3600)
         return 0
         
     def task_finished(self,task):
@@ -173,7 +173,8 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         self.broken = False
                 
     def update(self,dt):
-        super(Machinery, self).update(dt)           
+        super(Machinery, self).update(dt)     
+        
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
                 self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
@@ -315,6 +316,7 @@ class SolarPanel(Equipment):
 
 class Battery(Equipment):
     def __init__(self):   
+        self.imgfile = "images/placeholder_battery.tif"
         super(Battery, self).__init__()
         self.type = 'Li-ion'
         self.capacity = 100     #kilowatt-hours            
@@ -323,6 +325,7 @@ class Battery(Equipment):
         self.efficiency = 0.95
                 
     def update(self,dt): #TODO add time calculations
+        #print self.charge
         super(Battery, self).update(dt)
         if self.installed:
             power_situation = self.installed.station.resources.resources['Electricity'].previously_available

@@ -111,8 +111,9 @@ if __name__ == "__main__":
         print
         #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
         util.generic_logger.info('System time:%d FPS:%f' %(int(util.TIME_FACTOR*tot_time), clock.get_fps()))
-        for m in station.modules.values():
-            logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
+        #for m in station.modules.values():
+        #    logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
+        #util.generic_logger.info(' '.join(['Electricity','Available:',station.resources.resources['Electricity'].status()]))
         ernie.log_status()
         bert.log_status()
         
