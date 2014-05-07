@@ -1,12 +1,3 @@
-from generic_module import DestinyModule
-from zvezda import ZvezdaModule
-from docking_modules import UnityModule
-from cargo_modules import DragonCargoModule
-from module_resources import ResourceBundle
-from tasks import TaskTracker
-from station import Station        
-from actor import Robot
-from human import Human        
 import util
 import logging
 import pyglet
@@ -49,14 +40,8 @@ def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
 util.image_to_sprite = image_to_sprite
     
                                       
-if __name__ == "__main__":
-    from time import sleep    
-
-    
-    window = pyglet.window.Window(visible=False, resizable=True)
-    
-
-
+if __name__ == "__main__":    
+    window = pyglet.window.Window(visible=False, resizable=True)    
 
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -75,8 +60,7 @@ if __name__ == "__main__":
 
     @window.event
     def on_draw():
-
-    #    background.blit_tiled(0, 0, 0, window.width, window.height)
+        #background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -84,7 +68,6 @@ if __name__ == "__main__":
         glMatrixMode(GL_MODELVIEW);
 
         scenario.get_station().draw(window)
-
         
     #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)
