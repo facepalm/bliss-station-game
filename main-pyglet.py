@@ -12,6 +12,7 @@ import logging
 import pyglet
 from pyglet.gl import *  
 from pyglet import clock
+from scenario import ScenarioMaster
 
 util.GRAPHICS = 'pyglet'
 
@@ -70,57 +71,7 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    modA  = DestinyModule()
-    modDock = UnityModule()    
-    modB   = ZvezdaModule()
-    modDrag = DragonCargoModule()
-    modDrag.setup_simple_resupply()
-           
-    station = Station(modDock, 'NewbieStation', logger)
-    station.berth_module(None,None,modB, None, True)
-    station.berth_module(None,None,modA, None, True)    
-    station.berth_module(None,None,modDrag, None, True)
-    
-    '''rob = Robot('Robby')     
-    rob.station = station
-    station.actors[rob.id]=rob
-    rob.location = modB.node('hall0')
-    rob.xyz = modB.location'''
-    
-    ernie = Human('Bela Lugosi',station=station,logger=station.logger)
-    station.actors[ernie.id] = ernie
-    ernie.location = modA.node('hall0')
-    ernie.xyz = modA.location
-    
-    bert = Human('Mel Blanc',station=station,logger=station.logger)
-    station.actors[bert.id] = bert
-    bert.location = modB.node('hall0')
-    bert.xyz = modB.location
-    
-    ernie.needs['WasteCapacityLiquid'].amt=0.1
-    ernie.needs['Food'].set_amt_to_severity('HIGH')
-    ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
-    #modB.equipment['Electrolyzer'][3].broken=True
-    
-      
-    #modA.berth('CBM0', modB, 'CBM0')
-    for m in station.modules.values(): print m.short_id, m.location, m.orientation
-    #for n in station.paths.edges(data=True): print n
-    tot_time=0
-    def status_update(dt):
-        print
-        #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        util.generic_logger.info('System time:%d FPS:%f' %(int(util.TIME_FACTOR*tot_time), clock.get_fps()))
-        #for m in station.modules.values():
-        #    logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
-        #util.generic_logger.info(' '.join(['Electricity','Available:',station.resources.resources['Electricity'].status()]))
-        ernie.log_status()
-        bert.log_status()
-        
-    def system_tick(dt):    
-        station.update(dt*util.TIME_FACTOR)
-        global tot_time
-        tot_time += dt        
+    scenario = ScenarioMaster()
 
     @window.event
     def on_draw():
@@ -130,11 +81,11 @@ if __name__ == "__main__":
         glLoadIdentity();
         glOrtho(-window.width//2,window.width//2,-window.height//2,window.height//2,0,1);
         glMatrixMode(GL_MODELVIEW);
-        station.draw(window)
+        scenario.get_station().draw(window)
         
     clock.set_fps_limit(30)
-    clock.schedule_interval(status_update,1)
-    clock.schedule(system_tick)
+    clock.schedule_interval(scenario.status_update,1)
+    clock.schedule(scenario.system_tick)
     
     window.set_visible()
     pyglet.app.run()
