@@ -248,7 +248,7 @@ class Storage(Equipment):
 #docking equipment        
 class DockingRing(Equipment):
     def __init__(self):   
-        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_Hatch.tif"
+        if not hasattr(self,'imgfile'): self.imgfile = "images/closed_hatch.tif"
         super(DockingRing, self).__init__()     
         self.docked = None #a pointer to the module we've docked to
         self.open = False
@@ -260,9 +260,13 @@ class DockingRing(Equipment):
         if self.open: return
         if not self.docked: return False, "What are you, nuts?!"
         self.open = True
+        self.imgfile = "images/open_hatch.tif"
+        self.refresh_image()
         
     def close_(self):
         self.open=False
+        self.imgfile = "images/closed_hatch.tif"
+        self.refresh_image()
         
     def dock(self, target, instant = False):
         self.docked=target        
