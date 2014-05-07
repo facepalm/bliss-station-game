@@ -131,9 +131,9 @@ class Equipment(object):
                 
                 if self.installed: 
                     assert self.uninstall(), 'Unknown error after uninstallation'             
-                print task.location   
+                #print task.location   
                 module = task.station.get_module_from_loc(task.location)
-                print module.stowage.contents
+                #print module.stowage.contents
                 assert module.stowage.remove(self), 'Equipment not found in targeted module'
                 task.assigned_to.held=self
 

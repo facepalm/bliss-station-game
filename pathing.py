@@ -9,11 +9,11 @@ from util import separate_node
 class PathingWidget(object):
     def __init__(self, owner, node_graph, start, end, pos = None):
         self.owner = owner
-        print start,end
+        #print start,end
         if not nx.has_path(node_graph,start,end): 
             self.valid = False
             return None
-        print "----------NEW PATH---------"
+        #print "----------NEW PATH---------"
         self.path_list = nx.dijkstra_path(node_graph, source=start, target=end)
         self.total_length = nx.dijkstra_path_length(node_graph, source=start, target=end)
         self.current_coords = pos if pos is not None else self.owner.station.loc_to_xyz( start )

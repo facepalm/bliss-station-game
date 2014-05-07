@@ -71,7 +71,7 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    scenario = ScenarioMaster()
+    scenario = ScenarioMaster(logger=logger)
 
     @window.event
     def on_draw():
