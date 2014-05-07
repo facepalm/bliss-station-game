@@ -71,21 +71,24 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    scenario = ScenarioMaster(logger=logger)
+    scenario = ScenarioMaster(scenario='BERTNERNIE',logger=logger)
 
     @window.event
     def on_draw():
+
     #    background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(-window.width//2,window.width//2,-window.height//2,window.height//2,0,1);
         glMatrixMode(GL_MODELVIEW);
+
         scenario.get_station().draw(window)
+
         
-    clock.set_fps_limit(30)
+    #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)
-    clock.schedule(scenario.system_tick)
+    clock.schedule_interval(scenario.system_tick,0.050)
     
     window.set_visible()
     pyglet.app.run()

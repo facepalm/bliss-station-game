@@ -12,39 +12,10 @@ import logging
 
 class ScenarioMaster():
 
-    def __init__(self,scenario='BERTNERNIE',logger=util.generic_logger):
-        modA  = DestinyModule()
-        modDock = UnityModule()    
-        modB   = ZvezdaModule()
-        modDrag = DragonCargoModule()
-        modDrag.setup_simple_resupply()
-               
-        self.station = Station(modDock, 'NewbieStation', logger)
-        self.station.berth_module(None,None,modB, None, True)
-        self.station.berth_module(None,None,modA, None, True)    
-        self.station.berth_module(None,None,modDrag, None, True)
+    def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
+        current_scenario=Scenario(scenario,logger)        
         
-        '''rob = Robot('Robby')     
-        rob.station = station
-        station.actors[rob.id]=rob
-        rob.location = modB.node('hall0')
-        rob.xyz = modB.location'''
-        
-        ernie = Human('Bela Lugosi',station=self.station,logger=self.station.logger)
-        self.station.actors[ernie.id] = ernie
-        ernie.location = modA.node('hall0')
-        ernie.xyz = modA.location
-        
-        bert = Human('Mel Blanc',station=self.station,logger=self.station.logger)
-        self.station.actors[bert.id] = bert
-        bert.location = modB.node('hall0')
-        bert.xyz = modB.location
-        
-        ernie.needs['WasteCapacityLiquid'].amt=0.1
-        ernie.needs['Food'].set_amt_to_severity('HIGH')
-        ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
-        #modB.equipment['Electrolyzer'][3].broken=True
-        
+        self.station = current_scenario.station  
           
         #modA.berth('CBM0', modB, 'CBM0')
         for m in self.station.modules.values(): print m.short_id, m.location, m.orientation    
@@ -55,7 +26,7 @@ class ScenarioMaster():
         return self.station
         
     def status_update(self,dt):
-        print
+
         #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
         util.generic_logger.info('System time:%d' %(int(util.TIME_FACTOR*self.time_elapsed)))
         #for m in station.modules.values():
@@ -66,8 +37,49 @@ class ScenarioMaster():
         #ernie.log_status()
         #bert.log_status()    
 
+
     def system_tick(self,dt):    
         self.station.update(dt*util.TIME_FACTOR)
         self.time_elapsed += dt
+
                                           
-    
+class Scenario():
+    def __init__(self,name='DEFAULT',logger=util.generic_logger):
+        if name=='BERTNERNIE':
+
+            modA  = DestinyModule()
+            modDock = UnityModule()    
+            modB   = ZvezdaModule()
+            modDrag = DragonCargoModule()
+            modDrag.setup_simple_resupply()
+                   
+            self.station = Station(modDock, "BnE Station", logger)
+            self.station.berth_module(None,None,modB, None, True)
+            self.station.berth_module(None,None,modA, None, True)    
+            self.station.berth_module(None,None,modDrag, None, True)
+            
+            '''rob = Robot('Robby')     
+            rob.station = station
+            station.actors[rob.id]=rob
+            rob.location = modB.node('hall0')
+            rob.xyz = modB.location'''
+            
+            ernie = Human('Ernest',station=self.station,logger=self.station.logger)
+            self.station.actors[ernie.id] = ernie
+            ernie.location = modA.node('hall0')
+            ernie.xyz = modA.location
+            
+            bert = Human('Bertholomew',station=self.station,logger=self.station.logger)
+            self.station.actors[bert.id] = bert
+            bert.location = modB.node('hall0')
+            bert.xyz = modB.location
+            
+            ernie.needs['WasteCapacityLiquid'].amt=0.1
+            ernie.needs['Food'].set_amt_to_severity('HIGH')
+            ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
+            #modB.equipment['Electrolyzer'][3].broken=True
+            
+        else: #'DEFAULT'
+            modDock = UnityModule()                   
+            self.station = Station(modDock, 'NewbieStation',logger)
+            
