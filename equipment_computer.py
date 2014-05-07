@@ -16,3 +16,8 @@ class Computer(Equipment):
     def update(self,dt):            
         super(Computer, self).update(dt)
 
+class DockingComputer(Computer, Rack):
+    def __init__(self):
+        if not hasattr(self,'imgfile'): self.imgfile = "images/docking_computer.tif"
+        super(DockingComputer, self).__init__()              
+        self.idle_draw = 0.200 #kW

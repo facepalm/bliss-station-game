@@ -1,5 +1,6 @@
 from generic_module import BasicStationModule
 from equipment import CBM, SolarPanel, DOCK_EQUIPMENT
+from equipment_computer import DockingComputer
 
 import math
 import numpy as np
@@ -40,8 +41,7 @@ class UnityModule(BasicStationModule):
                 self.nodes[ self.node( ''.join( [ _d , '0' ] ) ) ] = np.array([ -0.6 , _sampdict[_d][0]/2 , _sampdict[_d][1]/2 ])
                 self.paths.add_nodes_from([ self.node( ''.join([ _d , '0' ] ) ) ])
                 self.add_edge( self.node( ''.join( [ 'hall' , '1' ] ) ) , self.node( ''.join( [ _d , '0' ] ) ) )
-                
-        
-                
+                        
+        self.stowage.add( DockingComputer() )                
         
 
