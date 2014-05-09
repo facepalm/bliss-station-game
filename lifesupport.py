@@ -1,7 +1,7 @@
 
-from equipment import Machinery, EquipmentSearch
+from equipment import Machinery
 import clutter
-from filtering import ClutterFilter
+from filtering import ClutterFilter, EquipmentFilter
 import util
 import atmospherics
 
@@ -22,9 +22,9 @@ class UniversalToilet(Machinery):
         
     def update(self,dt):
         super(UniversalToilet, self).update(dt)   
-        p = self.tank.find_resource( self.tank.target_1.compare )
+        p = self.tank.search( self.tank.target_1 )
         if self.installed and p and self.draw_power(0.03,dt):
-            gray_dest, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Gray Water').search()
+            gray_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) ) 
             #print 'gray dest', gray_dest
             if not gray_dest: return            
             proc_amt = max( 0, min( gray_dest.available_space, p.mass , self.processing_speed*dt ) )
@@ -44,8 +44,8 @@ class WaterPurifier(Machinery):
     def update(self,dt):
         super(WaterPurifier, self).update(dt)              
         if self.installed and self.draw_power(0.03,dt): #TODO replace with actual distillation power use
-            gray_source, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Gray Water').search()
-            pure_dest, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Potable Water').search()
+            gray_source, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) )           
+            pure_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Potable Water' ) )
             if not gray_source or not pure_dest: return
             water = gray_source.stowage.remove('Water',min( self.processing_speed*dt, pure_dest.available_space ) )
             if not water: return
@@ -68,7 +68,7 @@ class OxygenElectrolyzer(Machinery):
             O2_content = self.installed.atmo.partial_pressure('O2')            
             if O2_content < 21.27:   #sea-level pp of oxygen.  
                 #*Technically* we should also check for total pp, and release more O2 until like 40 kPa
-                pure_src, discard = EquipmentSearch( 'Storage', self.installed.station, resource_obj = self.installed.station.resources, storage_filter = 'Potable Water').search()
+                pure_src, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Potable Water' ) )
                 if pure_src and self.draw_power(self.power_draw,dt):
                     water = pure_src.stowage.remove('Water',self.process_rate*dt)
                     for w in water:

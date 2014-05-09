@@ -3,7 +3,7 @@
 
 from atmospherics import Atmosphere
 from tasks import Task, TaskSequence
-from filtering import ClutterFilter, NeedFilter
+from filtering import ClutterFilter, NeedFilter, EquipmentFilter, Searcher, SearchFilter
 import clutter
 import util
 import logging
@@ -12,7 +12,7 @@ import random
 DOCK_EQUIPMENT = ['CBM']
 
 
-class EquipmentSearch():    
+class EquipmentSearchBroke():    
     
     def __init__(self, target, station, check_storage=False, resource_obj=None, storage_filter='Any'):
         self.target=target
@@ -150,8 +150,8 @@ class Equipment(object):
         if self.installed or not station: return
         self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW", logger=self.logger)
         self.task.station = station
-        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=EquipmentSearch(self,station,check_storage=True).search,station=station))
-        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=EquipmentSearch("Equipment Slot",station,storage_filter=self.type).search,station=station))
+        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=Searcher(self,station,check_storage=True).search,station=station))
+        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=Searcher(EquipmentFilter(target=self.type, comparison_type="Equipment Slot"),station).search,station=station))
         station.tasks.add_task(self.task)
         
         
@@ -164,7 +164,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
         super(Window, self).update(dt)        
         if self.installed and not self.task or self.task.task_ended():
             #stellar observations
-            self.task = Task(''.join(['Collect Observational Data']), owner = self, timeout=86400, task_duration = 1800, severity='IGNORABLE', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
+            self.task = Task(''.join(['Collect Observational Data']), owner = self, timeout=86400, task_duration = 1800, severity='IGNORABLE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             self.installed.station.tasks.add_task(self.task)  
                                    
         
@@ -183,10 +183,10 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
-                self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
+                self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
                 self.installed.station.tasks.add_task(self.maint_task)
         if self.maint_timer < 0 and ( not self.maint_task or self.maint_task.task_ended() ):
-            self.maint_task = Task(''.join(['Maintain ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(1,'hours'), severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
+            self.maint_task = Task(''.join(['Maintain ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(1,'hours'), severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             #print self.maint_task.timeout,self.maint_task.task_duration
             self.installed.station.tasks.add_task(self.maint_task)
         
@@ -230,8 +230,8 @@ class Storage(Equipment):
             #Task 1: find stuff to store, go to, pick up  #Task 2: find self, go to, deposit
             filter_str = self.filter.target_string()
             self.task = TaskSequence(name = ''.join(['Store ',filter_str]), severity = "LOW",logger=self.logger)
-            self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target),logger=self.logger))
-            self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=EquipmentSearch(self,self.installed.station).search, owner=self,logger=self.logger))
+            self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=Searcher(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target),logger=self.logger))
+            self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method = Searcher( SearchFilter( self ), self.installed.station ).search, owner=self,logger=self.logger))
             self.installed.station.tasks.add_task(self.task)
         
     def get_available_space(self): return self.stowage.free_space       
@@ -239,7 +239,7 @@ class Storage(Equipment):
     
     def task_work_report(self,task,dt):
         if task.name.startswith('Put Away'):
-            item = task.assigned_to.inventory.find_resource(lambda x: self.filter.compare(x))
+            item = task.assigned_to.inventory.search(self.filter)
             if not item: return
             remove_amt = min(clutter.gather_rate*dt*item.density,self.available_space*item.density,item.mass)
             if remove_amt <= 0: return         
@@ -279,7 +279,7 @@ class DockingRing(Equipment):
         if instant: 
             self.open_()
         else:
-            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
+            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             self.installed.station.tasks.add_task(self.task)
         self.in_vaccuum = False
                 
@@ -289,7 +289,7 @@ class DockingRing(Equipment):
                 self.close_()
             else:
                 #TODO check and add a task for disconnecting the pipes
-                self.task = Task(''.join(['Close Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=EquipmentSearch(self,self.installed.station).search,logger=self.logger)
+                self.task = Task(''.join(['Close Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
                 self.installed.station.tasks.add_task(self.task)
         self.docked = None
         self.in_vaccuum = True

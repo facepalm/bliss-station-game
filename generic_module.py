@@ -81,28 +81,24 @@ class BasicModule():
             
         
      
-    def find_resource(self, resource_type = None, check = lambda x: True):
-        if resource_type == "Equipment":
-            eq=[]
-            eq.extend([[self.equipment[e][3], self.node( e ) ]  for e in self.equipment.keys() if self.equipment[e][3] and check(self.equipment[e][3]) ])
-            eq.extend( [ [ v, self.filterNode( self.node('Inside') ) ] for v in self.stowage.contents if check( v ) ] )
-            eq.extend( [ [ v, self.node('Outside') ] for v in self.exterior_stowage.contents if check( v ) ] )
-            if eq:
-                random.shuffle(eq)
-                return eq[0][0], eq[0][1]
-            return None, None
-        elif resource_type == "Equipment Slot":
-            eq=[]
-            eq.extend([[self.equipment[e][2], self.node( e ) ]  for e in self.equipment.keys() if not self.equipment[e][3] and check(self.equipment[e][2]) ])
-            if eq:
-                random.shuffle(eq)
-                return eq[0][0], eq[0][1]
-            return None, None        
-        else:
-            stuff=self.stowage.find_resource(check)
-            if stuff:
-                return stuff, self.filterNode( self.node('Inside') )
-            return None, None
+    def search(self, filter_):
+        hits=[]
+        if "Equipment" in filter_.comparison_type or 'All' in filter_.comparison_type:
+            hits.extend([[self.equipment[e][3], self.node( e ), filter_.compare(self.equipment[e][3]) ]  for e in self.equipment.keys() if self.equipment[e][3]])
+            
+            hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
+            #hits.append( self.exterior_stowage.find_resource( filter_ ) )
+
+        if "Equipment Slot" in filter_.comparison_type or 'All' in filter_.comparison_type:
+            hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys() ])
+ 
+        if "Clutter" in filter_.comparison_type:
+            hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
+            
+            
+        hits.sort(key=lambda tup: tup[2], reverse=True)
+        #print hits        
+        return hits[0] if hits and hits[0][2] else [None, None, False]        
                      
     def get_living_space(self): return self.stowage.free_space       
     living_space = property(get_living_space, None, None, "Living space" ) 

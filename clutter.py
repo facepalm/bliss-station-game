@@ -62,9 +62,9 @@ class Stowage(object):
         self.capacity=capacity
         self.contents=[]
                         
-    def find_resource(self, check = lambda x: True):
+    def search(self, filter_):
         stuff=[]
-        stuff.extend( [ v for v in self.contents if check( v ) ] )
+        stuff.extend( [ v for v in self.contents if filter_.compare( v ) ] )
         if stuff:
             return stuff[0]
         return None

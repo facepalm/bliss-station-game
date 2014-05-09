@@ -1,12 +1,13 @@
 from tasks import Task, TaskTracker
 from needs import Need, need_from_task
-from equipment import EquipmentSearch, Storage
+from equipment import Storage
 from clutter import Stowage
 from pathing import PathingWidget
 import uuid
 import numpy as np
 from util import separate_node
 import util, logging
+from filtering import EquipmentFilter
 
 class Actor(object):
     def __init__(self,name='Place Holder',station=None, logger=None):
@@ -68,7 +69,7 @@ class Actor(object):
         #'work on task'
         if not self.task: return
         if not self.task.location: 
-            self.task.target, self.task.location = self.task.fetch_location() #Grab location
+            self.task.target, self.task.location, d = self.task.fetch_location() #Grab location
             #print self.task.name, self.task.target, self.task.location
             if not self.task.location: 
                 self.task.drop()
@@ -130,7 +131,7 @@ class Robot(Actor):
         
     def new_charge_task(self,timeout,severity):
         #TODO replace with charge sequence, maybe
-        t=Task(''.join(['Satisfy Charge']), owner = self, timeout=timeout, task_duration = 600, severity=severity, fetch_location_method=EquipmentSearch('Battery',self.station).search,logger=self.logger)
+        t=Task(''.join(['Satisfy Charge']), owner = self, timeout=timeout, task_duration = 600, severity=severity, fetch_location_method=Searcher(EquipmentFilter( target='Battery' ), self.station ).search,logger=self.logger)
         return t     
                                         
     def task_work_report(self,task,dt):

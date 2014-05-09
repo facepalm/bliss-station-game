@@ -45,19 +45,20 @@ class Station():
         
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
+                
         
-        
-    def find_resource(self, resource_type = None, check = lambda x: True):
-        rnd_mod = self.modules.values()
-        random.shuffle(rnd_mod)
-        for m in rnd_mod:
-            [obj, loc] = m.find_resource(resource_type, check)
-            if obj and loc: return [ obj, loc ]
-        return None, None
+    def search(self, filter_):
+        hits=[]
+        for m in self.modules.values():
+            [obj, loc, score] = m.search(filter_)
+            hits.append( [ obj, loc, score ] )
+        hits.sort(key=lambda tup: tup[2], reverse=True)
+        #print hits
+        return hits[0] if hits and hits[0][2] else [None, None, None]
         
     def random_location(self):
         module = random.choice(self.modules.values())
-        return None, module.filterNode( module.node('Inside') )
+        return None, module.filterNode( module.node('Inside') ), None
         
     def update(self,dt):
         self.resources.update(dt)

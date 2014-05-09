@@ -1,8 +1,9 @@
 
-from equipment import Equipment, Machinery, EquipmentSearch, Rack
+from equipment import Equipment, Machinery, Rack
 import clutter
 import util
 import atmospherics
+
 
      
 class Computer(Equipment):

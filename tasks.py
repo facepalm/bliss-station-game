@@ -129,7 +129,7 @@ class TaskSequence(Task):
             return
         if not self.current_task or self.current_task.status == 'COMPLETED': 
             [ self.current_task, self.current_task_required ] = self.task_list.pop(0) 
-            [self.target, self.location] = self.current_task.fetch_location()
+            [self.target, self.location, d] = self.current_task.fetch_location()
             #print "SEARCHED", self.target, self.location, self.current_task.name
             self.name = ''.join( [ self.real_name, ': ', self.current_task.name ] )
         if self.current_task_required and self.current_task.status == 'CLOSED':

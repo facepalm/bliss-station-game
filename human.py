@@ -1,10 +1,10 @@
 from actor import Actor
-from equipment import EquipmentSearch, Storage
+from equipment import Storage
 from tasks import Task, TaskTracker
 from needs import Need, need_from_task
 import equipment
 import lifesupport
-from filtering import ClutterFilter
+from filtering import ClutterFilter, Searcher, EquipmentFilter
 import util
 
 class Human(Actor):
@@ -32,18 +32,18 @@ class Human(Actor):
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch(ClutterFilter('Potable Water'),self.station,check_storage=True).search)
+        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method = Searcher(ClutterFilter('Potable Water',check_storage=True),self.station).search )
         return t
         
     def new_dinner_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method=EquipmentSearch(ClutterFilter('Edible Food'),self.station,check_storage=True).search)
+        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method = Searcher(ClutterFilter('Edible Food',check_storage=True),self.station).search)
         return t        
         
     def number_1_task(self,timeout,severity):
-        return Task(''.join(['Satisfy WasteCapacityLiquid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Toilet',self.station).search)
+        return Task(''.join(['Satisfy WasteCapacityLiquid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=Searcher(EquipmentFilter('Toilet'),self.station).search)
 
     def number_2_task(self,timeout,severity):
-        return Task(''.join(['Satisfy WasteCapacitySolid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch('Toilet',self.station).search)
+        return Task(''.join(['Satisfy WasteCapacitySolid']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=Searcher(EquipmentFilter('Toilet'),self.station).search)
  
     def code_brown(self):
         #you have shit your pants.  This might be too goddamn realistic even for me.
