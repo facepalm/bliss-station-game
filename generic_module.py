@@ -90,7 +90,7 @@ class BasicModule():
             #hits.append( self.exterior_stowage.find_resource( filter_ ) )
 
         if "Equipment Slot" in filter_.comparison_type or 'All' in filter_.comparison_type:
-            hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys() ])
+            hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys()  if not self.equipment[e][3]])
  
         if "Clutter" in filter_.comparison_type:
             hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )

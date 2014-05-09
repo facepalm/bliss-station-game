@@ -113,7 +113,7 @@ class Human(Actor):
         if need in need_pristines.keys():
             target=task.target
             if isinstance(task.target, Storage):
-                target = task.target.stowage.find_resource(ClutterFilter(need_pristines[need]).compare)
+                target = task.target.stowage.search(ClutterFilter(need_pristines[need]))
             if not target: return                        
                 
             #"eat" - TODO make a more detailed nutrition model for things like scurvy            

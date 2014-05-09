@@ -26,7 +26,7 @@ class ScenarioMaster():
         return self.station
         
     def status_update(self,dt):
-
+        print
         #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
         util.generic_logger.info('System time:%d' %(int(util.TIME_FACTOR*self.time_elapsed)))
         #for m in station.modules.values():
