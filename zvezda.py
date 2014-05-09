@@ -6,7 +6,8 @@ from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, Rege
 
 import math
 import numpy as np
-import clutter
+from filtering import ClutterFilter
+
                                       
 class ZvezdaModule(BasicStationModule):
     """ Modeled after the Zvezda module of the ISS.  Lots and lots and lots of life support. """
@@ -75,7 +76,7 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
         
         graytank = WaterTank().install(self)
-        graytank.filter = clutter.ClutterFilter(['Gray Water'])
+        graytank.filter = ClutterFilter(['Gray Water'])
         self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'LSS' )
         
         

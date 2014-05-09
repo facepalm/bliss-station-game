@@ -71,7 +71,7 @@ if __name__ == "__main__":
         
     #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)
-    clock.schedule_interval(scenario.system_tick,0.050)
+    clock.schedule_interval(scenario.system_tick,0.0250)
     
     window.set_visible()
     pyglet.app.run()

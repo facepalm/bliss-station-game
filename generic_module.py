@@ -4,6 +4,7 @@ import networkx as nx
 from atmospherics import Atmosphere
 from equipment import CBM, O2TankRack, FoodStorageRack, BatteryBank, DOCK_EQUIPMENT, GenericStorageRack, Equipment
 from clutter import Stowage
+from filtering import ClutterFilter
 import clutter
 from equipment_science import MysteryBoxRack
 
@@ -295,7 +296,7 @@ class DestinyModule(BasicStationModule):
         self.equipment['starboard3'][3]=FoodStorageRack().install(self) 
         
         stuffrack = GenericStorageRack() 
-        stuffrack.filter = clutter.ClutterFilter(['Supplies'])
+        stuffrack.filter = ClutterFilter(['Supplies'])
         self.stowage.add( stuffrack )
         #self.equipment['nadir0'][3]=MysteryBoxRack().install(self)              
         

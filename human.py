@@ -4,7 +4,7 @@ from tasks import Task, TaskTracker
 from needs import Need, need_from_task
 import equipment
 import lifesupport
-import clutter
+from filtering import ClutterFilter
 import util
 
 class Human(Actor):
@@ -32,11 +32,11 @@ class Human(Actor):
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch(clutter.ClutterFilter('Potable Water'),self.station,check_storage=True).search)
+        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method=EquipmentSearch(ClutterFilter('Potable Water'),self.station,check_storage=True).search)
         return t
         
     def new_dinner_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method=EquipmentSearch(clutter.ClutterFilter('Edible Food'),self.station,check_storage=True).search)
+        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method=EquipmentSearch(ClutterFilter('Edible Food'),self.station,check_storage=True).search)
         return t        
         
     def number_1_task(self,timeout,severity):
@@ -113,7 +113,7 @@ class Human(Actor):
         if need in need_pristines.keys():
             target=task.target
             if isinstance(task.target, Storage):
-                target = task.target.stowage.find_resource(clutter.ClutterFilter(need_pristines[need]).compare)
+                target = task.target.stowage.find_resource(ClutterFilter(need_pristines[need]).compare)
             if not target: return                        
                 
             #"eat" - TODO make a more detailed nutrition model for things like scurvy            

@@ -1,6 +1,7 @@
 
 from equipment import Machinery, EquipmentSearch
 import clutter
+from filtering import ClutterFilter
 import util
 import atmospherics
 
@@ -9,8 +10,10 @@ class UniversalToilet(Machinery):
     def __init__(self):   
         super(UniversalToilet, self).__init__() 
         self.tank = clutter.Stowage(1)
-        self.tank.target_1 = clutter.ClutterFilter('Waste Water')
+        self.tank.target_1 = ClutterFilter('Waste Water')
         self.processing_speed = 0.01
+        self.satisfies['WasteCapacityLiquid'] = 0.5
+        self.satisfies['WasteCapacitySolid'] = 0.5
 
     def deposit(self, amt1=0, amt2=0):
         print amt1, amt2

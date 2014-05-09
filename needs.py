@@ -76,5 +76,4 @@ class Need():
         
     def status(self):
         return [self.amt/self.max_amt, self.severity]
-        
-        
+                

@@ -3,6 +3,7 @@
 
 from atmospherics import Atmosphere
 from tasks import Task, TaskSequence
+from filtering import ClutterFilter, NeedFilter
 import clutter
 import util
 import logging
@@ -38,10 +39,12 @@ class EquipmentSearch():
                 return obj == self.storage_filter              
             #print self.target                 
             #return clutter.equals(self.target, obj.name) #must be clutter
-        elif isinstance(self.target, clutter.ClutterFilter):
+        elif isinstance(self.target, ClutterFilter):
             if self.check_storage and isinstance( obj, Storage ):
                 return obj.stowage.find_resource(self.target.compare)
             return self.target.compare(obj) 
+        elif isinstance(self.target, NeedFilter):            
+            return self.target.compare(obj)         
         else:
             return obj is self.target
         return False
@@ -54,6 +57,8 @@ class EquipmentSearch():
             #print "Task location",tar,loc, self.target
         elif self.target == 'Equipment Slot':
             tar,loc = self.station.find_resource('Equipment Slot',check = self.compare)             
+        elif isinstance(self.target, NeedFilter):
+            tar,loc = self.station.find_resource('Equipment',check = self.compare)
         else:            
             tar,loc = self.station.find_resource('Clutter',check = self.compare)
             if not ( tar or loc) and self.check_storage: #no free objects, check stored stuff
@@ -73,6 +78,7 @@ class Equipment(object):
         self.broken = False
         self.name = name
         self.type = 'Misc'
+        self.satisfies = dict() #what qualities can this equipment provide?
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
         #basic health stats and such go here, as well as hooking into the task system
         
@@ -209,7 +215,7 @@ class Storage(Equipment):
     def __init__(self, **kwargs):
         super(Storage, self).__init__(**kwargs)         
         self.stowage = clutter.Stowage(1) #things floating around in the rack
-        self.filter = clutter.ClutterFilter(['All'])
+        self.filter = ClutterFilter(['All'])
         self.space_trigger = 0.1 #free volume
         
     def update(self,dt):
@@ -379,19 +385,19 @@ class BatteryBank(Rack, Battery):
 class WaterTank(Storage):
     def __init__(self):   
         super(WaterTank, self).__init__()         
-        self.filter = clutter.ClutterFilter(['Potable Water'])
+        self.filter = ClutterFilter(['Potable Water'])
         self.stowage.capacity = 0.5
 
 class FoodStorageRack(Storage,Rack):
     def __init__(self, **kwargs):   
         super(FoodStorageRack, self).__init__(**kwargs)         
-        self.filter = clutter.ClutterFilter(['Nonperishable Food'])
+        self.filter = ClutterFilter(['Nonperishable Food'])
         self.space_trigger = 0.5 #free volume, m^3   
 
 class GenericStorageRack(Storage,Rack):
     def __init__(self):   
         super(GenericStorageRack, self).__init__()         
-        self.filter = clutter.ClutterFilter(['Any'])
+        self.filter = ClutterFilter(['Any'])
         self.space_trigger = 0.5 #free volume, m^3  
 
 class WaterStorageRack(WaterTank,Rack):
