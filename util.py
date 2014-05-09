@@ -2,7 +2,7 @@ import logging
 
 TIME_FACTOR = 24 # 120# 24
 
-ZOOM=6
+ZOOM = 6
 
 equipment_targets = dict()
 

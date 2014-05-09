@@ -330,6 +330,7 @@ class BatteryBank(Rack, Battery):
 
 class WaterTank(Storage):
     def __init__(self):   
+        if not hasattr(self,'imgfile'): self.imgfile = "images/potable_water.tif"
         super(WaterTank, self).__init__()         
         self.filter = ClutterFilter(['Potable Water'])
         self.stowage.capacity = 0.5

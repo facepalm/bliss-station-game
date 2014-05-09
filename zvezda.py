@@ -77,6 +77,8 @@ class ZvezdaModule(BasicStationModule):
         
         graytank = WaterTank().install(self)
         graytank.filter = ClutterFilter(['Gray Water'])
+        graytank.imgfile = "images/gray_water.tif"
+        graytank.refresh_image()
         self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'LSS' )
         
         
