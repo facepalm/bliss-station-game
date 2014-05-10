@@ -18,6 +18,7 @@ def seconds(time=1,units='minutes'):
                                          else time*3600 if units == 'hours' or units == 'hour' \
                                          else time*86400 if units=='days' or units == 'day' \
                                          else time*2592000 if units=='months' or units == 'month' \
+                                         else time*2592000*12 if units=='years' or units == 'year' \
                                          else 10    
                                          
                                          

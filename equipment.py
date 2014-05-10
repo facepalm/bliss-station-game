@@ -119,7 +119,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_machinery.tif"
         super(Machinery, self).__init__()              
         self.idle_draw = 0.001 #kW
-        self.maint_timer = random.randrange(0, util.seconds(6,'months') )
+        self.maint_timer = random.randrange(util.seconds(6,'months'), util.seconds(2,'years') )
         self.maint_task = None
         self.wear = 1.0
         self.broken = False
@@ -143,6 +143,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if not task: return
         if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
             self.maint_task = None
+            self.wear += (1 - self.wear) / 2
             self.maint_timer = random.randrange(int (util.seconds(1,'months') * self.wear), int( util.seconds(6,'months') * self.wear ) )
         elif task.name == ''.join(['Repair ',self.name]) and task.target == self:
             self.broken = False

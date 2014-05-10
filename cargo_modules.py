@@ -3,6 +3,7 @@
 from generic_module import BasicModule
 from equipment import CBM, SolarPanel, DOCK_EQUIPMENT
 from clutter import Clutter
+from engines import Merlin_A, Engine
 
 import math
 import numpy as np
@@ -41,6 +42,11 @@ class DragonCargoModule(BasicModule):
         self.equipment['Solars1'][3].capacity=1
         self.equipment['Solars1'][3].in_vaccuum=True
         self.equipment['Solars1'][3].extended=True
+        
+        self.equipment['Engine0']= [ np.array([ -1 , 0 , 0 ]), np.array([ math.pi , 0]), 'ENGINE', Merlin_A().install(self)]
+        
+        self.equipment['Fuel']= [ np.array([ -1 , 1 , 0 ]), np.array([ math.pi , 0]), 'TANK', Merlin_A().install(self)]        
+        self.equipment['Oxidizer']= [ np.array([ -1 , -1 , 0 ]), np.array([ math.pi , 0]), 'TANK', Merlin_A().install(self)]        
         
     def setup_simple_resupply(self):
         self.stowage.add(Clutter('Food', 90.5 )) #one person-year of food
