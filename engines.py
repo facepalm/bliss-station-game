@@ -1,9 +1,9 @@
 
-from equipment import Equipment, Machinery, Rack
+from equipment import Equipment, Machinery, Rack, Storage
 import clutter
 import util
 import atmospherics
-from filtering import Searcher
+from filtering import Searcher, ClutterFilter
      
 class Engine(Machinery):
     '''Ancestor to all modern rocket engines, the Engine is best known for its crummy Isp rating'''
@@ -23,13 +23,26 @@ class Engine(Machinery):
         #    self.task = Task(''.join(['Stare at Mystery Box']), owner = self, timeout=86400, task_duration = 86400, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search )
         #    self.installed.station.tasks.add_task(self.task)
         
+        
+class Thruster(Machinery):
+    def __init__(self):
+        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_nodule.tif"
+        super(Engine, self).__init__()
+        self.in_vaccuum=True #default for rocket engines         
+        self.Isp = 300
+        self.fuel = 'Kerosene'
+        self.oxid = 'LOX'
+        
+    def update(self,dt):
+        super(Engine, self).update(dt)   
+                
+        
 class Merlin_A(Engine):
     def __init__(self):
         if not hasattr(self,'imgfile'): self.imgfile = "images/merlin_engine.tif"
         super(Merlin_A, self).__init__()              
         self.Isp = 450
         
-
 class KeroseneTank(Storage):
     def __init__(self):   
         if not hasattr(self,'imgfile'): self.imgfile = "images/flammable_fuel.tif"
