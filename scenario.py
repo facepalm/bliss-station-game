@@ -82,10 +82,9 @@ class Scenario():
         elif name == 'DOCKINGTEST':
             '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
                 He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
-            modDock = UnityModule()    
+   
             modB   = ZvezdaModule()
-            self.station = Station(modDock, "Docker Station", logger)
-            self.station.berth_module(None,None,modB, None, True)
+            self.station = Station(modB, "Docker Station", logger)
             
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
