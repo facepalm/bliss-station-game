@@ -78,7 +78,25 @@ class Scenario():
             ernie.needs['Food'].set_amt_to_severity('HIGH')
             ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
             #modB.equipment['Electrolyzer'][3].broken=True
+
+        elif name == 'DOCKINGTEST':
+            '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
+                He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
+            modDock = UnityModule()    
+            modB   = ZvezdaModule()
+            self.station = Station(modDock, "Docker Station", logger)
+            self.station.berth_module(None,None,modB, None, True)
             
+            modDrag = DragonCargoModule()
+            modDrag.setup_simple_resupply()
+            
+            #TODO: position Dragon on "docking" approach, add docking task
+            
+            ernie = Human('Ernest',station=self.station,logger=self.station.logger)
+            self.station.actors[ernie.id] = ernie
+            ernie.location = modB.node('hall0')
+            ernie.xyz = modB.location
+                                    
         else: #'DEFAULT'
             modDock = UnityModule()                   
             self.station = Station(modDock, 'NewbieStation',logger)
