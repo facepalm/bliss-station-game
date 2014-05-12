@@ -95,7 +95,7 @@ class BasicModule():
         if "Clutter" in filter_.comparison_type:
             hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
             
-            
+        random.shuffle(hits)    
         hits.sort(key=lambda tup: tup[2], reverse=True)
         #print hits        
         return hits[0] if hits and hits[0][2] else [None, None, False]        

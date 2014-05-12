@@ -49,6 +49,7 @@ class KeroseneTank(Storage):
         super(KeroseneTank, self).__init__()         
         self.filter = ClutterFilter(['Kerosene'])
         self.stowage.capacity = 2.0
+        self.stowage.add(clutter.Clutter('Kerosene', mass = 1600, density = 800.0 ))
 
 class OxygenTank(Storage):
     def __init__(self):   
@@ -56,4 +57,5 @@ class OxygenTank(Storage):
         super(OxygenTank, self).__init__()         
         self.filter = ClutterFilter(['LOX'])
         self.stowage.capacity = 2.0
+        self.stowage.add(clutter.Clutter('LOX', mass = 2252.0, density = 1146.0 ))
         

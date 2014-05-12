@@ -52,6 +52,7 @@ class Station():
         for m in self.modules.values():
             [obj, loc, score] = m.search(filter_)
             hits.append( [ obj, loc, score ] )
+        random.shuffle(hits)    
         hits.sort(key=lambda tup: tup[2], reverse=True)
         #print hits
         return hits[0] if hits and hits[0][2] else [None, None, None]
