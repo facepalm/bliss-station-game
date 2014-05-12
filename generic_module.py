@@ -229,7 +229,7 @@ class BasicModule():
         #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
         self.sprite.draw()
         for e in self.equipment.keys():
-            if self.equipment[e][3]:
+            if self.equipment[e][3] and self.equipment[e][3].visible:
                 l=self.getXYZ(self.equipment[e][0]) 
                 #rotimg=self.equipment[e][3].img.get_transform
                 self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])

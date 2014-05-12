@@ -26,6 +26,7 @@ class Equipment(object):
         self.type = 'Misc'
         self.satisfies = dict() #what qualities can this equipment provide?
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        self.visible = True
         #basic health stats and such go here, as well as hooking into the task system
         
         if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_equipment.tif"
@@ -281,7 +282,7 @@ class Battery(Equipment):
         self.discharge_rate = 2 #kilowatts
         self.efficiency = 0.95
                 
-    def update(self,dt): #TODO add time calculations
+    def update(self,dt): 
         #print self.charge
         super(Battery, self).update(dt)
         if self.installed:

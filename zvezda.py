@@ -1,7 +1,7 @@
 
 
 from generic_module import BasicStationModule
-from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window
+from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery
 from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
 from equipment_computer import DockingComputer
 
@@ -77,6 +77,9 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
         
         self.equipment['Docking Console'] = [ np.array([ -0.5 , 0.35 , 0 ]), np.array([ 0 , 0]), 'CONSOLE', DockingComputer().install(self)]
+        self.equipment['BackupBattery'] = [ np.array([ -0.6 , 0.35 , 0 ]), np.array([ 0 , 0]), 'ELEC', Battery().install(self)]
+        self.equipment['BackupBattery'][3].capacity = 3
+        self.equipment['BackupBattery'][3].visible = False
         
         graytank = WaterTank().install(self)
         graytank.filter = ClutterFilter(['Gray Water'])
