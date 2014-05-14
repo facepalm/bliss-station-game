@@ -222,14 +222,16 @@ class DockingRing(Equipment):
         self.imgfile = "images/closed_hatch.tif"
         self.refresh_image()
         
-    def dock(self, target, instant = False):
-        self.docked=target        
-        if instant: 
+    def dock(self, target, partner=None, instant = False):
+        self.docked=target                
+        self.in_vaccuum = False
+        self.partner=partner
+        if instant:             
             self.open_()
         else:
-            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-            self.installed.station.tasks.add_task(self.task)
-        self.in_vaccuum = False
+            if not self.installed.station: return
+            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+            self.installed.station.tasks.add_task(self.task)            
                 
     def undock(self, instant = False):
         if self.open: 
@@ -241,14 +243,17 @@ class DockingRing(Equipment):
                 self.installed.station.tasks.add_task(self.task)
         self.docked = None
         self.in_vaccuum = True
+        self.partner=None
         
     def task_finished(self,task):
         super(DockingRing, self).task_finished(task) 
         if task.name == 'Close Hatch': 
             #TODO check for someone in the other module
+            if self.partner: self.partner.close_()
             self.close_()
         elif task.name == 'Open Hatch':
             self.open_()
+            if self.partner: self.partner.open_()
             #TODO add a task to connect pipes, open other side
         
 class CBM(DockingRing):

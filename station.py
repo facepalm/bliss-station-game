@@ -58,12 +58,11 @@ class Station():
         safe_location = np.array([-30,-30+60*random.random(),0])
         
         module.location = safe_location
-        module.orientation = np.array([ math.pi/8, 0 ])
+        module.orientation = np.array([ -math.pi +2*math.pi*random.random(), 0 ])
         
         self.exterior_objects.append(module)
         module.refresh_image()
         
-        #TODO add docking task
         dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
         if not dock_comp:
             #TODO fail more gracefully

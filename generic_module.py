@@ -173,8 +173,8 @@ class BasicModule():
         #collision detection
 
         #dock, finally
-        self.equipment[my_node][3].dock( neighbor, instant)
-        neighbor.equipment[their_node][3].dock( self, instant )
+        self.equipment[my_node][3].dock( neighbor, neighbor.equipment[their_node][3], instant)
+        neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
         
         # map graphs together
         
