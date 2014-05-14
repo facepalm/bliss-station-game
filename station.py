@@ -1,5 +1,6 @@
 #from pygraph.classes.graph import graph
 import networkx as nx
+import numpy as np
 
 from generic_module import DestinyModule, separate_node
 from zvezda import ZvezdaModule
@@ -7,7 +8,7 @@ from docking_modules import UnityModule
 from cargo_modules import DragonCargoModule
 from module_resources import ResourceBundle
 from tasks import TaskTracker
-import random
+import random, math
 import util
 import logging
 
@@ -45,7 +46,14 @@ class Station():
         
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
-                
+        
+        
+    def begin_docking_approach(self,module):
+        #TODO calculate boundary of station, multiply by 1.25
+        safe_location = np.array([-30,-30+60*random.random(),0])
+        
+        module.location = safe_location
+        module.orientation = np.array([ 2*math.pi*random.random(), 0 ])
         
     def search(self, filter_):
         hits=[]

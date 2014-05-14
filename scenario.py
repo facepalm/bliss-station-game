@@ -88,8 +88,10 @@ class Scenario():
             
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
-            
+                       
             #TODO: position Dragon on "docking" approach, add docking task
+            self.station.begin_docking_approach(modDrag)
+            print modDrag.location, modDrag.orientation
             
             ernie = Human('Ernest',station=self.station,logger=self.station.logger)
             self.station.actors[ernie.id] = ernie
