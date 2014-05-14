@@ -33,6 +33,7 @@ class PathingWidget(object):
                 self.owner.transfer_node( self.path_list[0] )            
             self.owner.location = self.path_list.pop( 0 )                       
             if not self.path_list: 
+                #print self.owner.xyz, self.current_coords
                 self.completed = True
                 self.owner.xyz = self.current_coords
                 return True

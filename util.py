@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 TIME_FACTOR = 24 # 120# 24
 
@@ -26,6 +27,10 @@ def separate_node(node):
     if not '|' in node: return False, False
     n=node.split('|')
     return n
+
+def vec_dist(a,b):
+    diff = b-a
+    return np.sqrt( np.vdot( diff , diff ) )
 
 generic_logger=logging.getLogger("SystemLog")
 generic_logger.setLevel(logging.DEBUG)

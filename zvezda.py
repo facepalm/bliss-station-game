@@ -76,8 +76,8 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', OxygenElectrolyzer().install(self)]
         self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
         
-        self.equipment['Docking Console'] = [ np.array([ -0.5 , 0.35 , 0 ]), np.array([ 0 , 0]), 'CONSOLE', DockingComputer().install(self)]
-        self.equipment['BackupBattery'] = [ np.array([ -0.6 , 0.35 , 0 ]), np.array([ 0 , 0]), 'ELEC', Battery().install(self)]
+        self.add_equipment('Docking Console', DockingComputer().install(self), np.array([ -0.5 , 0.35 , 0 ]), eq_type='CONSOLE' )
+        self.add_equipment('BackupBattery', Battery().install(self), np.array([ -0.6 , 0.35 , 0 ]), eq_type='ELECTRICAL' )
         self.equipment['BackupBattery'][3].capacity = 3
         self.equipment['BackupBattery'][3].visible = False
         
@@ -86,8 +86,7 @@ class ZvezdaModule(BasicStationModule):
         graytank.imgfile = "images/gray_water.tif"
         graytank.refresh_image()
         self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'LSS' )
-        
-        
+                
         self.equipment['Solars0'][3].extended=True
         self.equipment['Solars1'][3].extended=True        
         

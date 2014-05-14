@@ -213,7 +213,13 @@ class BasicModule():
         for e in range(1,len(edges)):            
             self.add_edge( self.node( edges[ e - 1 ] ), self.node( edges[ e ] ) )
         
-    def add_equipment(self, eq_node, eq_obj, eq_coords, hall_node, eq_orientation=np.array([ 0 , 0]), eq_type='MISC' ):
+    def add_equipment(self, eq_node, eq_obj, eq_coords, hall_node=None, eq_orientation=np.array([ 0 , 0]), eq_type='MISC' ):
+        if not hall_node:
+            all_nodes = [separate_node(n)[1] for n in self.nodes.keys()]
+            hall_nodes = [n for n in all_nodes if not n in self.equipment.keys()]            
+            hall_nodes.sort(key=lambda t: util.vec_dist( self.nodes[self.node( t )] , eq_coords ), reverse=False)
+            #print [util.vec_dist( self.nodes[self.node( t )] , eq_coords ) for t in hall_nodes]
+            hall_node = hall_nodes[0]
         node_coords = self.nodes[ self.node( hall_node ) ] + 0.8 * ( eq_coords - self.nodes[ self.node( hall_node ) ] ) 
         self.nodes[self.node(eq_node)] = node_coords
         self.add_edge( self.node(hall_node), self.node(eq_node) )

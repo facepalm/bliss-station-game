@@ -33,7 +33,7 @@ class DockingComputer(Computer, Rack):
         self.docking_item = item
         self.docking_target = target if target else self.installed.station
         self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-        #self.installed.station.tasks.add_task(self.docking_task)    
+        self.installed.station.tasks.add_task(self.docking_task)    
             
             
 #class DockingPath():
