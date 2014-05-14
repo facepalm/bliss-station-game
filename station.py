@@ -67,7 +67,7 @@ class Station():
         if not dock_comp:
             #TODO fail more gracefully
             assert False, 'Docking initialized with no active docking computer!  WTF mang?'
-        dock_comp.dock_module(module)
+        dock_comp.dock_module([module,None],[None,None])
 
             
         
