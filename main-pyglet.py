@@ -1,4 +1,4 @@
-import util
+import util, math
 import logging
 import pyglet
 from pyglet.gl import *  
@@ -34,7 +34,7 @@ util.load_sprite = load_sprite
 
 def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
     sprite = pyglet.sprite.Sprite(image,x=util.ZOOM*x,y=util.ZOOM*y)
-    sprite.rotation= 90+1 * 180/3.14159 * rot
+    sprite.rotation= -1 * 180/math.pi * rot
     return sprite
     
 util.image_to_sprite = image_to_sprite

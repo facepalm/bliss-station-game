@@ -58,7 +58,7 @@ class Station():
         safe_location = np.array([-30,-30+60*random.random(),0])
         
         module.location = safe_location
-        module.orientation = np.array([ math.pi/4, 0 ])
+        module.orientation = np.array([ math.pi/8, 0 ])
         
         self.exterior_objects.append(module)
         module.refresh_image()
