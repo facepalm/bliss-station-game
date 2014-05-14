@@ -2,6 +2,7 @@
 import networkx as nx
 import numpy as np
 
+from filtering import EquipmentFilter
 from generic_module import DestinyModule, separate_node
 from zvezda import ZvezdaModule
 from docking_modules import UnityModule
@@ -15,12 +16,13 @@ import logging
 class Station():
     def __init__(self,initial_module=None, name=None, logger=None):
         self.modules=dict()
+        self.exterior_objects=[]
         self.resources=ResourceBundle()
         self.paths=nx.Graph()
         self.tasks=TaskTracker()
         self.actors=dict()
         self.name = name if name else "GenericStation"
-        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger        
         
         if initial_module: self.berth_module(None,None,initial_module,None)                        
                        
@@ -41,6 +43,9 @@ class Station():
         #attempt docking
         assert module.berth(mod_dock, my_module, my_dock, instant)
         
+        #remove if hanging outside
+        if module in self.exterior_objects: self.exterior_objects.remove(module)
+        
         #merge resources
         self.resources.grow()
         
@@ -53,7 +58,19 @@ class Station():
         safe_location = np.array([-30,-30+60*random.random(),0])
         
         module.location = safe_location
-        module.orientation = np.array([ 2*math.pi*random.random(), 0 ])
+        module.orientation = np.array([ math.pi/4, 0 ])
+        
+        self.exterior_objects.append(module)
+        module.refresh_image()
+        
+        #TODO add docking task
+        dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
+        if not dock_comp:
+            #TODO fail more gracefully
+            assert False, 'Docking initialized with no active docking computer!  WTF mang?'
+        dock_comp.dock_module(module)
+
+            
         
     def search(self, filter_):
         hits=[]
@@ -96,6 +113,8 @@ class Station():
         
     def draw(self, window):
         if not window: return self.logger.warning("Requested draw to Nonetype.")
+        for m in self.exterior_objects:
+            m.draw(window)
         for m in self.modules.values():
             m.draw(window)
         for a in self.actors:
