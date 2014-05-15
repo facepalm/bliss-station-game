@@ -220,7 +220,7 @@ class BasicModule():
             hall_nodes.sort(key=lambda t: util.vec_dist( self.nodes[self.node( t )] , eq_coords ), reverse=False)
             #print [util.vec_dist( self.nodes[self.node( t )] , eq_coords ) for t in hall_nodes]
             hall_node = hall_nodes[0]
-        node_coords = self.nodes[ self.node( hall_node ) ] + 0.8 * ( eq_coords - self.nodes[ self.node( hall_node ) ] ) 
+        node_coords = self.nodes[ self.node( hall_node ) ] + ( eq_coords - self.nodes[ self.node( hall_node ) ] ) 
         self.nodes[self.node(eq_node)] = node_coords
         self.add_edge( self.node(hall_node), self.node(eq_node) )
         self.equipment[ eq_node ] = [ eq_coords, eq_orientation, eq_type, eq_obj]

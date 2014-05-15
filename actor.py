@@ -37,7 +37,7 @@ class Actor(object):
     
     def draw(self,window):
         zoom=util.ZOOM
-        l= self.path.current_coords if self.path else self.station.loc_to_xyz( self.location )
+        l= self.path.current_coords if (self.path and not self.path.completed) else self.station.loc_to_xyz( self.location )
         self.img.blit(zoom*l[0], zoom*l[1], 0)        
         
     def drop(self):

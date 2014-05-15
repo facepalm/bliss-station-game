@@ -36,6 +36,7 @@ class PathingWidget(object):
                 #print self.owner.xyz, self.current_coords
                 self.completed = True
                 self.owner.xyz = self.current_coords
+                #print self.owner.xyz, self.owner.station.loc_to_xyz( self.owner.location ), self.owner.location 
                 return True
             self.traverse_step( remainder_dist )            
         else:    
