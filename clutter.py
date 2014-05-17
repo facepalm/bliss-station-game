@@ -51,7 +51,7 @@ class Clutter(object):
     def refresh_image(self):    
         if not util.GRAPHICS: return                
         if self.name == 'Water': 
-            self.imgfile = 'images/glitch-assets/cup_of_water/cup_of_water__x0.5_iconic_png_1354833111.png'
+            self.imgfile = 'images/glitch-assets/cup_of_water/cup_of_water__x1_iconic_png_1354833111.png'
         else:
             self.imgfile = 'images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'
         self.sprite = util.load_sprite(self.imgfile)

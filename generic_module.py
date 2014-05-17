@@ -236,7 +236,7 @@ class BasicModule():
         self.sprite.draw()
         for c in self.stowage.contents:
             if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
-                loc_xyz = self.getXYZ( c.local_coords )
+                loc_xyz = self.getXYZ( 0.8*c.local_coords )
                 c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
                 c.sprite.rotation = (-180/math.pi)*self.orientation[0]
                 c.sprite.draw()
