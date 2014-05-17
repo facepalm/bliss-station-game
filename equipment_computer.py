@@ -14,12 +14,15 @@ class Computer(Equipment):
     '''Progenitor class for non-moving computery bits'''
     
     def __init__(self):
-        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_computer.tif"
         super(Computer, self).__init__()              
         self.idle_draw = 0.100 #kW
 
     def update(self,dt):            
         super(Computer, self).update(dt)
+        
+    def refresh_image(self):     
+        super(Computer, self).refresh_image()
+        self.sprite.add_layer('Computer',util.load_image("images/computer_40x40.png"))
 
 class DockingComputer(Computer, Rack):
     def __init__(self):
@@ -31,6 +34,10 @@ class DockingComputer(Computer, Rack):
         self.docking_path = None #The path object that will interpolate its journey
         self.docking_task = None
         self.docking_duration = util.seconds(2,'minutes')
+    
+    def refresh_image(self):     
+        super(DockingComputer, self).refresh_image()
+        self.sprite.add_layer('DockingComputer',util.load_image("images/smalldockingsymbol_40x40.png"))
         
     def dock_module(self,item=[None,None],target=[None, None]):
         if not item[0]: return False

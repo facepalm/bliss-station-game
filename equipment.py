@@ -274,13 +274,18 @@ class CBM(DockingRing):
 #specialized, installed, single-purpose equipment
 class SolarPanel(Equipment):
     def __init__(self):   
-        self.imgfile = "images/solarpanel_horiz.tif"
-        self.anchor = [ 2 , 5 ]
         super(SolarPanel, self).__init__()       
           
         self.extended = False
         self.in_vaccuum = True
         self.capacity= 5 #kW
+        
+    def refresh_image(self):     
+        super(SolarPanel, self).refresh_image()
+        img = util.load_image("images/solarpanel_horiz.png")
+        img.anchor_x, img.anchor_y = [2,15]
+        self.sprite.add_layer('SolarPanel',img)
+        self.sprite.layer['Equipment'].visible=False        
         
     def update(self,dt):
         super(SolarPanel, self).update(dt)    
