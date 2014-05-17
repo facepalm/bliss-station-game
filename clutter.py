@@ -1,3 +1,6 @@
+import random
+import util
+import numpy as np
 
 #miscellaneous stuff related to the loose objects one might find floating around the station
 
@@ -31,6 +34,8 @@ class Clutter(object):
         self.name = name
         self.mass = mass
         self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None
+        self.local_coords = np.array([random.uniform(-1,1),random.uniform(-1,1),0])
+        self.sprite = None
         if isinstance(self.quality,dict):
             if self.name == 'Medical Supplies': self.quality['Medical'] = self.mass
             if self.name == 'Mechanical Supplies': self.quality['Spare Parts'] = self.mass
@@ -39,6 +44,17 @@ class Clutter(object):
                     self.quality[q] = self.mass / len(self.quality.keys())
         if self.name in common_subtypes: self.name = common_subtypes[self.name]
         self.density = common_densities[self.name] if self.name in common_densities.keys() else density
+        
+        self.refresh_image()
+        
+        
+    def refresh_image(self):    
+        if not util.GRAPHICS: return                
+        if self.name == 'Water': 
+            self.imgfile = 'images/glitch-assets/cup_of_water/cup_of_water__x0.5_iconic_png_1354833111.png'
+        else:
+            self.imgfile = 'images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'
+        self.sprite = util.load_sprite(self.imgfile)
         
     def get_volume(self): return self.mass/self.density
     volume = property(get_volume, None, None, "Clutter volume" )  
