@@ -34,22 +34,10 @@ class Equipment(object):
         self.refresh_image()    
      
     def refresh_image(self):
-        if not util.GRAPHICS == 'pyglet': return
-        
+        if not util.GRAPHICS == 'pyglet': return        
         import graphics
-        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name)
-        
+        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name)        
         self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
-        
-        #img = self.img_composite()
-        
-        #anchor_x = self.anchor[0] if hasattr(self,"anchor") else None
-        #anchor_y = self.anchor[1] if hasattr(self,"anchor") else None
-        
-        #img.anchor_x = anchor_x if anchor_x else img.width // 2
-        #img.anchor_y = anchor_y if anchor_y else img.height // 2 
-        #self.sprite = util.image_to_sprite(img)
-        #self.sprite = util.load_sprite( self.imgfile, anchor_x, anchor_y )
                
       
     def update(self,dt):
@@ -117,14 +105,11 @@ class Equipment(object):
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
-        super(Window, self).__init__()     
-        
-    #def img_composite(self):
-    #    return util.load_image("images/small_window.png")    
+        super(Window, self).__init__()       
         
     def refresh_image(self):     
         super(Window, self).refresh_image()
-        if not 'Window' in self.sprite.layer: self.sprite.add_layer('Window',util.load_image("images/small_window.png"))
+        self.sprite.add_layer('Window',util.load_image("images/small_window.png"))
         self.sprite.layer['Equipment'].visible=False
         
     def update(self,dt):
@@ -144,16 +129,11 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         self.maint_task = None
         self.wear = 1.0
         self.broken = False
-                
-    def img_composite(self):
-        img = super(Machinery, self).img_composite()
-        print len(img.get_image_data().get_data('RGBA',img.width*4))
-        
-
-        overlay = util.load_image('images/machinery_40x40.png')
-        img.get_texture().blit_into(overlay,img.anchor_x,img.anchor_y,0)        
-
-        return img               
+            
+    def refresh_image(self):     
+        super(Machinery, self).refresh_image()
+        self.sprite.add_layer('Machinery',util.load_image("images/machinery_40x40.png"))
+                 
                 
     def update(self,dt):
         super(Machinery, self).update(dt)     
