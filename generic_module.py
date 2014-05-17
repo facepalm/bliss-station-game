@@ -64,7 +64,7 @@ class BasicModule():
                 
         if True:#not hasattr(self,'imgfile'):
             if util.GRAPHICS:
-                self.img = util.make_solid_image(int(2*self.size[0]),int(2*self.size[1]),(128,128,128,255))
+                self.img = util.make_solid_image(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255))
             else: 
                 self.imgfile = "images/module_placeholder.jpg"            
 
@@ -244,9 +244,10 @@ class BasicModule():
             if self.equipment[e][3] and self.equipment[e][3].visible:
                 l=self.getXYZ(self.equipment[e][0]) 
                 #rotimg=self.equipment[e][3].img.get_transform
-                self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])
-                self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
-                self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
+                self.equipment[e][3].sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.equipment[e][1][0]+self.orientation[0])/math.pi)
+                #self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])
+                #self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
+                #self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
                  
 
 

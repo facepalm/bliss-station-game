@@ -59,3 +59,6 @@ def load_sprite(filename):
     
 def image_to_sprite():
     pass       
+    
+station_batch = None
+     
