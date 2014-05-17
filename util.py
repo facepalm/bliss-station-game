@@ -3,7 +3,7 @@ import numpy as np
 
 TIME_FACTOR = 24 # 120# 24
 
-ZOOM = 12
+ZOOM = 15
 
 equipment_targets = dict()
 

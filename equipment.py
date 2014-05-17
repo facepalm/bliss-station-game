@@ -109,7 +109,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
         
     def refresh_image(self):     
         super(Window, self).refresh_image()
-        self.sprite.add_layer('Window',util.load_image("images/small_window.png"))
+        self.sprite.add_layer('Window',util.load_image("images/window.png"))
         self.sprite.layer['Equipment'].visible=False
         
     def update(self,dt):
@@ -213,23 +213,29 @@ class Storage(Equipment):
 class DockingRing(Equipment):
     def __init__(self):   
         if not hasattr(self,'imgfile'): self.imgfile = "images/closed_hatch.tif"
-        super(DockingRing, self).__init__()     
-        self.docked = None #a pointer to the module we've docked to
         self.open = False
+        super(DockingRing, self).__init__()     
+        self.docked = None #a pointer to the module we've docked to        
         self.in_vaccuum = True
         self.partner = None #a pointer to the docking equipment partner
+        
+    def refresh_image(self):     
+        super(DockingRing, self).refresh_image()
+        if self.open:
+            self.sprite.add_layer('DockingRing',util.load_image("images/open_hatch.png"))
+        else:
+            self.sprite.add_layer('DockingRing',util.load_image("images/closed_hatch.png"))
+        self.sprite.layer['Equipment'].visible=False    
         
     #these two need to generate tasks for unpowered rings
     def open_(self):
         if self.open: return
         if not self.docked: return False, "What are you, nuts?!"
         self.open = True
-        self.imgfile = "images/open_hatch.tif"
         self.refresh_image()
         
     def close_(self):
         self.open=False
-        self.imgfile = "images/closed_hatch.tif"
         self.refresh_image()
         
     def dock(self, target, partner=None, instant = False):

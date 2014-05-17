@@ -65,12 +65,12 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['Water1']= [ np.array([ 0 , 0.5 , 0 ]), np.array([ math.pi , 0]), 'LSS', WaterTank().install(self)]
         self.equipment['Toilet1']= [ np.array([ 0 , -0.5 , 0 ]), np.array([ -math.pi , 0]), 'LSS', UniversalToilet().install(self)]
         
-        self.equipment['Window01'] = [ np.array([ 0.3 , 0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
-        self.equipment['Window02'] = [ np.array([ 0.3 , -0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
+        self.equipment['Window01'] = [ np.array([ 0.3 , 0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
+        self.equipment['Window02'] = [ np.array([ 0.3 , -0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window11'] = [ np.array([ 0.4 , 0 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window12'] = [ np.array([ 0.1 , 0 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
-        self.equipment['Window21'] = [ np.array([ 0.5 , 0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
-        self.equipment['Window22'] = [ np.array([ 0.5 , -0.1 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
+        self.equipment['Window21'] = [ np.array([ 0.5 , 0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
+        self.equipment['Window22'] = [ np.array([ 0.5 , -0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         
         self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', WaterPurifier().install(self)]
         self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', OxygenElectrolyzer().install(self)]
