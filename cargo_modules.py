@@ -51,7 +51,7 @@ class DragonCargoModule(BasicModule):
     def setup_simple_resupply(self):
         self.stowage.add(Clutter('Food', 90.5 )) #one person-year of food
         self.stowage.add(Clutter('Water',466.4 )) #six person-months of water
-        self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
+        #self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
         self.stowage.add(Clutter('General Supplies', 100 ))
                 
         

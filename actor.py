@@ -25,20 +25,24 @@ class Actor(object):
         self.inventory = Stowage(0.5)
         self.path=None
         self.held=None
+        self.sprite=None
         self.xyz = np.array([ 0, 0, 0 ])
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
-        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_actor.tif"
         self.refresh_image()
      
     def refresh_image(self):
-        self.img = util.load_image(self.imgfile)
+        if not util.GRAPHICS == 'pyglet': return        
+        import graphics
+        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name,batch=util.actor_batch)        
+        self.sprite.add_layer('ActorBase',util.load_image("images/npc_crafty_bot__x1_idle0_png_1354839494_crop.png"))
     
-    def draw(self,window):
+    def update_location(self):
         zoom=util.ZOOM
         l= self.path.current_coords if (self.path and not self.path.completed) else self.station.loc_to_xyz( self.location )
-        self.img.blit(zoom*l[0], zoom*l[1], 0)        
+        self.sprite.update_sprite(zoom*l[0], zoom*l[1],0)
+       
         
     def drop(self):
         pass #TODO drop held item        

@@ -118,7 +118,7 @@ class Station():
         for m in self.modules.values():
             m.draw(window)
         for a in self.actors:
-            self.actors[a].draw(window)
+            self.actors[a].update_location()
                     
         
                                       

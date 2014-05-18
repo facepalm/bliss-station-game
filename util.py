@@ -61,4 +61,5 @@ def image_to_sprite():
     pass       
     
 station_batch = None
+actor_batch = None
      
