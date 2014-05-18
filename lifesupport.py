@@ -15,6 +15,10 @@ class UniversalToilet(Machinery):
         self.satisfies['WasteCapacityLiquid'] = 0.5
         self.satisfies['WasteCapacitySolid'] = 0.5
 
+    def refresh_image(self):     
+        super(UniversalToilet, self).refresh_image()
+        self.sprite.add_layer('Toilet',util.load_image("images/14_toilets_40x40.png"))
+
     def deposit(self, amt1=0, amt2=0):
         print amt1, amt2
         if amt1: self.tank.add( clutter.Clutter( "Waste Water", amt1 ) )

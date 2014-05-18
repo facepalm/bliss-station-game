@@ -77,7 +77,7 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
         
         self.add_equipment('Docking Console', DockingComputer().install(self), np.array([ -0.5 , 0.35 , 0 ]), eq_type='CONSOLE' )
-        self.add_equipment('BackupBattery', Battery().install(self), np.array([ -0.6 , 0.35 , 0 ]), eq_type='ELECTRICAL' )
+        self.add_equipment('BackupBattery', Battery().install(self), np.array([ -0.8 , 0.35 , 0 ]), eq_type='ELECTRICAL' )
         self.equipment['BackupBattery'][3].capacity = 3
         self.equipment['BackupBattery'][3].visible = False
         

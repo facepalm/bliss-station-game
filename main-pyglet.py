@@ -40,7 +40,8 @@ def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
 util.image_to_sprite = image_to_sprite
     
 util.station_batch = pyglet.graphics.Batch()    
-util.actor_batch = pyglet.graphics.Batch()   
+util.actor_batch = pyglet.graphics.Batch()  
+util.parent_group = pyglet.graphics.Group() 
                                       
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
