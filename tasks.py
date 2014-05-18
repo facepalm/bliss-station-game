@@ -36,7 +36,7 @@ class Task(object):
         self.description = 'NONE'
         self.status = 'NEW'
         self.station = station
-        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if self.owner else util.generic_logger
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if (self.owner and hasattr(self.owner,'logger')) else util.generic_logger
         
     def update(self,dt):
         if self.timeout: self.timeout -= dt        

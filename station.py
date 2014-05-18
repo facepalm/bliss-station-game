@@ -82,8 +82,8 @@ class Station():
         #print hits
         return hits[0] if hits and hits[0][2] else [None, None, None]
         
-    def random_location(self):
-        module = random.choice(self.modules.values())
+    def random_location(self, modules_to_exclude=[]):        
+        module = random.choice([m for m in self.modules.values() if m not in modules_to_exclude])
         return None, module.filterNode( module.node('Inside') ), None
         
     def update(self,dt):

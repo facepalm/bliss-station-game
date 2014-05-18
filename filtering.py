@@ -22,7 +22,7 @@ class Searcher(): #wrapper around search method to allow it to be called later
         return self.station.search(self.filter)
         
 class ClutterFilter(SearchFilter):
-    def __init__(self,target=['All'], **kwargs):    
+    def __init__(self,target=['All'],  **kwargs):    
         super(ClutterFilter, self).__init__(target=target, **kwargs)              
             
     def compare(self,obj):
@@ -44,7 +44,7 @@ class ClutterFilter(SearchFilter):
         elif 'Edible Food' in self.target and obj.name == 'Food': 
             if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05
-        return clutter.equals(self.target, obj.name)
+        return clutter.equals(self.target[0], obj.name)
         
     def target_string(self):
         out = ''

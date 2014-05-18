@@ -46,6 +46,7 @@ class BasicModule():
         self.composition = {'Al' : 14500}      
         self.package_material = [] #if a list of filters, material put in this will not be removed
         self.station = None
+        self.manifest=None
         
         self.atmo = Atmosphere()
         self.atmo.volume= math.pi * 2*self.size[0] * pow (self.size[1], 2)   
@@ -97,7 +98,7 @@ class BasicModule():
             
         random.shuffle(hits)    
         hits.sort(key=lambda tup: tup[2], reverse=True)
-        #print hits        
+        
         return hits[0] if hits and hits[0][2] else [None, None, False]        
                      
     def get_living_space(self): return self.stowage.free_space       
@@ -132,6 +133,8 @@ class BasicModule():
             for c in self.stowage.contents:
                 if isinstance(c,Equipment) and not c.installed and not c.task:
                     c.install_task(self.station)
+        if self.manifest: 
+            self.manifest.check_satisfied()
                 
         
     def get_random_dock(self, side_port_allowed=True):

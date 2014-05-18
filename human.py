@@ -21,6 +21,10 @@ class Human(Actor):
         self.activity_state = 'IDLE'
         self.suffocation = 0.0
         
+    def refresh_image(self):       
+        super(Human, self).refresh_image()
+        self.sprite.add_layer('ActorBase',util.load_image("images/doll_wittgenstein__x1_1_png_1354832578_crop.png"))    
+        
     def hunger_hit(self):
         self.health -= 0.02 #TODO model malnutrition better later
         self.needs['Food']=Need('Food', self, 0.1, 0.1/86400.0, 0.1/600.0, self.new_dinner_task, self.hunger_hit)

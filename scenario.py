@@ -7,6 +7,7 @@ from tasks import TaskTracker
 from station import Station        
 from actor import Robot
 from human import Human        
+import manifest
 import util
 import logging
 
@@ -88,6 +89,9 @@ class Scenario():
             
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
+            
+            modDrag.manifest = manifest.Manifest(modDrag)
+            modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
                        
             #TODO: position Dragon on "docking" approach, add docking task
             self.station.begin_docking_approach(modDrag)
