@@ -72,9 +72,9 @@ class Station():
 
             
         
-    def search(self, filter_):
+    def search(self, filter_, modules_to_exclude=[]):
         hits=[]
-        for m in self.modules.values():
+        for m in [n for n in self.modules.values() if n not in modules_to_exclude]:
             [obj, loc, score] = m.search(filter_)
             hits.append( [ obj, loc, score ] )
         random.shuffle(hits)    

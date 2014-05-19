@@ -82,7 +82,7 @@ class BasicModule():
             
         
      
-    def search(self, filter_):
+    def search(self, filter_, **kwargs):
         hits=[]
         if "Equipment" in filter_.comparison_type or 'All' in filter_.comparison_type:
             hits.extend([[self.equipment[e][3], self.node( e ), filter_.compare(self.equipment[e][3]) ]  for e in self.equipment.keys() if self.equipment[e][3]])

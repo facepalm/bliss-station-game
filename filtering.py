@@ -16,10 +16,10 @@ class Searcher(): #wrapper around search method to allow it to be called later
     def __init__(self, filter_, station, **kwargs):
         self.station=station
         self.filter = filter_ if isinstance( filter_, SearchFilter ) else SearchFilter( filter_, **kwargs )
-        
-        
+        self.exclude=[] if not 'exclude' in kwargs else kwargs['exclude']
+                
     def search(self):
-        return self.station.search(self.filter)
+        return self.station.search(self.filter, modules_to_exclude=self.exclude)
         
 class ClutterFilter(SearchFilter):
     def __init__(self,target=['All'],  **kwargs):    

@@ -54,6 +54,8 @@ class Clutter(object):
             self.imgfile = 'images/glitch-assets/cup_of_water/cup_of_water__x1_iconic_png_1354833111.png'
         elif self.name == 'Food':    
             self.imgfile = 'images/glitch-assets/pi/pi__x1_rescaled_iconic_png_1354839579.png'
+        elif self.name == "Solid Waste":
+            self.imgfile = 'images/glitch-assets/loam/loam__x1_40_iconic_png_1354832758.png'
         else:
             self.imgfile = 'images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'
         self.sprite = util.load_sprite(self.imgfile)
