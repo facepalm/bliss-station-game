@@ -91,10 +91,11 @@ class Scenario():
             
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
-            #modDrag.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
+            
+            modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
             
             modDrag.manifest = manifest.Manifest(modDrag)
-            modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+            #modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
             modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')
                        
             #TODO: position Dragon on "docking" approach, add docking task

@@ -74,6 +74,8 @@ class Actor(object):
         if not self.task: return
         if not self.task.location: 
             self.task.target, self.task.location, d = self.task.fetch_location() #Grab location
+            if self.task.name == 'Move Solid Waste: Pick Up Solid Waste':
+                print self.task.target, self.task.location, d 
             #print self.task.location
             if not self.task.location: 
                 self.task.drop()

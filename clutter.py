@@ -145,6 +145,7 @@ class JanitorMon(object):
         
     def task_work_report(self,task,dt):
         if task.name.startswith('Pick Up'):
+            #print self.target, task.target
             #print gather_rate, dt, task.target.density, task.assigned_to.inventory.free_space
             remove_amt = min(gather_rate*dt*task.target.density,task.assigned_to.inventory.free_space*task.target.density)
             if remove_amt <= 0: return

@@ -29,13 +29,13 @@ class ManifestItem(object):
                 return False
         elif self.tasktype == 'Load':
             found_any = self.owner.module.stowage.search(self.filter)
-            if not found_any or (found_any.volume < self.taskamt and self.owner.module.stowage.free_space() > 0.25):
+            if not found_any or (found_any.volume < self.taskamt and self.owner.module.stowage.free_space > 0.25):
                 found_any = self.owner.module.station.search(self.filter,modules_to_exclude=[self.owner.module])   
-                if found_any:
+                if found_any[0]:
                     filter_str = self.filter.target_string()
                     self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "MODERATE")
                     self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module.station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
-                    self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: self.owner.module.node('Inside'), owner=self))
+                    self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None], owner=self))
                     self.owner.module.station.tasks.add_task(self.task)
                     return False     
         return True
