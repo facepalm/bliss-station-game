@@ -58,7 +58,7 @@ class Task(object):
             self.flag('COMPLETED') 
             
     def drop(self):
-        self.logger.info(''.join(["Task dropped!"]))
+        self.logger.info(''.join(["Task '",self.name,"' dropped!"]))
         self.flag('OPEN')                          
         self.assigned_to = None   
         self.location = None
@@ -79,7 +79,7 @@ class Task(object):
             self.status = new_flag
             if hasattr(self.owner, 'task_failed'): self.owner.task_failed(self)            
         if new_flag == 'COMPLETED' and not self.status == 'CLOSED':
-            self.logger.info(''.join(["Task finished!"]))
+            self.logger.info(''.join(["Task '",self.name,"' finished!"]))
             self.status = new_flag
             if hasattr(self.owner, 'task_finished'): self.owner.task_finished(self) 
         self.status = new_flag

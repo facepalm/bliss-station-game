@@ -74,7 +74,7 @@ class Actor(object):
         if not self.task: return
         if not self.task.location: 
             self.task.target, self.task.location, d = self.task.fetch_location() #Grab location
-            #print self.task.name, self.task.target, self.task.location
+            #print self.task.location
             if not self.task.location: 
                 self.task.drop()
                 self.task=None
