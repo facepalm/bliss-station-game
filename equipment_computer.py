@@ -29,6 +29,7 @@ class DockingComputer(Computer, Rack):
         if not hasattr(self,'imgfile'): self.imgfile = "images/docking_computer.tif"
         super(DockingComputer, self).__init__()              
         self.idle_draw = 0.200 #kW
+        self.docking_mode = 'DOCK'
         self.docking_item = None #The thing doing the docking or undocking (THEM)
         self.docking_target = None #The (module,dock) where it will be docking to (US)
         self.docking_path = None #The path object that will interpolate its journey
@@ -55,10 +56,35 @@ class DockingComputer(Computer, Rack):
         if self.docking_item[0] and not self.docking_item[1]: 
             self.docking_item[1] = self.docking_item[0].get_random_dock(side_port_allowed=False)                                        
         
-        self.docking_path = FlightPath().init_dock(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration)
+        self.docking_path = FlightPath(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration, FlightType='DOCK')
         
         self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
         self.installed.station.tasks.add_task(self.docking_task)    
+
+    def undock_module(self, item=[None,None]):
+        if not item[0]: return False
+        if not self.installed: return False
+        if self.docking_task and not self.docking_task.ended(): return False                       
+        #TODO check for fuel, engines, etc on item
+        
+        self.docking_item = item
+        self.docking_target = target
+        
+        if self.docking_item[0] and not self.docking_item[1]: 
+            self.docking_item[1] = self.docking_item[0].get_random_dock(side_port_allowed=False)                                        
+        
+        #TODO finish this method
+        
+        '''if not self.docking_target[0]: 
+            mods = self.installed.station.modules     
+            self.docking_target[0] = random.choice( [ mods[m] for m in mods if mods[m].get_random_dock() ] )    
+        if not self.docking_target[1]: self.docking_target[1] = self.docking_target[0].get_random_dock()                 
+        
+        self.docking_path = FlightPath(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration, FlightType='DOCK')
+        
+        self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+        self.installed.station.tasks.add_task(self.docking_task)    
+        '''
 
     def task_finished(self,task):
         if not task or not self.installed: return
@@ -73,12 +99,15 @@ class DockingComputer(Computer, Rack):
                 
             
 class FlightPath():
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.duration = None
         self.start_coords = [None,None]
         self.start_orient = [None,None]
         self.end_coords = [None,None,None]
         self.end_orient = [None,None,None]
+        
+        if 'FlightType' in kwargs and kwargs['FlightType']=='DOCK':
+            self.init_dock(*args, **kwargs)
                 
     def calculate_path(self):
         if not (self.duration and self.start_coords.any() and self.end_coords.any() and self.start_orient.any() and self.end_orient.any()):
@@ -95,7 +124,7 @@ class FlightPath():
         self.o1 = UnivariateSpline(x, np.array([0,0,0,0]), w=w,k=2, s=0)    
             
         
-    def init_dock(self,mod_dock, dock_dock, mod_docker, dock_docker, duration):
+    def init_dock(self,mod_dock, dock_dock, mod_docker, dock_docker, duration, **kwargs):
         self.duration=duration
         self.start_coords = mod_docker.location
         self.start_orient = mod_docker.orientation
@@ -108,8 +137,7 @@ class FlightPath():
         
         self.end_coords = mod_dock.getXYZ(mod_dock.equipment[dock_dock][0]) - loc_offset
         
-        self.calculate_path()
-        return self
+        self.calculate_path()        
         
     def get_time_point(self,t=0):
         return [np.array([self.c0(t), self.c1(t), self.c2(t)]), np.array([self.o0(t), self.o1(t)]) ]
