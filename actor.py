@@ -7,7 +7,7 @@ import uuid
 import numpy as np
 from util import separate_node
 import util, logging
-from filtering import EquipmentFilter
+from filtering import Searcher,EquipmentFilter
 
 class Actor(object):
     def __init__(self,name='Place Holder',station=None, logger=None):
@@ -50,6 +50,9 @@ class Actor(object):
     def new_idle_task(self,timeout,severity):
         t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = None, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location,logger=self.logger)
         return t     
+        
+    def refresh_station(self):
+        self.task=None    
         
     def update(self,dt):
         self.my_tasks.update(dt)

@@ -15,9 +15,10 @@ import logging
 class ScenarioMaster():
 
     def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
-        current_scenario=Scenario(scenario,logger)        
+        self.current_scenario=Scenario(scenario,logger)        
         
-        self.station = current_scenario.station  
+        self.station = self.current_scenario.station  
+          
           
         #modA.berth('CBM0', modB, 'CBM0')
         for m in self.station.modules.values(): print m.short_id, m.location, m.orientation    
@@ -42,6 +43,7 @@ class ScenarioMaster():
 
     def system_tick(self,dt):    
         self.station.update(dt*util.TIME_FACTOR)
+        self.current_scenario.stationB.update(dt*util.TIME_FACTOR)        
         self.time_elapsed += dt
 
                                           
@@ -92,14 +94,20 @@ class Scenario():
             
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
-            
+                                    
             modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
-            
+                                  
             modDrag.manifest = manifest.Manifest(modDrag)
             modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
             modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')
             
-            stationB=Station(modDrag,'StubStation', logger)
+            self.stationB=Station(modDrag,'StubStation', logger)
+            
+            rob = Robot('Robby')     
+            rob.station = self.stationB
+            self.stationB.actors[rob.id]=rob
+            rob.location = modDrag.node('store0')
+            rob.xyz = modDrag.location
                        
             #TODO: position Dragon on "docking" approach, add docking task
             self.station.begin_docking_approach(modDrag)

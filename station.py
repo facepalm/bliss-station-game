@@ -59,7 +59,11 @@ class Station():
                     self.modules[m] = other_station.modules[m]
                 else:
                     self.modules[other_station.modules[m].id] = other_station.modules[m]
-            
+                    
+            for a in other_station.actors:
+                other_station.actors[a].station = self
+                self.actors[a] = other_station.actors[a]
+                self.actors[a].refresh_station()
         
         #remove if hanging outside
         if module in self.exterior_objects: self.exterior_objects.remove(module)
@@ -70,6 +74,8 @@ class Station():
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
+    #def split_station(self, docking_ring):
+                
         
     def begin_docking_approach(self,module):
         #TODO calculate boundary of station, multiply by 1.25
@@ -108,8 +114,9 @@ class Station():
         self.tasks.update(dt)
         for m in self.modules:
             self.modules[m].update(dt)     
-        for a in self.actors:
-            self.actors[a].update(dt)       
+        print self.name, self.actors
+        for a in self.actors.values():
+            a.update(dt)       
             
     def loc_to_xyz(self,loc):
         [ node, name ] = separate_node(loc)
