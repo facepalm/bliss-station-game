@@ -55,7 +55,7 @@ class DockingComputer(Computer, Rack):
         if self.docking_item[0] and not self.docking_item[1]: 
             self.docking_item[1] = self.docking_item[0].get_random_dock(side_port_allowed=False)                                        
         
-        self.docking_path = DockingPath(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration)
+        self.docking_path = FlightPath().init_dock(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration)
         
         self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
         self.installed.station.tasks.add_task(self.docking_task)    
@@ -72,10 +72,31 @@ class DockingComputer(Computer, Rack):
             
                 
             
-class DockingPath():
-    def __init__(self, mod_dock, dock_dock, mod_docker, dock_docker, duration):
+class FlightPath():
+    def __init__(self):
+        self.duration = None
+        self.start_coords = [None,None]
+        self.start_orient = [None,None]
+        self.end_coords = [None,None,None]
+        self.end_orient = [None,None,None]
+                
+    def calculate_path(self):
+        if not (self.duration and self.start_coords.any() and self.end_coords.any() and self.start_orient.any() and self.end_orient.any()):
+            #TODO log this
+            assert False, "Flight path requested with incomplete information!"
+        self.x = np.array( [0, self.duration/4, 3*self.duration/4, self.duration] )
+        x=self.x
+        w=np.array([1,10,10,5])
+        self.c0 = UnivariateSpline(x, np.array([self.start_coords[0], self.start_coords[0]+10*math.cos(self.start_orient[0]), self.end_coords[0]-30*math.cos(self.end_orient[0]), self.end_coords[0]]), w=w,k=2, s=0)
+        self.c1 = UnivariateSpline(x, np.array([self.start_coords[1], self.start_coords[1]+10*math.sin(self.start_orient[0]), self.end_coords[1]-30*math.sin(self.end_orient[0]), self.end_coords[1]]), w=w,k=2, s=0)
+        self.c2 = UnivariateSpline(x, np.array([self.start_coords[2], self.start_coords[2], self.end_coords[2], self.end_coords[2]]), w=w,k=2, s=0)
+            
+        self.o0 = UnivariateSpline(x, np.array([self.start_orient[0], self.start_orient[0], self.end_orient[0], self.end_orient[0]]), w=w,k=2, s=0)
+        self.o1 = UnivariateSpline(x, np.array([0,0,0,0]), w=w,k=2, s=0)    
+            
+        
+    def init_dock(self,mod_dock, dock_dock, mod_docker, dock_docker, duration):
         self.duration=duration
-        #start_coords, start_orient, end_coords, end_orient, duration):
         self.start_coords = mod_docker.location
         self.start_orient = mod_docker.orientation
         self.start_orient %= 2*math.pi
@@ -87,21 +108,10 @@ class DockingPath():
         
         self.end_coords = mod_dock.getXYZ(mod_dock.equipment[dock_dock][0]) - loc_offset
         
-        #print self.start_coords, self.end_coords, self.start_orient, self.end_orient        
-        
-        self.x = np.array( [0, duration/4, 3*duration/4, duration] )
-        x=self.x
-        w=np.array([1,10,10,5])
-        self.c0 = UnivariateSpline(x, np.array([self.start_coords[0], self.start_coords[0]+10*math.cos(self.start_orient[0]), self.end_coords[0]-30*math.cos(self.end_orient[0]), self.end_coords[0]]), w=w,k=2, s=0)
-        self.c1 = UnivariateSpline(x, np.array([self.start_coords[1], self.start_coords[1]+10*math.sin(self.start_orient[0]), self.end_coords[1]-30*math.sin(self.end_orient[0]), self.end_coords[1]]), w=w,k=2, s=0)
-        self.c2 = UnivariateSpline(x, np.array([self.start_coords[2], self.start_coords[2], self.end_coords[2], self.end_coords[2]]), w=w,k=2, s=0)
-            
-        self.o0 = UnivariateSpline(x, np.array([self.start_orient[0], self.start_orient[0], self.end_orient[0], self.end_orient[0]]), w=w,k=2, s=0)
-        self.o1 = UnivariateSpline(x, np.array([0,0,0,0]), w=w,k=2, s=0)
+        self.calculate_path()
+        return self
         
     def get_time_point(self,t=0):
-        #return [ self.end_coords, self.end_orient ]
-        #print [np.array([self.c0(t), self.c1(t), self.c2(t)]), np.array([self.o0(t), self.o1(t)]) ]
         return [np.array([self.c0(t), self.c1(t), self.c2(t)]), np.array([self.o0(t), self.o1(t)]) ]
         
 util.equipment_targets['Docking Computer'] = DockingComputer
