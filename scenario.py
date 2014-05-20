@@ -89,6 +89,7 @@ class Scenario():
             modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
             self.station = Station(modB, "Docker Station", logger)
             
+            
             modDrag = DragonCargoModule()
             modDrag.setup_simple_resupply()
             
@@ -97,6 +98,8 @@ class Scenario():
             modDrag.manifest = manifest.Manifest(modDrag)
             modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
             modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')
+            
+            stationB=Station(modDrag,'StubStation', logger)
                        
             #TODO: position Dragon on "docking" approach, add docking task
             self.station.begin_docking_approach(modDrag)

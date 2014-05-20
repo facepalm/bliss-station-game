@@ -58,6 +58,7 @@ class Equipment(object):
             self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)             
         elif self.station:
             self.logger = logging.getLogger(self.station.logger.name +'.' + self.name)
+        self.task = None #a new station means our tasks are no longer relevant
 
     def uninstall(self):
         if not self.installed: return None # "Can't install the same thing twice!"

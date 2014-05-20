@@ -179,12 +179,13 @@ class BasicModule():
         self.equipment[my_node][3].dock( neighbor, neighbor.equipment[their_node][3], instant)
         neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
         
-        # map graphs together
-        
+        # map graphs together        
+                
         if neighbor.station:    
             if self.station:
-                print self.station, neighbor.station
-                assert False, "Station merging not in yet" #TODO replace with station merge
+                pass
+                #print self.station, neighbor.station
+                #assert False, "Station merging not in yet" #TODO replace with station merge
             else:         
                 self.station = neighbor.station 
                 self.station.paths.add_nodes_from(self.paths.nodes())
@@ -237,12 +238,7 @@ class BasicModule():
         zoom=util.ZOOM
         #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
         self.sprite.draw()
-        for c in self.stowage.contents:
-            if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
-                loc_xyz = self.getXYZ( 0.8*c.local_coords )
-                c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
-                c.sprite.rotation = (-180/math.pi)*self.orientation[0]
-                c.sprite.draw()
+        
         for e in self.equipment.keys():
             if self.equipment[e][3] and self.equipment[e][3].visible:
                 l=self.getXYZ(self.equipment[e][0]) 
@@ -251,7 +247,12 @@ class BasicModule():
                 #self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])
                 #self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
                 #self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
-                 
+        for c in self.stowage.contents:
+            if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
+                loc_xyz = self.getXYZ( 0.8*c.local_coords )
+                c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
+                c.sprite.rotation = (-180/math.pi)*self.orientation[0]
+                c.sprite.draw()         
 
 
 class BasicStationModule(BasicModule):
