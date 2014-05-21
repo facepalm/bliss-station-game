@@ -53,6 +53,7 @@ class Actor(object):
         
     def refresh_station(self):
         self.task=None    
+        if self.station: self.logger = logging.getLogger(self.station.logger.name + '.' + self.name)
         
     def update(self,dt):
         self.my_tasks.update(dt)

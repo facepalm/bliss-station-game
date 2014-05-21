@@ -103,8 +103,7 @@ class Scenario():
             
             self.stationB=Station(modDrag,'StubStation', logger)
             
-            rob = Robot('Robby')     
-            rob.station = self.stationB
+            rob = Robot('Robby',station = self.stationB,logger=logger)                 
             self.stationB.actors[rob.id]=rob
             rob.location = modDrag.node('store0')
             rob.xyz = modDrag.location
