@@ -134,8 +134,8 @@ class BasicModule():
                 if isinstance(c,Equipment) and not c.installed and not c.task:
                     c.install_task(self.station)
         if self.manifest: 
-            self.manifest.check_satisfied()
-                
+            satisfaction = self.manifest.check_satisfied()
+            #print satisfaction    
         
     def get_random_dock(self, side_port_allowed=True):
         docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ]

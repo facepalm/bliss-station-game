@@ -97,6 +97,8 @@ class Station():
         
     def search(self, filter_, modules_to_exclude=[]):
         hits=[]
+        if [m for m in self.modules.values() if not m in modules_to_exclude] == []:
+            return [None, None, None]        
         for m in [n for n in self.modules.values() if not n in modules_to_exclude]:
             [obj, loc, score] = m.search(filter_)
             hits.append( [ obj, loc, score ] )
@@ -106,6 +108,8 @@ class Station():
         return hits[0] if hits and hits[0][2] else [None, None, None]
         
     def random_location(self, modules_to_exclude=[]):        
+        if [m for m in self.modules.values() if not m in modules_to_exclude] == []:
+            return [None, None, None]
         module = random.choice([m for m in self.modules.values() if not m in modules_to_exclude])
         return None, module.filterNode( module.node('Inside') ), None
         
@@ -114,7 +118,7 @@ class Station():
         self.tasks.update(dt)
         for m in self.modules:
             self.modules[m].update(dt)     
-        print self.name, self.actors
+
         for a in self.actors.values():
             a.update(dt)       
             
