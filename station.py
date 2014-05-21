@@ -86,7 +86,7 @@ class Station():
         module.location = safe_location
         module.orientation = np.array([ -math.pi +2*math.pi*random.random(), 0 ])
         
-        self.exterior_objects.append(module)
+        if not module.station: self.exterior_objects.append(module)
         module.refresh_image()
         
         dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
