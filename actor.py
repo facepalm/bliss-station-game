@@ -41,6 +41,7 @@ class Actor(object):
     def update_location(self):
         zoom=util.ZOOM
         l= self.path.current_coords if (self.path and not self.path.completed) else self.station.loc_to_xyz( self.location )
+        self.xyz=l
         self.sprite.update_sprite(zoom*l[0], zoom*l[1],0)
        
         
@@ -53,6 +54,8 @@ class Actor(object):
         
     def refresh_station(self):
         self.task=None    
+        self.path=None
+        #self.xyz = self.station.loc_to_xyz( self.location )
         if self.station: self.logger = logging.getLogger(self.station.logger.name + '.' + self.name)
         
     def update(self,dt):

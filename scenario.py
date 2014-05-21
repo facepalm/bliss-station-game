@@ -103,14 +103,17 @@ class Scenario():
             
             self.stationB=Station(modDrag,'StubStation', logger)
             
+            self.station.begin_docking_approach(modDrag)
+            
             rob = Robot('Robby',station = self.stationB,logger=logger)                 
             self.stationB.actors[rob.id]=rob
             rob.location = modDrag.node('store0')
             rob.xyz = modDrag.location
+            rob.update_location()
                        
             #TODO: position Dragon on "docking" approach, add docking task
-            self.station.begin_docking_approach(modDrag)
-            print modDrag.location, modDrag.orientation
+            
+            print modDrag.location, modDrag.orientation, rob.xyz
             
             ernie = Human('Ernest',station=self.station,logger=self.station.logger)
             self.station.actors[ernie.id] = ernie

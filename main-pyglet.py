@@ -72,6 +72,7 @@ if __name__ == "__main__":
         glMatrixMode(GL_MODELVIEW);        
 
         scenario.get_station().draw(window)
+        scenario.current_scenario.stationB.draw(window)
         util.station_batch.draw()
         util.actor_batch.draw()
         

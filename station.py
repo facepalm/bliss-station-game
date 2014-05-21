@@ -148,7 +148,8 @@ class Station():
         for a in self.actors:
             self.actors[a].update_location()
                     
-        
+    def percolate_location(self,module):
+        pass        
                                       
 if __name__ == "__main__":
     from time import sleep    
