@@ -52,18 +52,20 @@ class Station():
             self.paths.add_edges_from(other_station.paths.edges(data=True))
             self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)
             
-            for m in other_station.modules:
+            for m in other_station.modules.keys():
                 other_station.modules[m].station = self
                 other_station.modules[m].refresh_equipment()
                 if not m in self.modules:
                     self.modules[m] = other_station.modules[m]
                 else:
                     self.modules[other_station.modules[m].id] = other_station.modules[m]
+                other_station.modules.pop(m)
                     
-            for a in other_station.actors:
+            for a in other_station.actors.keys():
                 other_station.actors[a].station = self
                 self.actors[a] = other_station.actors[a]
                 self.actors[a].refresh_station()
+                other_station.actors.pop(a)
         
         #remove if hanging outside
         if module in self.exterior_objects: self.exterior_objects.remove(module)
