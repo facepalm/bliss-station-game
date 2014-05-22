@@ -83,5 +83,8 @@ class Manifest(object):
         if fail: return False
         return True         
 
+    def refresh_station(self, station=None):
+        for i in self.item: #New station!  New station! Dump tasks!
+            i.task=None
             
         

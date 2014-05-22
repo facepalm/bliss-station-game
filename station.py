@@ -30,7 +30,7 @@ class Station():
         if module and not self.modules:
             self.modules[module.id]=module
             module.station = self
-            module.refresh_equipment()
+            module.refresh_station()
             self.paths = module.paths.copy()
             return
             
@@ -54,7 +54,7 @@ class Station():
             
             for m in other_station.modules.keys():
                 other_station.modules[m].station = self
-                other_station.modules[m].refresh_equipment()
+                other_station.modules[m].refresh_station()
                 if not m in self.modules:
                     self.modules[m] = other_station.modules[m]
                 else:
@@ -118,6 +118,7 @@ class Station():
     def update(self,dt):
         self.resources.update(dt)
         self.tasks.update(dt)
+        #print [[t.name,str(t.touched)] for t in self.tasks.tasks]
         for m in self.modules:
             self.modules[m].update(dt)     
 

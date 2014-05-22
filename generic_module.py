@@ -197,7 +197,7 @@ class BasicModule():
                 self.station.paths.add_nodes_from(self.paths.nodes())
                 self.station.paths.add_edges_from(self.paths.edges(data=True))
                 #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
-                self.refresh_equipment()
+                self.refresh_station()
                 
         else:             
             neighbor.station = self.station
@@ -206,7 +206,7 @@ class BasicModule():
                 self.station.paths.add_nodes_from(neighbor.paths.nodes())
                 self.station.paths.add_edges_from(neighbor.paths.edges(data=True))
                 #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
-                neighbor.refresh_equipment()
+                neighbor.refresh_station()
             
         neighbor.refresh_image()    
         self.refresh_image()
@@ -235,7 +235,9 @@ class BasicModule():
         self.add_edge( self.node(hall_node), self.node(eq_node) )
         self.equipment[ eq_node ] = [ eq_coords, eq_orientation, eq_type, eq_obj]
 
-    def refresh_equipment(self):
+    def refresh_station(self, station=None):
+        if station and station != self.station: self.station = station
+        if self.manifest: self.manifest.refresh_station(self.station)
         for e in self.equipment:            
             if self.equipment[e][3]: 
                 self.equipment[e][3].refresh_station()

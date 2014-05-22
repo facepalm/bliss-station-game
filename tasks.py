@@ -124,6 +124,8 @@ class TaskSequence(Task):
     fetch_location = property(get_location_method, None, None, "Fetch location method" )      
         
     def update(self,dt):
+        if self.touched > 0: 
+            self.touched -= dt
         if not self.task_list and (not self.current_task or self.current_task.status == 'COMPLETED'): 
             self.flag('COMPLETED')            
             return
