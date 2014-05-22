@@ -147,6 +147,12 @@ class BasicModule():
         if not slots: return None
         return random.choice(slots)
             
+    def get_node(self,equip):
+        for f in self.equipment.keys():
+            if self.equipment[f][3] == equip:
+                return self.node(f)
+        return None        
+            
     def uninstall_equipment(self,equip):
         for f in self.equipment.keys():
             if self.equipment[f][3] == equip:
@@ -190,7 +196,7 @@ class BasicModule():
                 self.station = neighbor.station 
                 self.station.paths.add_nodes_from(self.paths.nodes())
                 self.station.paths.add_edges_from(self.paths.edges(data=True))
-                self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
+                #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
                 self.refresh_equipment()
                 
         else:             
@@ -199,7 +205,7 @@ class BasicModule():
             if self.station:
                 self.station.paths.add_nodes_from(neighbor.paths.nodes())
                 self.station.paths.add_edges_from(neighbor.paths.edges(data=True))
-                self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
+                #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
                 neighbor.refresh_equipment()
             
         neighbor.refresh_image()    

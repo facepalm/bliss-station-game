@@ -50,7 +50,7 @@ class Station():
             
             self.paths.add_nodes_from(other_station.paths.nodes())
             self.paths.add_edges_from(other_station.paths.edges(data=True))
-            self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)
+            #self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)
             
             for m in other_station.modules.keys():
                 other_station.modules[m].station = self

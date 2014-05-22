@@ -234,6 +234,8 @@ class DockingRing(Equipment):
         if not self.docked: return False, "What are you, nuts?!"
         self.open = True
         self.refresh_image()
+        if self.partner and not self.partner.open:
+            self.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
         
     def close_(self):
         self.open=False
@@ -247,7 +249,8 @@ class DockingRing(Equipment):
             self.open_()
         else:
             if not self.installed.station: return
-            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+            self.task = Task(''.join(['Open Hatch']), owner = self.partner, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+            self.task = Task(''.join(['Open Hatch']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            
             self.installed.station.tasks.add_task(self.task)            
                 
     def undock(self, instant = False):

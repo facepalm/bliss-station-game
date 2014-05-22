@@ -96,7 +96,11 @@ class Actor(object):
                 else:
                     #print self.task.name, self.task.target, self.task.location
                     new_path = PathingWidget(self,self.station.paths,self.location, self.task.location, self.xyz)
-                    if not new_path.valid: assert False, "ERROR: some kind of pathing error!"
+                    if not new_path.valid: 
+                        self.logger.warning("Pathing error: "+self.task.name+": !")
+                        self.task.drop()
+                        self.task=None
+                        return
                     self.path = new_path
                     self.path.traverse_step(dt*self.speed)
                     
