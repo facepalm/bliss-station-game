@@ -9,13 +9,14 @@ from docking_modules import UnityModule
 from cargo_modules import DragonCargoModule
 from module_resources import ResourceBundle
 from tasks import TaskTracker
-import random, math
+import random, math, uuid
 import util
 import logging
 
 class Station():
     def __init__(self,initial_module=None, name=None, logger=None):
         self.modules=dict()
+        self.id = str(uuid.uuid4())   
         self.exterior_objects=[]
         self.resources=ResourceBundle()
         self.paths=nx.Graph()
@@ -79,9 +80,8 @@ class Station():
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
     #def split_station(self, docking_ring):
-                
-        
-    def begin_docking_approach(self,module):
+
+    def position_at_safe_distance(self,module):
         #TODO calculate boundary of station, multiply by 1.25
         safe_location = np.array([-30,-30+60*random.random(),0])
         
@@ -89,8 +89,9 @@ class Station():
         module.orientation = np.array([ -math.pi +2*math.pi*random.random(), 0 ])
         
         if not module.station: self.exterior_objects.append(module)
-        module.refresh_image()
+        module.refresh_image()                
         
+    def begin_docking_approach(self,module):                
         dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
         if not dock_comp:
             #TODO fail more gracefully
