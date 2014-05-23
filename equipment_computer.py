@@ -133,10 +133,8 @@ class FlightPath():
         self.end_orient = ( mod_dock.orientation + mod_dock.equipment[dock_dock][1] - mod_docker.equipment[dock_docker][1] ) + np.array([math.pi, 0])
         self.end_orient %= 2*math.pi
         
-        loc_offset = absolute_xyz(np.array([0,0,0]), mod_docker.equipment[dock_docker][0], self.end_orient, mod_docker.size)
-        
-        self.end_coords = mod_dock.getXYZ(mod_dock.equipment[dock_dock][0]) - loc_offset
-        
+        loc_offset = absolute_xyz(np.array([0,0,0]), mod_docker.equipment[dock_docker][0], self.end_orient, mod_docker.size)        
+        self.end_coords = mod_dock.getXYZ(mod_dock.equipment[dock_dock][0]) - loc_offset        
         self.calculate_path()        
         
     def get_time_point(self,t=0):

@@ -249,7 +249,6 @@ class DockingRing(Equipment):
             self.open_()
         else:
             if not self.installed.station: return
-            self.partner.task = Task(''.join(['Open Hatch']), owner = self.partner, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             self.task = Task(''.join(['Open Hatch']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            
             self.installed.station.tasks.add_task(self.task)            
                 

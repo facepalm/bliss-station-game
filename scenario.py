@@ -15,40 +15,21 @@ import logging
 class ScenarioMaster():
 
     def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
-        self.current_scenario=Scenario(scenario,logger)        
-        
-        self.station = self.current_scenario.station  
-          
-          
-        #modA.berth('CBM0', modB, 'CBM0')
-        for m in self.station.modules.values(): print m.short_id, m.location, m.orientation    
-        
-        self.time_elapsed=0
+        self.current_scenario=DockingScenario(scenario,logger)                 
     
-    def get_station(self):
-        return self.station
+    def get_stations(self):
+        return self.current_scenario.get_stations()
         
     def status_update(self,dt):
-        print
-        #print round(util.TIME_FACTOR*tot_time),': Human task:', None if not ernie.task else (ernie.task.name,ernie.task.location,ernie.task.severity)
-        util.generic_logger.info('System time:%d' %(int(util.TIME_FACTOR*self.time_elapsed)))
-        #for m in station.modules.values():
-        #    logger.debug(''.join([m.short_id,' O2:', str(m.atmo.partial_pressure('O2')), ' CO2:',str(m.atmo.partial_pressure('CO2'))]))
-        #util.generic_logger.info(' '.join(['Electricity','Available:',station.resources.resources['Electricity'].status()]))
-        for a in self.station.actors:
-            self.station.actors[a].log_status()
-        #ernie.log_status()
-        #bert.log_status()    
-
+        self.current_scenario.status_update(dt)   
 
     def system_tick(self,dt):    
-        self.station.update(dt*util.TIME_FACTOR)
-        self.current_scenario.stationB.update(dt*util.TIME_FACTOR)        
-        self.time_elapsed += dt
+        self.current_scenario.system_tick(dt)    
 
                                           
 class Scenario():
     def __init__(self,name='DEFAULT',logger=util.generic_logger):
+        self.time_elapsed=0
         if name=='BERTNERNIE':
 
             modA  = DestinyModule()
@@ -82,8 +63,29 @@ class Scenario():
             ernie.needs['Food'].set_amt_to_severity('HIGH')
             ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
             #modB.equipment['Electrolyzer'][3].broken=True
+             
+                                    
+        else: #'DEFAULT'
+            modDock = UnityModule()                   
+            self.station = Station(modDock, 'NewbieStation',logger)
+            
+    def system_tick(self,dt):    
+        self.station.update(dt*util.TIME_FACTOR)       
+        self.time_elapsed += dt   
+        
+    def status_update(self,dt):
+        print      
+        util.generic_logger.info('System time:%d' %(int(util.TIME_FACTOR*self.time_elapsed)))
+        for a in self.station.actors:
+            self.station.actors[a].log_status()
 
-        elif name == 'DOCKINGTEST':
+    def get_stations(self):
+        return [self.station]
+        
+        
+class DockingScenario(Scenario):
+    def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
+            self.time_elapsed=0
             '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
                 He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
    
@@ -119,8 +121,14 @@ class Scenario():
             self.station.actors[ernie.id] = ernie
             ernie.location = modB.node('hall0')
             ernie.xyz = modB.location
-                                    
-        else: #'DEFAULT'
-            modDock = UnityModule()                   
-            self.station = Station(modDock, 'NewbieStation',logger)
             
+            #for m in self.station.modules.values(): print m.short_id, m.location, m.orientation 
+    
+    def system_tick(self,dt):    
+        self.station.update(dt*util.TIME_FACTOR)
+        self.stationB.update(dt*util.TIME_FACTOR)        
+        self.time_elapsed += dt  
+    
+    def get_stations(self):
+        return [self.station, self.stationB]    
+                        

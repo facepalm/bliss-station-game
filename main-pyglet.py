@@ -71,8 +71,8 @@ if __name__ == "__main__":
         glOrtho(-window.width//1,window.width//1,-window.height//1,window.height//1,0,1);
         glMatrixMode(GL_MODELVIEW);        
 
-        scenario.get_station().draw(window)
-        scenario.current_scenario.stationB.draw(window)
+        for s in scenario.get_stations():
+            s.draw(window)
         util.station_batch.draw()
         util.actor_batch.draw()
         

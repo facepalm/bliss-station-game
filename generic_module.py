@@ -163,7 +163,7 @@ class BasicModule():
         
     
             
-    def berth(self, my_node, neighbor, their_node, instant=False):
+    def berth(self, my_node, neighbor, their_node):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
         if not my_node in self.equipment or not their_node in neighbor.equipment: return False, "Docking cancelled: wrong module, I guess?"
         if not self.equipment[my_node][2] in DOCK_EQUIPMENT or not neighbor.equipment[their_node][2] in DOCK_EQUIPMENT: return False, "Docking cancelled: requested interface(s) are not docking equipment!"
@@ -181,9 +181,7 @@ class BasicModule():
         
         #collision detection
 
-        #dock, finally
-        self.equipment[my_node][3].dock( neighbor, neighbor.equipment[their_node][3], instant)
-        neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
+        
         
         # map graphs together        
                 
@@ -207,11 +205,17 @@ class BasicModule():
                 self.station.paths.add_edges_from(neighbor.paths.edges(data=True))
                 #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
                 neighbor.refresh_station()
-            
+         
+                     
         neighbor.refresh_image()    
         self.refresh_image()
             
         return True        
+        
+    def connect(self, my_node, neighbor, their_node, instant=False):    
+        #dock, finally
+        self.equipment[my_node][3].dock( neighbor, neighbor.equipment[their_node][3], instant)
+        neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
         
     def add_edge(self,one,two):
         delta = self.nodes[two] - self.nodes[one] #numpy vector subtraction, I hope

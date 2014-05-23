@@ -42,7 +42,7 @@ class Station():
         if not mod_dock: mod_dock = module.get_random_dock(side_port_allowed=False)                                        
                 
         #attempt docking
-        assert module.berth(mod_dock, my_module, my_dock, instant)
+        assert module.berth(mod_dock, my_module, my_dock)
         
         if module.station != self:
             #merge stations
@@ -66,6 +66,8 @@ class Station():
                 self.actors[a] = other_station.actors[a]
                 self.actors[a].refresh_station()
                 other_station.actors.pop(a)
+                
+        module.connect(mod_dock, my_module, my_dock, instant)        
         
         #remove if hanging outside
         if module in self.exterior_objects: self.exterior_objects.remove(module)
