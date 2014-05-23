@@ -58,12 +58,12 @@ class Scenario(object):
             rob.location = modB.node('hall0')
             rob.xyz = modB.location'''
             
-            ernie = Human('Ernest',station=self.station,logger=self.station.logger)
+            ernie = Human('Ernest',station=station,logger=self.logger)
             station.actors[ernie.id] = ernie
             ernie.location = modA.node('hall0')
             ernie.xyz = modA.location
             
-            bert = Human('Bertholomew',station=self.station,logger=self.station.logger)
+            bert = Human('Bertholomew',station=station,logger=self.logger)
             station.actors[bert.id] = bert
             bert.location = modB.node('hall0')
             bert.xyz = modB.location
@@ -73,11 +73,12 @@ class Scenario(object):
             ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
             #modB.equipment['Electrolyzer'][3].broken=True
              
-            self.add_station(station) 
+             
                                     
         elif name=='DEFAULT':
             modDock = UnityModule()                   
-            self.station = Station(modDock, 'NewbieStation',logger)
+            station = Station(modDock, 'NewbieStation',logger)
+            self.add_station(station)
             
     def system_tick(self,dt):    
         for s in self.stations.values():
@@ -119,60 +120,25 @@ class Scenario(object):
         
 class DockingScenario(Scenario):
     def __init__(self,name='DOCKING',logger=util.generic_logger):
-            super(DockingScenario, self).__init__(name=name, logger=logger) 
+        super(DockingScenario, self).__init__(name=name, logger=logger) 
 
-            '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
-                He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
+        '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
+           He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
    
-            self.mission_control = missioncontrol.MissionControl(self,self.logger)
-   
-            modB   = ZvezdaModule()
-            modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
+        self.mission_control = missioncontrol.MissionControl(self,self.logger)
+        modB   = ZvezdaModule()
+        modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
             
-            station = Station(modB, "Docker Station", logger)
+        station = Station(modB, "Docker Station", logger)
             
-            ernie = Human('Ernest',station = station, logger = station.logger)
-            station.actors[ernie.id] = ernie
-            ernie.location = modB.node('hall0')
-            ernie.xyz = modB.location
+        ernie = Human('Ernest',station = station, logger = station.logger)
+        station.actors[ernie.id] = ernie
+        ernie.location = modB.node('hall0')
+        ernie.xyz = modB.location
             
-            self.add_station(station)
+        self.add_station(station)
             
-            newStation = self.mission_control.send_resupply_vessel(station.id)
-            
-            #modDrag = DragonCargoModule()
-            #modDrag.setup_simple_resupply()
-                                    
-            modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
+        newStation = self.mission_control.send_resupply_vessel(station.id)
+        modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
                                   
-            #modDrag.manifest = manifest.Manifest(modDrag)
-            #modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
-            #modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')
-            
-            #self.stationB=Station(modDrag,'StubStation', logger)
-            
-            #station.begin_docking_approach(modDrag)
-            
-            #rob = Robot('Robby',station = self.stationB,logger=logger)                 
-            #self.stationB.actors[rob.id]=rob
-            #rob.location = modDrag.node('store0')
-            #rob.xyz = modDrag.location
-            #rob.update_location()
-                       
-            #TODO: position Dragon on "docking" approach, add docking task
-            
-            #print modDrag.location, modDrag.orientation, rob.xyz
-            
-            
-            
-            
-            #for m in self.station.modules.values(): print m.short_id, m.location, m.orientation 
-    
-    #def system_tick(self,dt):    
-    #    self.station.update(dt*util.TIME_FACTOR)
-    #    self.stationB.update(dt*util.TIME_FACTOR)        
-    #    self.time_elapsed += dt  
-    
-    #def get_stations(self):
-    #    return [self.station, self.stationB]    
                         

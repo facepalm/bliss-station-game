@@ -33,8 +33,8 @@ class ManifestItem(object):
                 found_any = self.owner.module.station.search(self.filter,modules_to_exclude=[self.owner.module])   
                 if found_any[0]:
                     filter_str = self.filter.target_string()
-                    self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "MODERATE")
-                    self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module.station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
+                    self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "HIGH")
+                    self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "HIGH", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module.station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
                     self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None], owner=self))
                     self.owner.module.station.tasks.add_task(self.task)
                     return False     
@@ -52,7 +52,16 @@ class ManifestItem(object):
             remove_amt = min(clutter.gather_rate*dt*item.density,item.mass)
             if remove_amt <= 0: return         
             obj = item.split(remove_amt)
-            self.owner.module.station.get_module_from_loc(task.location).stowage.add(obj)                        
+            self.owner.module.station.get_module_from_loc(task.location).stowage.add(obj) 
+            
+    def task_dropped(self,task):
+        if task.name.startswith('Put Away'): #Drop your crap wherever you are
+            item = task.assigned_to.inventory.search(self.filter)
+            if not item: return
+            remove_amt = item.mass
+            if remove_amt <= 0: return         
+            obj = item.split(remove_amt)
+            self.owner.module.station.get_module_from_loc(task.assigned_to.location).stowage.add(obj)                              
             
 
 class Manifest(object):

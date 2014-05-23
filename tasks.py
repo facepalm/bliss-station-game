@@ -59,6 +59,7 @@ class Task(object):
             
     def drop(self):
         self.logger.info(''.join(["Task '",self.name,"' dropped!"]))
+        if hasattr(self.owner, 'task_dropped'): self.owner.task_dropped(self)
         self.flag('OPEN')                          
         self.assigned_to = None   
         self.location = None
@@ -155,6 +156,9 @@ class TaskSequence(Task):
         #What's this?  Recursion?  Yer goddamned right it is, son.  We COMPSCI 201 all up in this bitch.
         return self.do_work(dt-time_slice) 
         
+    def drop(self):
+        self.current_task.drop()
+        self.touched = 300        
         
     def add_task(self,task,required=False):  
         if self.task_list:      
