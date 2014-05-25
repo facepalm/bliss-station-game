@@ -24,6 +24,17 @@ class Computer(Equipment):
         super(Computer, self).refresh_image()
         self.sprite.add_layer('Computer',util.load_image("images/computer_40x40.png"))
 
+class MissionComputer(Computer, Rack):
+    def __init__(self):
+        super(MissionComputer, self).__init__()              
+        self.idle_draw = 1.000 #kW
+    
+    def refresh_image(self):     
+        super(MissionComputer, self).refresh_image()
+        self.sprite.add_layer('DockingComputer',util.load_image("images/smallmissionsymbol_40x40.png"))
+        
+    
+
 class DockingComputer(Computer, Rack):
     def __init__(self):
         if not hasattr(self,'imgfile'): self.imgfile = "images/docking_computer.tif"
