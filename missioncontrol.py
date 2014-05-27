@@ -31,7 +31,7 @@ class MissionControl(object):
         self.scenario.add_station(newStation)                    
         
         self.scenario.stations[station].position_at_safe_distance(modDrag)
-        self.scenario.stations[station].begin_docking_approach(modDrag)
+        #self.scenario.stations[station].begin_docking_approach(modDrag)
         
         return newStation
         

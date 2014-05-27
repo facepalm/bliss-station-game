@@ -8,10 +8,12 @@ from station import Station
 from actor import Robot
 from human import Human        
 import missioncontrol
+import mission
 import clutter
 import manifest
 import util
 import logging
+import filtering
 
 class ScenarioMaster():
 
@@ -141,6 +143,12 @@ class DockingScenario(Scenario):
         self.add_station(station)
             
         newStation = self.mission_control.send_resupply_vessel(station.id)
+        
+        miss_comp, d, d = station.search( filtering.EquipmentFilter( target='Mission Computer' ) )
+        miss_comp.scenario=self
+        new_miss = mission.Mission()
+        new_miss.load_mission(selection='Standard Resupply', target_id = newStation.id)
+        miss_comp.new_mission(new_miss)
         
                                   
                         

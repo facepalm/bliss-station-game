@@ -28,7 +28,7 @@ class Mission(object):
     def add_objective(self,obj):
         if not obj: return
         self.num_objectives += 1
-        self.objectives['{02- }'.format(self.num_objectives)+obj.name]=obj    
+        self.objectives['{:02}'.format(self.num_objectives)+'- '+obj.name]=obj    
         
     def current_objective(self):
         open_obj = [o for o in self.objectives.keys() if not self.objectives[o].completed and (not self.objectives[o].requires or self.objectives[o].requires.completed)]

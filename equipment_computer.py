@@ -32,7 +32,7 @@ class MissionComputer(Computer, Rack):
         self.scenario=scenario
         
         self.mission=None
-        self.objective_timer = 300
+        self.objective_timer = 30
     
     def refresh_image(self):     
         super(MissionComputer, self).refresh_image()
@@ -42,7 +42,7 @@ class MissionComputer(Computer, Rack):
         super(MissionComputer, self).update(dt)        
         self.objective_timer -= dt        
         if self.objective_timer < 0:
-            self.objective_timer = 300
+            self.objective_timer = 30
             if not self.mission: return
             objective = self.mission.current_objective()
             if not objective: return
@@ -51,7 +51,7 @@ class MissionComputer(Computer, Rack):
             
     def new_mission(self,mission):
         if not mission or (self.task and not self.task.task_ended()) or not self.installed: return
-        self.task = Task(''.join(['Log Mission']), owner = self, timeout=None, task_duration = 300, severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            
+        self.task = Task(''.join(['Log Mission']), owner = self, timeout=None, task_duration = 30, severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            
         self.task.mission=mission
         self.installed.station.tasks.add_task(self.task)       
         
