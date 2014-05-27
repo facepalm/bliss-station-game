@@ -9,13 +9,14 @@ import numpy as np
 from scipy.interpolate import UnivariateSpline
 import random, math
 from generic_module import absolute_xyz
+import mission
      
 class Computer(Equipment):
     '''Progenitor class for non-moving computery bits'''
     
     def __init__(self):
         super(Computer, self).__init__()              
-        self.idle_draw = 0.100 #kW
+        self.idle_draw = 0.200 #kW
 
     def update(self,dt):            
         super(Computer, self).update(dt)
@@ -25,13 +26,39 @@ class Computer(Equipment):
         self.sprite.add_layer('Computer',util.load_image("images/computer_40x40.png"))
 
 class MissionComputer(Computer, Rack):
-    def __init__(self):
+    def __init__(self, scenario=None):
         super(MissionComputer, self).__init__()              
         self.idle_draw = 1.000 #kW
+        self.scenario=scenario
+        
+        self.mission=None
+        self.objective_timer = 300
     
     def refresh_image(self):     
         super(MissionComputer, self).refresh_image()
         self.sprite.add_layer('DockingComputer',util.load_image("images/smallmissionsymbol_40x40.png"))
+        
+    def update(self,dt):            
+        super(MissionComputer, self).update(dt)        
+        self.objective_timer -= dt        
+        if self.objective_timer < 0:
+            self.objective_timer = 300
+            if not self.mission: return
+            objective = self.mission.current_objective()
+            if not objective: return
+            objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            
+            
+    def new_mission(self,mission):
+        if not mission or (self.task and not self.task.task_ended()) or not self.installed: return
+        self.task = Task(''.join(['Log Mission']), owner = self, timeout=None, task_duration = 300, severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            
+        self.task.mission=mission
+        self.installed.station.tasks.add_task(self.task)       
+        
+    def task_finished(self,task):
+        if not task or not self.installed: return
+        if task.name == "Log Mission":
+            self.mission = self.task.mission                   
         
     
 
@@ -152,3 +179,4 @@ class FlightPath():
         return [np.array([self.c0(t), self.c1(t), self.c2(t)]), np.array([self.o0(t), self.o1(t)]) ]
         
 util.equipment_targets['Docking Computer'] = DockingComputer
+util.equipment_targets['Mission Computer'] = MissionComputer

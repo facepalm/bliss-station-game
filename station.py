@@ -91,14 +91,21 @@ class Station():
         if not module.station: self.exterior_objects.append(module)
         module.refresh_image()                
         
-    def begin_docking_approach(self,module):                
+    def begin_docking_approach(self,module,dock=None):                
         dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
         if not dock_comp:
             #TODO fail more gracefully
             assert False, 'Docking initialized with no active docking computer!  WTF mang?'
-        dock_comp.dock_module([module,None],[None,None])
+        dock_comp.dock_module([module,dock],[None,None])
 
-            
+    def get_random_dock(self, side_port_allowed = True, modules_to_exclude=[]):
+        hits=[]
+        for m in [n for n in self.modules.values() if not n in modules_to_exclude]:
+            d = m.get_random_dock( side_port_allowed )
+            if d: hits.append( [ m, d ] )    
+        random.shuffle(hits)  
+        hits.sort(key=lambda tup: tup[0], reverse=True)
+        return hits[0] if hits else [None, None]              
         
     def search(self, filter_, modules_to_exclude=[]):
         hits=[]

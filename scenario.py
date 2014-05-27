@@ -126,8 +126,10 @@ class DockingScenario(Scenario):
            He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
    
         self.mission_control = missioncontrol.MissionControl(self,self.logger)
+        
         modB   = ZvezdaModule()
         modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
+        modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))   
             
         station = Station(modB, "Docker Station", logger)
             
@@ -139,6 +141,6 @@ class DockingScenario(Scenario):
         self.add_station(station)
             
         newStation = self.mission_control.send_resupply_vessel(station.id)
-        modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))
+        
                                   
                         
