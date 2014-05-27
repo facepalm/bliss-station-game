@@ -46,7 +46,10 @@ class MissionComputer(Computer, Rack):
             if not self.mission: return
             objective = self.mission.current_objective()
             if not objective: return
-            objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            if not objective.completed: 
+                objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            if objective.completed: 
+                self.update(0)
             
             
     def new_mission(self,mission):

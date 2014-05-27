@@ -1,4 +1,4 @@
-
+import manifest
 
 class Mission(object):
     def __init__(self,selection=None):
@@ -57,6 +57,13 @@ class Objective(object):
         elif order_token[0] == 'BERTH':
             self.completed=True #TODO actually do
         elif order_token[0] == 'MANIFEST':
-            pass                
-        
+            if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested docking to a station which doesn't exist!")
+            station = scenario.stations[order_token[1]]
+            if order_token[2] and order_token[2] == 'RESUPPLY':
+                for module in station.modules.values():
+                    if module.manifest: continue
+                    module.manifest = manifest.Manifest(module)
+                    module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+                    module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
+                self.completed=True
         

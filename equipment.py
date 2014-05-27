@@ -269,12 +269,19 @@ class DockingRing(Equipment):
         if task.name == 'Close Hatch': 
             #TODO check for someone in the other module
             if self.partner: self.partner.close_()
-            self.close_()
+            if self.open: self.close_()
         elif task.name == 'Open Hatch':
-            self.open_()
+            if not self.open: self.open_()
             if self.partner: self.partner.open_()
             #TODO add a task to connect pipes, open other side
-        
+            
+    def task_work_report(self,task,dt):
+        if task.name == 'Close Hatch' and not self.open: 
+            self.task.flag('COMPLETED')
+        elif task.name == 'Open Hatch' and self.open:    
+            self.task.flag('COMPLETED')
+            
+            
 class CBM(DockingRing):
     def __init__(self):   
         super(CBM, self).__init__()     

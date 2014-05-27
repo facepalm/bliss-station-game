@@ -163,7 +163,7 @@ class BasicModule():
         
     
             
-    def berth(self, my_node, neighbor, their_node):
+    def dock(self, my_node, neighbor, their_node):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
         if not my_node in self.equipment or not their_node in neighbor.equipment: return False, "Docking cancelled: wrong module, I guess?"
         if not self.equipment[my_node][2] in DOCK_EQUIPMENT or not neighbor.equipment[their_node][2] in DOCK_EQUIPMENT: return False, "Docking cancelled: requested interface(s) are not docking equipment!"

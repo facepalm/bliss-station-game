@@ -22,11 +22,7 @@ class MissionControl(object):
         self.counter += 1
         
         
-        newStation = Station(modDrag,'ResupplyStation', self.logger)
-        
-        modDrag.manifest = manifest.Manifest(modDrag)
-        modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
-        modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')                        
+        newStation = Station(modDrag,'ResupplyStation', self.logger)                                     
         
         self.scenario.add_station(newStation)                    
         

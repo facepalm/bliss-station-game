@@ -43,7 +43,7 @@ class Station():
         if not mod_dock: mod_dock = module.get_random_dock(side_port_allowed=False)                                        
                 
         #attempt docking
-        assert module.berth(mod_dock, my_module, my_dock)
+        assert module.dock(mod_dock, my_module, my_dock)
         
         if module.station != self:
             #merge stations
