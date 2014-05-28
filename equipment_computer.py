@@ -41,16 +41,17 @@ class MissionComputer(Computer, Rack):
     def update(self,dt):            
         super(MissionComputer, self).update(dt)        
         self.objective_timer -= dt        
+        if not self.installed: return
         if self.objective_timer < 0:
             self.objective_timer = 30
             if not self.mission: return
             objective = self.mission.current_objective()
             if not objective: return
-            if not objective.completed: 
-                objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            if not objective.completed and (not self.task or self.task.task_ended()): 
+                self.task = Task(''.join(['Update Mission']), owner = self, timeout=None, task_duration = 30, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+                self.installed.station.tasks.add_task(self.task)
             if objective.completed: 
-                self.update(0)
-            
+                self.update(0)            
             
     def new_mission(self,mission):
         if not mission or (self.task and not self.task.task_ended()) or not self.installed: return
@@ -61,8 +62,10 @@ class MissionComputer(Computer, Rack):
     def task_finished(self,task):
         if not task or not self.installed: return
         if task.name == "Log Mission":
-            self.mission = self.task.mission                   
-        
+            self.mission = self.task.mission 
+        elif task.name == "Update Mission":                              
+            objective = self.mission.current_objective()
+            objective.carry_out(station=self.installed.station, scenario=self.scenario)
     
 
 class DockingComputer(Computer, Rack):
@@ -130,7 +133,7 @@ class DockingComputer(Computer, Rack):
     def task_finished(self,task):
         if not task or not self.installed: return
         if task.name == "Dock module":
-            self.installed.station.berth_module(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1])        
+            self.installed.station.dock_module(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1])        
             
     def task_work_report(self,task,dt):
         if task.name.startswith('Dock module'):

@@ -236,10 +236,15 @@ class DockingRing(Equipment):
         self.refresh_image()
         if self.partner and not self.partner.open:
             self.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
+            self.partner.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
         
     def close_(self):
         self.open=False
         self.refresh_image()
+        if self.partner and not self.partner.open:
+            pass #TODO remove edge
+            #self.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
+            #self.partner.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
         
     def dock(self, target, partner=None, instant = False):
         self.docked=target                

@@ -10,16 +10,16 @@ class Mission(object):
         if not selection: return
         if selection == 'Standard Resupply' and 'target_id' in kwargs:
             self.current_mission = selection
-            dockObj=Objective(name='Dock Vessel',description='Dock vessel to station',order='DOCK '+kwargs['target_id']+'  station')
+            dockObj=Objective(name='Dock Vessel',description='Dock vessel to station',order='DOCK '+kwargs['target_id']+'  ')
             self.add_objective(dockObj)  
-            berthObj=Objective(name='Berth Vessel',description='Dock vessel to station',order='BERTH '+kwargs['target_id']+'  station',requires=dockObj)     
+            berthObj=Objective(name='Berth Vessel',description='Dock vessel to station',order='BERTH '+kwargs['target_id']+'  ',requires=dockObj)     
             self.add_objective(berthObj)    
-            self.add_objective(Objective(name='Resupply Manifest',order='MANIFEST '+kwargs['target_id']+' RESUPPLY'))
-            unberthObj=Objective(name='Unberth Vessel',order='UNBERTH '+kwargs['target_id'],requires=berthObj)
+            self.add_objective(Objective(name='Resupply Manifest',order='MANIFEST MODULE  RESUPPLY',requires=berthObj))
+            unberthObj=Objective(name='Unberth Vessel',order='UNBERTH  ',requires=berthObj)
             self.add_objective(unberthObj)
-            sendoffObj = Objective(name='Send off Vessel',order='SENDOFF '+kwargs['target_id'],requires=unberthObj)
+            sendoffObj = Objective(name='Send off Vessel',order='SENDOFF  ',requires=unberthObj)
             self.add_objective(sendoffObj)               
-            self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+kwargs['target_id'],requires=sendoffObj)) 
+            self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT  ',requires=sendoffObj)) 
         
     def update_mission(self,scenario):
         if self.current_mission == "Standard Resupply":
@@ -27,12 +27,14 @@ class Mission(object):
             
     def add_objective(self,obj):
         if not obj: return
+        obj.mission = self
         self.num_objectives += 1
         self.objectives['{:02}'.format(self.num_objectives)+'- '+obj.name]=obj    
         
     def current_objective(self):
         open_obj = [o for o in self.objectives.keys() if not self.objectives[o].completed and (not self.objectives[o].requires or self.objectives[o].requires.completed)]
         if not open_obj: return None
+        print open_obj
         return self.objectives[sorted(open_obj)[0]]
             
 class Objective(object):
@@ -47,23 +49,42 @@ class Objective(object):
         #if not station: return
         order_token = self.order.split(' ')
         if order_token[0] == 'DOCK': 
-            if not scenario or not station: return
-            if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested docking to a station which doesn't exist!")
+            if not hasattr(self.mission,'dock'):
+                if not scenario or not station: return
+                if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested docking to a station which doesn't exist!")
+                docking_station = scenario.stations[order_token[1]]
+                [mod, dock] = docking_station.get_random_dock()
+                if not dock: 
+                    station.logger.warning("Docking mission: no valid docking points available!")
+                    return
+                self.mission.module = mod
+                self.mission.dock = mod.equipment[dock][3]
+                station.begin_docking_approach(mod,dock)
+            elif self.mission.dock.docked:
+                self.completed=True
+        elif order_token[0] == 'BERTH':
+            if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested berth to a station which doesn't exist!")
             docking_station = scenario.stations[order_token[1]]
-            [mod, dock] = docking_station.get_random_dock()
-            station.begin_docking_approach(mod,dock)
+            
+            dock_station = scenario.stations[order_token[2]] if order_token[2] in scenario.stations.keys() else station
+            dock_station.berth_station(docking_station)            
             
             self.completed=True
-        elif order_token[0] == 'BERTH':
-            self.completed=True #TODO actually do
         elif order_token[0] == 'MANIFEST':
-            if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested docking to a station which doesn't exist!")
-            station = scenario.stations[order_token[1]]
-            if order_token[2] and order_token[2] == 'RESUPPLY':
-                for module in station.modules.values():
-                    if module.manifest: continue
+            modules=[]
+            if order_token[1] == 'MODULE':
+                if not order_token[2]:
+                    if self.mission.module: modules.append(self.mission.module)
+                else:
+                    modules.append(scenario.modules[order_token[2]])                    
+            else:  
+                if not order_token[2] in scenario.stations.keys(): station.logger.warning("Requested manifest to a station which doesn't exist!")
+                station = scenario.stations[order_token[2]]
+                modules.extend(station.modules.values())
+            if order_token[3] and order_token[3] == 'RESUPPLY':    
+                for module in modules:    
                     module.manifest = manifest.Manifest(module)
                     module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
                     module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
-                self.completed=True
-        
+            self.completed=True                    
+            

@@ -25,9 +25,9 @@ class Station():
         self.name = name if name else "GenericStation"
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger        
         
-        if initial_module: self.berth_module(None,None,initial_module,None)                        
+        if initial_module: self.dock_module(None,None,initial_module,None)                        
                        
-    def berth_module(self, my_module, my_dock, module, mod_dock, instant = False):        
+    def dock_module(self, my_module, my_dock, module, mod_dock, instant = False):        
         if module and not self.modules:
             self.modules[module.id]=module
             module.station = self
@@ -51,22 +51,7 @@ class Station():
             
             self.paths.add_nodes_from(other_station.paths.nodes())
             self.paths.add_edges_from(other_station.paths.edges(data=True))
-            #self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)
-            
-            for m in other_station.modules.keys():
-                other_station.modules[m].station = self
-                other_station.modules[m].refresh_station()
-                if not m in self.modules:
-                    self.modules[m] = other_station.modules[m]
-                else:
-                    self.modules[other_station.modules[m].id] = other_station.modules[m]
-                other_station.modules.pop(m)
-                    
-            for a in other_station.actors.keys():
-                other_station.actors[a].station = self
-                self.actors[a] = other_station.actors[a]
-                self.actors[a].refresh_station()
-                other_station.actors.pop(a)
+            #self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)                        
                 
         module.connect(mod_dock, my_module, my_dock, instant)        
         
@@ -79,6 +64,22 @@ class Station():
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
+    def berth_station(self, other_station):          
+        for m in other_station.modules.keys():
+            other_station.modules[m].station = self
+            other_station.modules[m].refresh_station()
+            if not m in self.modules:
+                self.modules[m] = other_station.modules[m]
+            else:
+                self.modules[other_station.modules[m].id] = other_station.modules[m]
+            other_station.modules.pop(m)
+                    
+        for a in other_station.actors.keys():
+            other_station.actors[a].station = self
+            self.actors[a] = other_station.actors[a]
+            self.actors[a].refresh_station()
+            other_station.actors.pop(a)
+    
     #def split_station(self, docking_ring):
 
     def position_at_safe_distance(self,module):
