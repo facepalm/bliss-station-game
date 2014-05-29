@@ -34,7 +34,6 @@ class Mission(object):
     def current_objective(self):
         open_obj = [o for o in self.objectives.keys() if not self.objectives[o].completed and (not self.objectives[o].requires or self.objectives[o].requires.completed)]
         if not open_obj: return None
-        print open_obj
         return self.objectives[sorted(open_obj)[0]]
             
 class Objective(object):
@@ -60,11 +59,12 @@ class Objective(object):
                 self.mission.module = mod
                 self.mission.dock = mod.equipment[dock][3]
                 station.begin_docking_approach(mod,dock)
-            elif self.mission.dock.docked:
+            elif self.mission.dock.open:
                 self.completed=True
         elif order_token[0] == 'BERTH':
             if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested berth to a station which doesn't exist!")
             docking_station = scenario.stations[order_token[1]]
+            self.mission.modules = docking_station.modules.values()
             
             dock_station = scenario.stations[order_token[2]] if order_token[2] in scenario.stations.keys() else station
             dock_station.berth_station(docking_station)            
@@ -74,7 +74,8 @@ class Objective(object):
             modules=[]
             if order_token[1] == 'MODULE':
                 if not order_token[2]:
-                    if self.mission.module: modules.append(self.mission.module)
+                    if hasattr(self.mission,'module') and self.mission.module: modules.append(self.mission.module)
+                    if hasattr(self.mission,'modules'): modules.extend(self.mission.modules)
                 else:
                     modules.append(scenario.modules[order_token[2]])                    
             else:  

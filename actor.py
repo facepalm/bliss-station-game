@@ -63,10 +63,11 @@ class Actor(object):
         for n in self.needs.values():
             n.update(dt)
             
-        self.inventory.update(dt)
+        self.inventory.update(dt)        
         
         if self.task and self.task.task_ended():            
             self.task=None
+            return
         
         #'grab new task'                
         _curr_value = -5 if not self.task else self.task.task_value()
@@ -88,6 +89,7 @@ class Actor(object):
         if self.location == self.task.location: 
             #work on task
             self.task.do_work(dt)
+            
         else:
             if self.task.location and not self.task.location == self.location: 
                 #go to location 

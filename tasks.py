@@ -189,6 +189,7 @@ class TaskTracker():
               
          
     def fetch_open_task(self):
+        self.update(0)
         open_tasks = sorted([t for t in self.tasks if t.status == 'OPEN' and t.touched <= 0])
         if open_tasks: return open_tasks[-1]        
             
