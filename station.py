@@ -64,7 +64,7 @@ class Station():
         self.modules[module.id]=module  
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
-    def berth_station(self, other_station):          
+    def join_station(self, other_station):          
         for m in other_station.modules.keys():
             other_station.modules[m].station = self
             other_station.modules[m].refresh_station()
@@ -80,7 +80,18 @@ class Station():
             self.actors[a].refresh_station()
             other_station.actors.pop(a)
     
-    #def split_station(self, docking_ring):
+    def split_station(self, docking_ring):
+        '''Splits off the module WITH the given docking ring into a new station, percolates it to connected modules'''
+        if not docking_ring or not docking_ring.installed or not docking_ring.docked: return
+        self.reset_module_touches()
+        docking_ring.docked.touched = True
+        new_station_list = docking_ring.installed.percolate()
+        print new_station_list
+        
+
+    def reset_module_touches(self):
+        for m in self.modules.values():
+            m.touched=False
 
     def position_at_safe_distance(self,module):
         #TODO calculate boundary of station, multiply by 1.25

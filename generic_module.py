@@ -57,6 +57,7 @@ class BasicModule():
         
         self.nodes=dict()
         
+        self.touched = False
         
         self.refresh_image()
      
@@ -142,6 +143,23 @@ class BasicModule():
         if not docks: return None
         return random.choice(docks)    
             
+    def get_neighbors(self, equipment=False):
+        out=[]
+        for e in [f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and self.equipment[f][3].docked ]:
+            if not equipment:
+                out.append(self.equipment[e][3].partner.installed)
+            else:
+                out.append(self.equipment[e][3])
+        return out
+        
+    def percolate(self):
+        if self.touched: return []
+        out = [self]
+        self.touched=True
+        for n in self.get_neighbors():
+            out.extend(n.percolate())
+        return out    
+            
     def get_empty_slot(self,slot_type='LSS'):
         slots = [s for s in self.equipment.keys() if ( self.equipment[s][2] == slot_type or slot_type=='ANY' ) and not self.equipment[s][3]]
         if not slots: return None
@@ -172,40 +190,27 @@ class BasicModule():
         
         #calculate orientation
         self.orientation = ( neighbor.orientation + neighbor.equipment[their_node][1] - self.equipment[my_node][1] ) + np.array([math.pi, 0])
+        self.orientation %= 2*math.pi
         
         #calculate location
         self.location=np.array([ 0,0,0 ])
         loc_offset = self.getXYZ(self.equipment[my_node][0])
-        self.location = neighbor.getXYZ(neighbor.equipment[their_node][0]) - loc_offset
-        self.orientation %= 2*math.pi
+        self.location = neighbor.getXYZ(neighbor.equipment[their_node][0]) - loc_offset        
         
-        #collision detection
-
-        
-        
-        # map graphs together        
-                
+        #collision detection   
+                        
         if neighbor.station:    
-            if self.station:
-                pass
-                #print self.station, neighbor.station
-                #assert False, "Station merging not in yet" #TODO replace with station merge
-            else:         
+            if not self.station:     
                 self.station = neighbor.station 
                 self.station.paths.add_nodes_from(self.paths.nodes())
                 self.station.paths.add_edges_from(self.paths.edges(data=True))
-                #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
-                self.refresh_station()
-                
+                self.refresh_station()                
         else:             
-            neighbor.station = self.station
-                                    
+            neighbor.station = self.station                                    
             if self.station:
                 self.station.paths.add_nodes_from(neighbor.paths.nodes())
                 self.station.paths.add_edges_from(neighbor.paths.edges(data=True))
-                #self.station.paths.add_edge(self.node(my_node),neighbor.node(their_node),weight=1)
-                neighbor.refresh_station()
-         
+                neighbor.refresh_station()         
                      
         neighbor.refresh_image()    
         self.refresh_image()

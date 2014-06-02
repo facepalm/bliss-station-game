@@ -14,12 +14,14 @@ class Mission(object):
             self.add_objective(dockObj)  
             berthObj=Objective(name='Berth Vessel',description='Dock vessel to station',order='BERTH '+kwargs['target_id']+'  ',requires=dockObj)     
             self.add_objective(berthObj)    
-            self.add_objective(Objective(name='Resupply Manifest',order='MANIFEST MODULE  RESUPPLY',requires=berthObj))
-            unberthObj=Objective(name='Unberth Vessel',order='UNBERTH  ',requires=berthObj)
+            undock_mod_id = kwargs['module_id'] if 'module_id' in kwargs else ''
+            self.add_objective(Objective(name='Resupply Manifest',order='MANIFEST MODULE '+undock_mod_id+' RESUPPLY',requires=berthObj))
+            undock_dock_id = kwargs['dock_id'] if 'dock_id' in kwargs else ''            
+            unberthObj=Objective(name='Unberth Vessel',order='UNBERTH '+undock_dock_id+' ',requires=berthObj)
             self.add_objective(unberthObj)
-            sendoffObj = Objective(name='Send off Vessel',order='SENDOFF  ',requires=unberthObj)
+            sendoffObj = Objective(name='Send off Vessel',order='SENDOFF '+undock_mod_id+' ',requires=unberthObj)
             self.add_objective(sendoffObj)               
-            self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT  ',requires=sendoffObj)) 
+            self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+undock_mod_id+' ',requires=sendoffObj)) 
         
     def update_mission(self,scenario):
         if self.current_mission == "Standard Resupply":
@@ -67,7 +69,7 @@ class Objective(object):
             self.mission.modules = docking_station.modules.values()
             
             dock_station = scenario.stations[order_token[2]] if order_token[2] in scenario.stations.keys() else station
-            dock_station.berth_station(docking_station)            
+            dock_station.join_station(docking_station)            
             
             self.completed=True
         elif order_token[0] == 'MANIFEST':
@@ -88,4 +90,13 @@ class Objective(object):
                     module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
                     module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
             self.completed=True                    
+        elif order_token[0] == 'UNBERTH':
+            #if not order_token[1] in scenario.modules.keys(): station.logger.warning("Requested split station from a nonexistent module!")
+            
+            splitdock = self.mission.dock if self.mission.dock else None
+            if not splitdock: 
+                station.logger.warning("Split dock does not exist!")
+            station.split_station(splitdock)
+            self.completed=True            
+            
             
