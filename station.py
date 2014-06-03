@@ -86,6 +86,26 @@ class Station():
         self.reset_module_touches()
         docking_ring.docked.touched = True
         new_station_list = docking_ring.installed.percolate()
+        if len(new_station_list) == len(self.modules.values()) -1:
+            self.logger.warning(''.join(["Attempting to split a doubly or-higher connected module from station"])) 
+            pass
+            
+        new_station = Station(None, "Return Station", self.logger)             
+        util.scenario.add_station(new_station)
+        
+        for a in self.actors.keys():
+            if self.get_module_from_loc(self.actors[a].location) in new_station_list:
+                self.actors[a].station = new_station
+                new_station.actors[a] = self.actors[a]
+                self.actors[a].refresh_station()
+                self.actors.pop(a)
+        
+        for m in new_station_list:
+            m.station = new_station
+            new_station.modules[m.id] = m
+            m.refresh_station()
+            self.modules.pop(m.id)
+                                                            
         print new_station_list
         
 

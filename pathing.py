@@ -20,10 +20,11 @@ class PathingWidget(object):
         self.completed = False
         self.valid=True
         
-    def traverse_step(self,dist):        
-        node_vec = self.owner.station.loc_to_xyz( self.path_list[0] ) - self.current_coords
+    def traverse_step(self,dist):
+        goal_xyz = self.owner.station.loc_to_xyz( self.path_list[0] )        
+        if goal_xyz==None: return False
+        node_vec = goal_xyz - self.current_coords
         dist_to_node = np.sqrt( np.vdot( node_vec , node_vec ) )
-        #print dist_to_node, dist, self.path_list, self.current_coords, self.owner.station.loc_to_xyz( self.path_list[0] )
         if dist >= dist_to_node:
             #move to new node, recurse
             remainder_dist = dist - dist_to_node
@@ -43,4 +44,5 @@ class PathingWidget(object):
             self.current_coords = self.current_coords + node_vec * dist / dist_to_node            
             self.owner.orientation = node_vec
             self.owner.xyz = self.current_coords
+        return True
 

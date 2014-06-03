@@ -222,6 +222,14 @@ class BasicModule():
         self.equipment[my_node][3].dock( neighbor, neighbor.equipment[their_node][3], instant)
         neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
         
+    
+    def disconnect(self, my_node, neighbor, their_node, instant=False):    
+        #dock, finally
+        a = self.equipment[my_node][3].undock( neighbor, neighbor.equipment[their_node][3], instant)
+        b = neighbor.equipment[their_node][3].undock( self, self.equipment[my_node][3], instant )
+        return a and b
+            
+        
     def add_edge(self,one,two):
         delta = self.nodes[two] - self.nodes[one] #numpy vector subtraction, I hope
         delta *= self.size

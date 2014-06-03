@@ -63,3 +63,5 @@ def image_to_sprite():
 station_batch = None
 actor_batch = None
 parent_group = None     
+
+scenario = None

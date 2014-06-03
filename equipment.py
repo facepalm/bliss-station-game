@@ -239,12 +239,12 @@ class DockingRing(Equipment):
             self.partner.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
         
     def close_(self):
+        if not self.open: return
         self.open=False
         self.refresh_image()
-        if self.partner and not self.partner.open:
-            pass #TODO remove edge
-            #self.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
-            #self.partner.installed.station.paths.add_edge(self.installed.get_node(self),self.docked.get_node(self.partner),weight=1)
+        if self.partner and not self.partner.open:            
+            self.installed.station.paths.remove_edge(self.installed.get_node(self),self.docked.get_node(self.partner))
+            self.partner.installed.station.paths.remove_edge(self.installed.get_node(self),self.docked.get_node(self.partner))
         
     def dock(self, target, partner=None, instant = False):
         self.docked=target                
@@ -258,16 +258,21 @@ class DockingRing(Equipment):
             self.installed.station.tasks.add_task(self.task)            
                 
     def undock(self, instant = False):
-        if self.open: 
-            if instant:
-                self.close_()
-            else:
-                #TODO check and add a task for disconnecting the pipes
-                self.task = Task(''.join(['Close Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-                self.installed.station.tasks.add_task(self.task)
-        self.docked = None
-        self.in_vaccuum = True
-        self.partner=None
+        if not self.open: 
+            self.docked = None
+            self.in_vaccuum = True
+            self.partner = None
+            return True
+        if self.task and not self.task.task_ended():
+            return False
+        if instant:
+            self.close_()                
+        else:
+            #TODO check and add a task for disconnecting the pipes
+            self.task = Task(''.join(['Close Hatch']), owner = self, timeout=86400, task_duration = 300, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+            self.installed.station.tasks.add_task(self.task)
+        return self.undock(instant)
+            
         
     def task_finished(self,task):
         super(DockingRing, self).task_finished(task) 

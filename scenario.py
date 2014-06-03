@@ -19,6 +19,7 @@ class ScenarioMaster():
 
     def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
         self.current_scenario=DockingScenario(scenario,logger)                 
+        util.scenario = self.current_scenario
     
     def get_stations(self):
         return self.current_scenario.get_stations()
