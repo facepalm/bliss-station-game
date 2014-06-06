@@ -25,6 +25,8 @@ class Station():
         self.name = name if name else "GenericStation"
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger        
         
+        self.docked_stations = []
+        
         if initial_module: self.dock_module(None,None,initial_module,None)                        
                        
     def dock_module(self, my_module, my_dock, module, mod_dock, instant = False):        
@@ -45,13 +47,20 @@ class Station():
         #attempt docking
         assert module.dock(mod_dock, my_module, my_dock)
         
-        if module.station != self:
+        if module.station != self and not module.station in self.docked_stations:
             #merge stations
             other_station = module.station
             
+            n=self.paths.nodes()
+            e=self.paths.edges(data=True)
+            
             self.paths.add_nodes_from(other_station.paths.nodes())
             self.paths.add_edges_from(other_station.paths.edges(data=True))
-            #self.paths.add_edge(my_module.node(my_dock),module.node(mod_dock),weight=1)                        
+            other_station.paths.add_nodes_from(n)
+            other_station.paths.add_edges_from(e)
+            
+            self.docked_stations.append(other_station)
+            other_station.docked_stations.append(self)
                 
         module.connect(mod_dock, my_module, my_dock, instant)        
         
@@ -65,6 +74,9 @@ class Station():
         self.logger.info(''.join(["Modules berthed: ",my_module.short_id,'(',my_dock,')',' to ',module.short_id,'(',mod_dock,')']))
         
     def join_station(self, other_station):          
+        if not other_station in self.docked_stations:
+            self.logger.warning('Attempting to join two stations that are apparently not docked.')
+            
         for m in other_station.modules.keys():
             other_station.modules[m].station = self
             other_station.modules[m].refresh_station()
@@ -79,6 +91,10 @@ class Station():
             self.actors[a] = other_station.actors[a]
             self.actors[a].refresh_station()
             other_station.actors.pop(a)
+            
+        if other_station in self.docked_stations: 
+            self.docked_stations.remove(other_station)
+
     
     def split_station(self, docking_ring):
         '''Splits off the module WITH the given docking ring into a new station, percolates it to connected modules'''
@@ -90,7 +106,12 @@ class Station():
             self.logger.warning(''.join(["Attempting to split a doubly or-higher connected module from station"])) 
             pass
             
-        new_station = Station(None, "Return Station", self.logger)             
+        new_station = Station(None, "Return Station", self.logger)
+        self.docked_stations.append(new_station)
+        new_station.docked_stations.append(self)
+        new_station.paths.add_nodes_from(self.paths.nodes())
+        new_station.paths.add_edges_from(self.paths.edges(data=True))
+                     
         util.scenario.add_station(new_station)
         
         for a in self.actors.keys():
@@ -165,27 +186,30 @@ class Station():
         self.resources.update(dt)
         self.tasks.update(dt)
         #print [[t.name,str(t.touched)] for t in self.tasks.tasks]
-        for m in self.modules:
-            self.modules[m].update(dt)     
+        for m in self.modules.keys():
+            if m in self.modules: self.modules[m].update(dt)     
 
         for a in self.actors.values():
             a.update(dt)       
             
-    def loc_to_xyz(self,loc):
+    def loc_to_xyz(self,loc, percolate=True):
         [ node, name ] = separate_node(loc)
-        module = [self.modules[m] for m in self.modules if self.modules[m].id == node]
-        if not module: return None
-        module = module[0]
+        module = self.get_module_from_loc(loc, percolate)
         if name == "Inside": return module.location
         return module.getXYZ(module.nodes[loc])
         
     def xyz_to_module(self, xyz):
         pass      #needs collision detection
         
-    def get_module_from_loc(self, loc):
+    def get_module_from_loc(self, loc, percolate=True):
         [ node, name ] = separate_node( loc )
         module = [ self.modules[ m ] for m in self.modules if self.modules[ m ].id == node ]        
-        if not module: return None
+        if not module: 
+            if percolate:
+                for s in self.docked_stations:
+                    new_loc = s.get_module_from_loc(loc,False)
+                    if new_loc != None: return new_loc
+            return None
         return module[ 0 ]
         
     def draw(self, window):

@@ -10,17 +10,24 @@ class Mission(object):
         if not selection: return
         if selection == 'Standard Resupply' and 'target_id' in kwargs:
             self.current_mission = selection
+            
             dockObj=Objective(name='Dock Vessel',description='Dock vessel to station',order='DOCK '+kwargs['target_id']+'  ')
             self.add_objective(dockObj)  
+            
             berthObj=Objective(name='Berth Vessel',description='Dock vessel to station',order='BERTH '+kwargs['target_id']+'  ',requires=dockObj)     
             self.add_objective(berthObj)    
+            
             undock_mod_id = kwargs['module_id'] if 'module_id' in kwargs else ''
-            self.add_objective(Objective(name='Resupply Manifest',order='MANIFEST MODULE '+undock_mod_id+' RESUPPLY',requires=berthObj))
+            manObj = Objective(name='Resupply Manifest',order='MANIFEST MODULE '+undock_mod_id+' RESUPPLY',requires=berthObj)
+            self.add_objective(manObj)
+            
             undock_dock_id = kwargs['dock_id'] if 'dock_id' in kwargs else ''            
             unberthObj=Objective(name='Unberth Vessel',order='UNBERTH '+undock_dock_id+' ',requires=berthObj)
             self.add_objective(unberthObj)
+            
             sendoffObj = Objective(name='Send off Vessel',order='SENDOFF '+undock_mod_id+' ',requires=unberthObj)
             self.add_objective(sendoffObj)               
+            
             self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+undock_mod_id+' ',requires=sendoffObj)) 
         
     def update_mission(self,scenario):
@@ -96,7 +103,13 @@ class Objective(object):
             splitdock = self.mission.dock if self.mission.dock else None
             if not splitdock: 
                 station.logger.warning("Split dock does not exist!")
-            station.split_station(splitdock)
+            self.mission.foreignstation = station.split_station(splitdock)
             self.completed=True            
+        elif order_token[0] == 'SENDOFF':
+            forstation = self.mission.foreignstation if hasattr(self.mission,'foreignstation') else None
+            splitdock = self.mission.dock if self.mission.dock else None
+            self.completed=True            
+            
+            
             
             

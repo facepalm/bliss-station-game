@@ -48,9 +48,10 @@ class MissionComputer(Computer, Rack):
             objective = self.mission.current_objective()
             if not objective: return
             if not objective.completed and (not self.task or self.task.task_ended()): 
+                objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            if objective.completed and (not self.task or self.task.task_ended()):     
                 self.task = Task(''.join(['Update Mission']), owner = self, timeout=None, task_duration = 30, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-                self.installed.station.tasks.add_task(self.task)
-            if objective.completed: 
+                self.installed.station.tasks.add_task(self.task) 
                 self.update(0)            
             
     def new_mission(self,mission):
@@ -65,7 +66,8 @@ class MissionComputer(Computer, Rack):
             self.mission = self.task.mission 
         elif task.name == "Update Mission":                              
             objective = self.mission.current_objective()
-            objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            
+        self.update(0)
     
 
 class DockingComputer(Computer, Rack):

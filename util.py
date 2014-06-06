@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-TIME_FACTOR = 24 # 120# 24
+TIME_FACTOR = 120 # 120# 24
 
 ZOOM = 15
 
