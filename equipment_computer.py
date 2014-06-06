@@ -31,28 +31,34 @@ class MissionComputer(Computer, Rack):
         self.idle_draw = 1.000 #kW
         self.scenario=scenario
         
-        self.mission=None
+        self.mission = None
+        self.objective = None
         self.objective_timer = 30
+        self.objective_tick = 30
     
     def refresh_image(self):     
         super(MissionComputer, self).refresh_image()
         self.sprite.add_layer('DockingComputer',util.load_image("images/smallmissionsymbol_40x40.png"))
         
     def update(self,dt):            
-        super(MissionComputer, self).update(dt)        
-        self.objective_timer -= dt        
-        if not self.installed: return
-        if self.objective_timer < 0:
+        super(MissionComputer, self).update(dt)                
+        if not self.installed or not self.mission or not self.objective: return
+                
+        if self.objective.completed and (not self.task or self.task.task_ended()):     
+            #print self.objective.name
+            self.logger.info(''.join(['Mission objective completed: ',self.objective.name,' Updating mission...']))
+            self.task = Task(''.join(['Update Mission']), owner = self, timeout=None, task_duration = 30, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+            self.installed.station.tasks.add_task(self.task) 
             self.objective_timer = 30
-            if not self.mission: return
-            objective = self.mission.current_objective()
-            if not objective: return
-            if not objective.completed and (not self.task or self.task.task_ended()): 
-                objective.carry_out(station=self.installed.station, scenario=self.scenario)
-            if objective.completed and (not self.task or self.task.task_ended()):     
-                self.task = Task(''.join(['Update Mission']), owner = self, timeout=None, task_duration = 30, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-                self.installed.station.tasks.add_task(self.task) 
-                self.update(0)            
+        
+        self.objective_tick -= dt        
+        if self.objective_tick < 0:
+            self.objective_tick = self.objective_timer           
+            if not self.objective.completed:                 
+                self.objective.carry_out(station=self.installed.station, scenario=self.scenario)
+                self.objective_timer += 30
+            else:
+                self.objective_timer = 30            
             
     def new_mission(self,mission):
         if not mission or (self.task and not self.task.task_ended()) or not self.installed: return
@@ -64,8 +70,11 @@ class MissionComputer(Computer, Rack):
         if not task or not self.installed: return
         if task.name == "Log Mission":
             self.mission = self.task.mission 
+            self.objective = self.mission.current_objective()
         elif task.name == "Update Mission":                              
-            objective = self.mission.current_objective()
+            self.objective = self.mission.current_objective()
+            self.objective.carry_out(station=self.installed.station, scenario=self.scenario)
+            self.logger.info(''.join(['Mission updated.  Current objective: ',self.objective.name]))
             
         self.update(0)
     
@@ -89,7 +98,7 @@ class DockingComputer(Computer, Rack):
     def dock_module(self,item=[None,None],target=[None, None]):
         if not item[0]: return False
         if not self.installed: return False
-        if self.docking_task and not self.docking_task.ended(): return False                       
+        if self.docking_task and not self.docking_task.task_ended(): return False                       
         #TODO check for fuel, engines, etc on item
         
         self.docking_item = item
@@ -106,39 +115,48 @@ class DockingComputer(Computer, Rack):
         
         self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
         self.installed.station.tasks.add_task(self.docking_task)    
+        return True
 
     def undock_module(self, item=[None,None]):
         if not item[0]: return False
         if not self.installed: return False
-        if self.docking_task and not self.docking_task.ended(): return False                       
+        if self.docking_task and not self.docking_task.task_ended(): return False                       
         #TODO check for fuel, engines, etc on item
         
         self.docking_item = item
-        self.docking_target = target
         
         if self.docking_item[0] and not self.docking_item[1]: 
-            self.docking_item[1] = self.docking_item[0].get_random_dock(side_port_allowed=False)                                        
+            self.docking_item[1] = self.docking_item[0].get_neighbor_dock(self.installed.station) #TODO this WILL crash, implement when it does
+        #check for hatches closed, start tasks if necessary
+        dock = self.docking_item[0].equipment[self.docking_item[1]][3]
+        if dock.docked:
+            self.docking_item[0].disconnect(self.docking_item[1], dock.partner)    
+            return False
+
         
-        #TODO finish this method
+        #undock stations
+        self.installed.station.undock_station(self.docking_item[0].station)
         
-        '''if not self.docking_target[0]: 
-            mods = self.installed.station.modules     
-            self.docking_target[0] = random.choice( [ mods[m] for m in mods if mods[m].get_random_dock() ] )    
-        if not self.docking_target[1]: self.docking_target[1] = self.docking_target[0].get_random_dock()                 
+        #start motion
+        new_loc, new_orient = self.installed.station.get_safe_distance_orient()
+        self.docking_path = FlightPath(self.docking_item[0], self.docking_item[1], new_loc, new_orient,self.docking_duration, FlightType='UNDOCK')
         
-        self.docking_path = FlightPath(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1],self.docking_duration, FlightType='DOCK')
-        
-        self.docking_task = Task("Dock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+        self.docking_task = Task("Undock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
         self.installed.station.tasks.add_task(self.docking_task)    
-        '''
+        
+        return True
 
     def task_finished(self,task):
         if not task or not self.installed: return
         if task.name == "Dock module":
             self.installed.station.dock_module(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1])        
+            self.docking_item[0].station.position='Docked'
+        if task.name == "Undock module":            
+            self.docking_item[0].station.position='Approach'
+            
             
     def task_work_report(self,task,dt):
-        if task.name.startswith('Dock module'):
+        if task.name.startswith('Dock module') or task.name.startswith('Undock module'):
             self.docking_item[0].location, self.docking_item[0].orientation = self.docking_path.get_time_point(task.task_duration - task.task_duration_remaining)
             self.docking_item[0].refresh_image()
             
@@ -154,6 +172,8 @@ class FlightPath():
         
         if 'FlightType' in kwargs and kwargs['FlightType']=='DOCK':
             self.init_dock(*args, **kwargs)
+        elif 'FlightType' in kwargs and kwargs['FlightType']=='UNDOCK':
+            self.init_undock(*args, **kwargs)
                 
     def calculate_path(self):
         if not (self.duration and self.start_coords.any() and self.end_coords.any() and self.start_orient.any() and self.end_orient.any()):
@@ -182,6 +202,16 @@ class FlightPath():
         loc_offset = absolute_xyz(np.array([0,0,0]), mod_docker.equipment[dock_docker][0], self.end_orient, mod_docker.size)        
         self.end_coords = mod_dock.getXYZ(mod_dock.equipment[dock_dock][0]) - loc_offset        
         self.calculate_path()        
+        
+    def init_undock(self,mod_dock, dock_dock, loc, orient, duration, **kwargs):
+        self.duration=duration
+        self.start_coords = mod_dock.location
+        self.start_orient = mod_dock.orientation
+        self.start_orient %= 2*math.pi
+        
+        self.end_orient = orient        
+        self.end_coords = loc
+        self.calculate_path()    
         
     def get_time_point(self,t=0):
         return [np.array([self.c0(t), self.c1(t), self.c2(t)]), np.array([self.o0(t), self.o1(t)]) ]

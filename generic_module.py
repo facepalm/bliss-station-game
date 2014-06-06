@@ -152,6 +152,11 @@ class BasicModule():
                 out.append(self.equipment[e][3])
         return out
         
+    def get_neighbor(self,station=None):
+        for n in self.get_neighbors():
+            if station and n.station == station: return n
+        return None
+        
     def percolate(self):
         if self.touched: return []
         out = [self]
@@ -223,10 +228,10 @@ class BasicModule():
         neighbor.equipment[their_node][3].dock( self, self.equipment[my_node][3], instant )
         
     
-    def disconnect(self, my_node, neighbor, their_node, instant=False):    
+    def disconnect(self, my_node, their_node, instant=False):    
         #dock, finally
-        a = self.equipment[my_node][3].undock( neighbor, neighbor.equipment[their_node][3], instant)
-        b = neighbor.equipment[their_node][3].undock( self, self.equipment[my_node][3], instant )
+        a = self.equipment[my_node][3].undock( instant )
+        b = their_node.undock( instant )
         return a and b
             
         

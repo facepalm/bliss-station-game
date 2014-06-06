@@ -90,7 +90,8 @@ class Manifest(object):
             i.get_some_satisfaction()
             if not i.satisfied: fail = True
         if fail: return False
-        return True         
+        return True   
+    satisfied = property(check_satisfied, None, None, "Check manifest satisfaction" )          
 
     def refresh_station(self, station=None):
         for i in self.item: #New station!  New station! Dump tasks!

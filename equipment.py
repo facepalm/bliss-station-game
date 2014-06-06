@@ -53,6 +53,13 @@ class Equipment(object):
         self.logger.debug(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
         return self    
         
+    def get_name(self):
+        if not self.installed: return None
+        for e in self.installed.equipment.keys():
+            if self.installed.equipment[e][3] == self:
+                return e
+        return None
+        
     def refresh_station(self):
         if self.installed and self.installed.station:
             self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)             

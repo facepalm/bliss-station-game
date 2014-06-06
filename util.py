@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import string
 
 TIME_FACTOR = 120 # 120# 24
 
@@ -22,6 +23,9 @@ def seconds(time=1,units='minutes'):
                                          else time*2592000*12 if units=='years' or units == 'year' \
                                          else 10    
                                          
+                                         
+def short_id(long_id):
+    return string.upper(long_id[0:6])                                                
                                          
 def separate_node(node):
     if not '|' in node: return False, False

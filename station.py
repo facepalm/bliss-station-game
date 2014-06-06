@@ -26,6 +26,9 @@ class Station():
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger        
         
         self.docked_stations = []
+
+        self.location = 'LEO'
+        self.position = 'Approach'
         
         if initial_module: self.dock_module(None,None,initial_module,None)                        
                        
@@ -35,6 +38,7 @@ class Station():
             module.station = self
             module.refresh_station()
             self.paths = module.paths.copy()
+            self.position = 'Docked'
             return
             
         if not my_module: my_module = random.choice( [ self.modules[m] for m in self.modules if self.modules[m].get_random_dock() ] )    
@@ -106,7 +110,14 @@ class Station():
             self.logger.warning(''.join(["Attempting to split a doubly or-higher connected module from station"])) 
             pass
             
+        #Validate new station
+        for n in new_station_list:
+            if n.manifest and not n.manifest.satisfied:
+                self.logger.info("Station splitting failed: at least one split module has unsatisfied manifest!")
+                return False    
+            
         new_station = Station(None, "Return Station", self.logger)
+        new_station.position='Docked'
         self.docked_stations.append(new_station)
         new_station.docked_stations.append(self)
         new_station.paths.add_nodes_from(self.paths.nodes())
@@ -127,19 +138,40 @@ class Station():
             m.refresh_station()
             self.modules.pop(m.id)
                                                             
-        print new_station_list
+        self.logger.info(''.join(["Successfully split station! New station: ",util.short_id(new_station.id)]))
         
+        return new_station
 
+    def undock_station(self,other_station):
+        if other_station == self: return
+        if other_station in self.docked_stations: 
+            self.docked_stations.remove(other_station)
+        else:
+            return
+        
+        #prune nodes, edges
+        for n in self.paths.nodes(): 
+            if self.get_module_from_loc(n) == None:
+                self.paths.remove_node(n)
+        for e in self.paths.edges():
+            if not (e[0] in self.paths and e[1] in self.paths):
+                self.paths.remove_edge(e)
+                
+        other_station.undock_station(self)
+        
     def reset_module_touches(self):
         for m in self.modules.values():
             m.touched=False
 
+    def get_safe_distance_orient(self):
+        return np.array([-30,-30+60*random.random(),0]), np.array([ -math.pi +2*math.pi*random.random(), 0 ])
+
     def position_at_safe_distance(self,module):
         #TODO calculate boundary of station, multiply by 1.25
-        safe_location = np.array([-30,-30+60*random.random(),0])
+        safe_location, safe_orient = self.get_safe_distance_orient()
         
         module.location = safe_location
-        module.orientation = np.array([ -math.pi +2*math.pi*random.random(), 0 ])
+        module.orientation = safe_orient
         
         if not module.station: self.exterior_objects.append(module)
         module.refresh_image()                
@@ -152,6 +184,12 @@ class Station():
             assert False, 'Docking initialized with no active docking computer!  WTF mang?'
         dock_comp.dock_module([module,dock],[None,None])
 
+    def begin_undocking_approach(self,module,dock=None):                
+        dock_comp, d, d = self.search( EquipmentFilter( target='Docking Computer' ) )
+        if not dock_comp:
+            #TODO fail more gracefully
+            assert False, 'Undocking initialized with no active docking computer!  WTF mang?'
+        dock_comp.undock_module([module,dock])
 
     def get_random_dock(self, side_port_allowed = True, modules_to_exclude=[]):
         hits=[]

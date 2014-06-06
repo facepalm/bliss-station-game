@@ -14,7 +14,7 @@ class Mission(object):
             dockObj=Objective(name='Dock Vessel',description='Dock vessel to station',order='DOCK '+kwargs['target_id']+'  ')
             self.add_objective(dockObj)  
             
-            berthObj=Objective(name='Berth Vessel',description='Dock vessel to station',order='BERTH '+kwargs['target_id']+'  ',requires=dockObj)     
+            berthObj=Objective(name='Join Vessel',description='Join vessel to station',order='JOIN '+kwargs['target_id']+'  ',requires=dockObj)     
             self.add_objective(berthObj)    
             
             undock_mod_id = kwargs['module_id'] if 'module_id' in kwargs else ''
@@ -22,10 +22,10 @@ class Mission(object):
             self.add_objective(manObj)
             
             undock_dock_id = kwargs['dock_id'] if 'dock_id' in kwargs else ''            
-            unberthObj=Objective(name='Unberth Vessel',order='UNBERTH '+undock_dock_id+' ',requires=berthObj)
+            unberthObj=Objective(name='Split Vessel',order='SPLIT '+undock_dock_id+' ',requires=berthObj)
             self.add_objective(unberthObj)
             
-            sendoffObj = Objective(name='Send off Vessel',order='SENDOFF '+undock_mod_id+' ',requires=unberthObj)
+            sendoffObj = Objective(name='Undock Vessel',order='SENDOFF '+undock_mod_id+' ',requires=unberthObj)
             self.add_objective(sendoffObj)               
             
             self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+undock_mod_id+' ',requires=sendoffObj)) 
@@ -55,6 +55,7 @@ class Objective(object):
         
     def carry_out(self,station=None, scenario=None):
         #if not station: return
+        if self.completed: return
         order_token = self.order.split(' ')
         if order_token[0] == 'DOCK': 
             if not hasattr(self.mission,'dock'):
@@ -70,7 +71,7 @@ class Objective(object):
                 station.begin_docking_approach(mod,dock)
             elif self.mission.dock.open:
                 self.completed=True
-        elif order_token[0] == 'BERTH':
+        elif order_token[0] == 'JOIN':
             if not order_token[1] in scenario.stations.keys(): station.logger.warning("Requested berth to a station which doesn't exist!")
             docking_station = scenario.stations[order_token[1]]
             self.mission.modules = docking_station.modules.values()
@@ -94,21 +95,25 @@ class Objective(object):
             if order_token[3] and order_token[3] == 'RESUPPLY':    
                 for module in modules:    
                     module.manifest = manifest.Manifest(module)
-                    module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+                    #module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
                     module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
             self.completed=True                    
-        elif order_token[0] == 'UNBERTH':
+        elif order_token[0] == 'SPLIT':
             #if not order_token[1] in scenario.modules.keys(): station.logger.warning("Requested split station from a nonexistent module!")
             
             splitdock = self.mission.dock if self.mission.dock else None
             if not splitdock: 
                 station.logger.warning("Split dock does not exist!")
-            self.mission.foreignstation = station.split_station(splitdock)
-            self.completed=True            
+            self.mission.foreign_station = station.split_station(splitdock)
+            if self.mission.foreign_station:
+                self.completed=True            
         elif order_token[0] == 'SENDOFF':
-            forstation = self.mission.foreignstation if hasattr(self.mission,'foreignstation') else None
             splitdock = self.mission.dock if self.mission.dock else None
-            self.completed=True            
+            if splitdock.installed.station.position == 'Approach':
+                self.completed = True            
+            else:
+                result = station.begin_undocking_approach(splitdock.installed,splitdock.get_name())            
+            
             
             
             
