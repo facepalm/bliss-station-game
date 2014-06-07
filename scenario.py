@@ -42,6 +42,9 @@ class Scenario(object):
         self.actors=dict()
         self.logger=logger
         
+        self.mission_control = missioncontrol.MissionControl(self,self.logger)
+        
+        
         if name=='BERTNERNIE':
 
             modA  = DestinyModule()
@@ -113,8 +116,13 @@ class Scenario(object):
     def remove_station(self,station=None):
         if not station: return    
         for m in station.actors.values():
-            if m.id in self.actors.keys(): self.actors.pop(m.id)
+            if m.id in self.actors.keys(): 
+                m.sprite.delete()
+                self.actors.pop(m.id)
         for m in station.modules.values():
+            for e in m.equipment.values():
+                if e[3]: 
+                    e[3].sprite.delete()
             if m.id in self.modules.keys(): self.modules.pop(m.id)            
         if station.id in self.stations.keys(): self.stations.pop(station.id)
 
@@ -128,7 +136,6 @@ class DockingScenario(Scenario):
         '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
            He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
    
-        self.mission_control = missioncontrol.MissionControl(self,self.logger)
         
         modB   = ZvezdaModule()
         modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))

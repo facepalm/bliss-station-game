@@ -20,6 +20,10 @@ class LayeredSprite(object):
         sprite.group = pyglet.graphics.OrderedGroup(self.order, parent = util.parent_group)
         self.layer[name]=sprite    
         
+    def delete(self):
+        for l in self.layer.values():
+            l.delete()    
+        
     def update_sprite(self,x,y,rot):
         for l in self.layer.values():
             l.x = x

@@ -42,7 +42,10 @@ class MissionComputer(Computer, Rack):
         
     def update(self,dt):            
         super(MissionComputer, self).update(dt)                
-        if not self.installed or not self.mission or not self.objective: return
+        if not self.installed or not self.mission: return
+        if not self.objective:             
+            self.mission = None
+            return
                 
         if self.objective.completed and (not self.task or self.task.task_ended()):     
             #print self.objective.name
@@ -73,6 +76,7 @@ class MissionComputer(Computer, Rack):
             self.objective = self.mission.current_objective()
         elif task.name == "Update Mission":                              
             self.objective = self.mission.current_objective()
+            if not self.objective: return
             self.objective.carry_out(station=self.installed.station, scenario=self.scenario)
             self.logger.info(''.join(['Mission updated.  Current objective: ',self.objective.name]))
             

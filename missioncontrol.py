@@ -32,8 +32,7 @@ class MissionControl(object):
         return newStation
         
 
-    def accept_vessel(self,scenario=None,station=""):        
-        if not scenario: return
+    def accept_vessel(self,station=None):        
         if not station: return
         
         #calculate station value (if possible/necessary)

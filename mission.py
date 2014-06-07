@@ -54,6 +54,7 @@ class Objective(object):
         self.requires = kwargs['requires'] if 'requires' in kwargs else None
         
     def carry_out(self,station=None, scenario=None):
+        if not scenario: scenario = util.scenario
         #if not station: return
         if self.completed: return
         order_token = self.order.split(' ')
@@ -113,8 +114,9 @@ class Objective(object):
                 self.completed = True            
             else:
                 result = station.begin_undocking_approach(splitdock.installed,splitdock.get_name())            
-            
-            
+        elif order_token[0] == 'DEORBIT':            
+            scenario.mission_control.accept_vessel(self.mission.foreign_station)
+            self.completed = True
             
             
             
