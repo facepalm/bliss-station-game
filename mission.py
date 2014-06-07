@@ -29,6 +29,28 @@ class Mission(object):
             self.add_objective(sendoffObj)               
             
             self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+undock_mod_id+' ',requires=sendoffObj)) 
+            
+        elif selection == 'New Module' and 'target_id' in kwargs and 'module_id' in kwargs:
+            self.current_mission = selection
+            
+            dockObj=Objective(name='Dock Vessel',description='Dock vessel to station',order='DOCK '+kwargs['target_id']+'  ')
+            self.add_objective(dockObj)  
+            
+            berthObj=Objective(name='Join Vessel',description='Join vessel to station',order='JOIN '+kwargs['target_id']+'  ',requires=dockObj)     
+            self.add_objective(berthObj)    
+            
+            undock_mod_id = kwargs['module_id'] if 'module_id' in kwargs else ''
+            manObj = Objective(name='Resupply Manifest',order='MANIFEST MODULE '+undock_mod_id+' RESUPPLY',requires=berthObj)
+            self.add_objective(manObj)
+            
+            unberthObj=Objective(name='Split Vessel',order='SPLIT '+undock_mod_id+' ',requires=berthObj)
+            self.add_objective(unberthObj)
+            
+            sendoffObj = Objective(name='Undock Vessel',order='SENDOFF '+undock_mod_id+' ',requires=unberthObj)
+            self.add_objective(sendoffObj)               
+            
+            self.add_objective(Objective(name='Contact Mission Control',order='DEORBIT '+undock_mod_id+' ',requires=sendoffObj)) 
+        
         
     def update_mission(self,scenario):
         if self.current_mission == "Standard Resupply":
@@ -101,15 +123,19 @@ class Objective(object):
             self.completed=True                    
         elif order_token[0] == 'SPLIT':
             #if not order_token[1] in scenario.modules.keys(): station.logger.warning("Requested split station from a nonexistent module!")
-            
-            splitdock = self.mission.dock if self.mission.dock else None
+            if order_token[1] in scenario.modules.keys():
+                mod = scenario.modules[order_token[1]]                
+                splitdock = mod.equipment[mod.get_random_dock(used=True, unused=False)][3]
+            else:
+                splitdock = self.mission.dock if self.mission.dock else None
+            self.mission.split_dock = splitdock
             if not splitdock: 
                 station.logger.warning("Split dock does not exist!")
             self.mission.foreign_station = station.split_station(splitdock)
             if self.mission.foreign_station:
                 self.completed=True            
         elif order_token[0] == 'SENDOFF':
-            splitdock = self.mission.dock if self.mission.dock else None
+            splitdock = self.mission.split_dock if self.mission.split_dock else None
             if splitdock.installed.station.position == 'Approach':
                 self.completed = True            
             else:

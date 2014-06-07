@@ -138,8 +138,10 @@ class BasicModule():
             satisfaction = self.manifest.check_satisfied()
             #print satisfaction    
         
-    def get_random_dock(self, side_port_allowed=True):
-        docks=[f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ]
+    def get_random_dock(self, side_port_allowed=True, unused = True, used = False):
+        docks=[]
+        if unused: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ])
+        if used: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ])
         if not docks: return None
         return random.choice(docks)    
             

@@ -54,9 +54,9 @@ class Scenario(object):
             modDrag.setup_simple_resupply()
                    
             station = Station(modDock, "BnE Station", logger)
-            station.berth_module(None,None,modB, None, True)
-            station.berth_module(None,None,modA, None, True)    
-            station.berth_module(None,None,modDrag, None, True)
+            station.dock_module(None,None,modB, None, True)
+            station.dock_module(None,None,modA, None, True)    
+            station.dock_module(None,None,modDrag, None, True)
             
             '''rob = Robot('Robby')     
             rob.station = station
@@ -151,11 +151,14 @@ class DockingScenario(Scenario):
         self.add_station(station)
             
         newStation = self.mission_control.send_resupply_vessel(station.id)
+        modDock = newStation.modules.values()[0]
+        modD = DestinyModule()
+        newStation.dock_module(None,None,modD, None, True)
         
         miss_comp, d, d = station.search( filtering.EquipmentFilter( target='Mission Computer' ) )
         miss_comp.scenario=self
         new_miss = mission.Mission()
-        new_miss.load_mission(selection='Standard Resupply', target_id = newStation.id)
+        new_miss.load_mission(selection='New Module', target_id = newStation.id, module_id = modDock.id)
         miss_comp.new_mission(new_miss)
         
                                   
