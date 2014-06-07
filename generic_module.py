@@ -167,6 +167,18 @@ class BasicModule():
             out.extend(n.percolate())
         return out    
             
+    def percolate_location(self):
+        if self.touched: return
+        self.touched = True
+        for e in self.get_neighbors(equipment=True):
+             #update e's partner's module's location
+             n = e.partner.installed
+             if not n.touched:                
+                n.adjust_location(e.partner.get_name(),self,e.get_name())        
+                n.refresh_image()     
+             #call n
+             n.percolate_location()           
+            
     def get_empty_slot(self,slot_type='LSS'):
         slots = [s for s in self.equipment.keys() if ( self.equipment[s][2] == slot_type or slot_type=='ANY' ) and not self.equipment[s][3]]
         if not slots: return None
@@ -186,7 +198,15 @@ class BasicModule():
                 return True
         return False                            
         
-    
+    def adjust_location(self,my_node,neighbor,their_node):
+        self.orientation = ( neighbor.orientation + neighbor.equipment[their_node][1] - self.equipment[my_node][1] ) + np.array([math.pi, 0])
+        self.orientation %= 2*math.pi
+        
+        #calculate location
+        self.location=np.array([ 0,0,0 ])
+        loc_offset = self.getXYZ(self.equipment[my_node][0])
+        self.location = neighbor.getXYZ(neighbor.equipment[their_node][0]) - loc_offset        
+        
             
     def dock(self, my_node, neighbor, their_node):
         if not neighbor or not my_node or not their_node: return False, "Docking cancelled: pointers missing" 
@@ -195,14 +215,7 @@ class BasicModule():
         if self.equipment[my_node][2] != neighbor.equipment[their_node][2]: return False, "Docking cancelled: incompatible docking mechanisms"
         if self.equipment[my_node][3].docked or neighbor.equipment[their_node][3].docked: return False, "Docking cancelled: at least one module already docked elsewhere"
         
-        #calculate orientation
-        self.orientation = ( neighbor.orientation + neighbor.equipment[their_node][1] - self.equipment[my_node][1] ) + np.array([math.pi, 0])
-        self.orientation %= 2*math.pi
-        
-        #calculate location
-        self.location=np.array([ 0,0,0 ])
-        loc_offset = self.getXYZ(self.equipment[my_node][0])
-        self.location = neighbor.getXYZ(neighbor.equipment[their_node][0]) - loc_offset        
+        self.adjust_location(my_node,neighbor,their_node)        
         
         #collision detection   
                         

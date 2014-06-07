@@ -99,6 +99,11 @@ class Station():
         if other_station in self.docked_stations: 
             self.docked_stations.remove(other_station)
 
+
+    def percolate_location(self,init_mod):
+        self.reset_module_touches()
+        init_mod.percolate_location()
+        
     
     def split_station(self, docking_ring):
         '''Splits off the module WITH the given docking ring into a new station, percolates it to connected modules'''
@@ -259,8 +264,6 @@ class Station():
         for a in self.actors:
             self.actors[a].update_location()
                     
-    def percolate_location(self,module):
-        pass        
                                       
 if __name__ == "__main__":
     from time import sleep    

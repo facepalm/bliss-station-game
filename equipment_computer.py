@@ -162,6 +162,7 @@ class DockingComputer(Computer, Rack):
     def task_work_report(self,task,dt):
         if task.name.startswith('Dock module') or task.name.startswith('Undock module'):
             self.docking_item[0].location, self.docking_item[0].orientation = self.docking_path.get_time_point(task.task_duration - task.task_duration_remaining)
+            self.docking_item[0].station.percolate_location(self.docking_item[0])
             self.docking_item[0].refresh_image()
             
                 
