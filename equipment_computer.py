@@ -143,6 +143,7 @@ class DockingComputer(Computer, Rack):
         
         #start motion
         new_loc, new_orient = self.installed.station.get_safe_distance_orient()
+        new_loc *= 2
         self.docking_path = FlightPath(self.docking_item[0], self.docking_item[1], new_loc, new_orient,self.docking_duration, FlightType='UNDOCK')
         
         self.docking_task = Task("Undock module", owner = self, timeout=None, task_duration = self.docking_duration, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
@@ -153,6 +154,10 @@ class DockingComputer(Computer, Rack):
     def task_finished(self,task):
         if not task or not self.installed: return
         if task.name == "Dock module":
+            self.docking_item[0].location, self.docking_item[0].orientation = self.docking_path.get_time_point(task.task_duration)
+            self.docking_item[0].station.percolate_location(self.docking_item[0])
+            self.docking_item[0].refresh_image()
+            
             self.installed.station.dock_module(self.docking_target[0], self.docking_target[1], self.docking_item[0], self.docking_item[1])        
             self.docking_item[0].station.position='Docked'
         if task.name == "Undock module":            

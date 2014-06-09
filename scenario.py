@@ -136,7 +136,6 @@ class DockingScenario(Scenario):
         '''Ernie, in a station badly needing resupply, gets a Dragon shipment.
            He installs a docking computer, docks Dragon, unloads food, loads waste, undocks Dragon, Dragon reenters'''
    
-        
         modB   = ZvezdaModule()
         modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
         modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))   

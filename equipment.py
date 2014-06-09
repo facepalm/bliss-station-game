@@ -36,7 +36,7 @@ class Equipment(object):
     def refresh_image(self):
         if not util.GRAPHICS == 'pyglet': return        
         import graphics
-        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name)        
+        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name)
         self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
                
       

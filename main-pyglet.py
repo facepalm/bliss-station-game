@@ -1,11 +1,22 @@
-import util, math
+import util
+
+import math
 import logging
 import pyglet
-from pyglet.gl import *  
+
 from pyglet import clock
-from scenario import ScenarioMaster
+from scenario import ScenarioMaster               
+      
+from pyglet import gl as gl     
+
 
 util.GRAPHICS = 'pyglet'
+
+# 
+
+
+
+
 
 def load_image(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
@@ -42,6 +53,8 @@ util.image_to_sprite = image_to_sprite
 util.station_batch = pyglet.graphics.Batch()    
 util.actor_batch = pyglet.graphics.Batch()  
 util.parent_group = pyglet.graphics.Group() 
+               
+
                                       
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
@@ -65,11 +78,11 @@ if __name__ == "__main__":
     def on_draw():
         #background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glLoadIdentity();
         
-        glOrtho(-window.width//1,window.width//1,-window.height//1,window.height//1,0,1);
-        glMatrixMode(GL_MODELVIEW);        
+        gl.glOrtho(-window.width//1,window.width//1,-window.height//1,window.height//1,0,1);
+        gl.glMatrixMode(gl.GL_MODELVIEW);        
 
         for s in scenario.get_stations():
             s.draw(window)
