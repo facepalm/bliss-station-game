@@ -7,6 +7,7 @@ from tasks import TaskTracker
 from station import Station        
 from actor import Robot
 from human import Human        
+from equipment_science import Experiment, BiologyExperimentRack
 import missioncontrol
 import mission
 import clutter
@@ -153,6 +154,8 @@ class DockingScenario(Scenario):
         modDock = newStation.modules.values()[0]
         modD = DestinyModule()
         newStation.dock_module(None,None,modD, None, True)
+        modD.equipment['port3'][3]=BiologyExperimentRack().install(modD)   
+        modD.equipment['port5'][3]=Experiment().install(modD)
         
         miss_comp, d, d = station.search( filtering.EquipmentFilter( target='Mission Computer' ) )
         miss_comp.scenario=self
