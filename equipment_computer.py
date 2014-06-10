@@ -63,6 +63,11 @@ class MissionComputer(Computer, Rack):
             else:
                 self.objective_timer = 30            
             
+    def generate_mission(self, selection='New Module', target_id = '', module_id = ''):
+        new_miss = mission.Mission()
+        new_miss.load_mission( selection=selection, target_id=target_id, module_id=module_id)
+        self.new_mission(new_miss)       
+            
     def new_mission(self,mission):
         if not mission or (self.task and not self.task.task_ended()) or not self.installed: return
         self.task = Task(''.join(['Log Mission']), owner = self, timeout=None, task_duration = 30, severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)            

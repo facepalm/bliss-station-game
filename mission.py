@@ -1,4 +1,5 @@
 import manifest
+import util
 
 class Mission(object):
     def __init__(self,selection=None):

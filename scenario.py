@@ -90,6 +90,7 @@ class Scenario(object):
     def system_tick(self,dt):    
         for s in self.stations.values():
             s.update(dt*util.TIME_FACTOR)       
+        self.mission_control.update(dt*util.TIME_FACTOR)
         self.time_elapsed += dt   
         
     def status_update(self,dt):
@@ -157,11 +158,7 @@ class DockingScenario(Scenario):
         modD.equipment['port3'][3]=BiologyExperimentRack().install(modD)   
         modD.equipment['port5'][3]=Experiment().install(modD)
         
-        miss_comp, d, d = station.search( filtering.EquipmentFilter( target='Mission Computer' ) )
-        miss_comp.scenario=self
-        new_miss = mission.Mission()
-        new_miss.load_mission(selection='New Module', target_id = newStation.id, module_id = modDock.id)
-        miss_comp.new_mission(new_miss)
+        
         
                                   
                         

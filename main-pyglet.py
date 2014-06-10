@@ -12,12 +12,6 @@ from pyglet import gl as gl
 
 util.GRAPHICS = 'pyglet'
 
-# 
-
-
-
-
-
 def load_image(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x else img.width // 2
@@ -39,6 +33,7 @@ def load_sprite(filename, anchor_x=None, anchor_y=None):
     img.anchor_x = anchor_x if anchor_x else img.width // 2
     img.anchor_y = anchor_y if anchor_y else img.height // 2 
     sprite = pyglet.sprite.Sprite(img)
+    
     return sprite
     
 util.load_sprite = load_sprite

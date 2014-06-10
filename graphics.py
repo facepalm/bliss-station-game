@@ -15,6 +15,7 @@ class LayeredSprite(object):
     
     def add_layer(self,name,image):
         sprite = pyglet.sprite.Sprite(image)
+        sprite.x= -10000
         if name not in self.layer: self.order += 1 
         sprite.batch = self.batch
         sprite.group = pyglet.graphics.OrderedGroup(self.order, parent = util.parent_group)

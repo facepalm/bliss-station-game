@@ -172,11 +172,18 @@ class Station():
         return np.array([-30,-30+60*random.random(),0]), np.array([ -math.pi +2*math.pi*random.random(), 0 ])
 
     def position_at_safe_distance(self,module):
+        station=None
+        if isinstance(module, Station):
+            station = module
+            module = module.modules.values()[0]
         #TODO calculate boundary of station, multiply by 1.25
         safe_location, safe_orient = self.get_safe_distance_orient()
         
         module.location = safe_location
         module.orientation = safe_orient
+        
+        if station is not None:
+            station.percolate_location(module)
         
         if not module.station: self.exterior_objects.append(module)
         module.refresh_image()                
