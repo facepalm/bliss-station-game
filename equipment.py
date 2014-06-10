@@ -43,7 +43,7 @@ class Equipment(object):
     def update(self,dt):
         if self.task and self.task.task_ended(): self.task = None        
         
-        self.powered = self.idle_draw and self.draw_power(self.idle_draw,dt) > 0
+        self.powered = self.idle_draw > 0 and self.draw_power(self.idle_draw,dt) > 0
 
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"

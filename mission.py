@@ -1,6 +1,8 @@
 import manifest
 import util
 
+from cargo_modules import DragonCargoModule
+
 class Mission(object):
     def __init__(self,selection=None):
         self.load_mission(selection)  
@@ -127,6 +129,7 @@ class Objective(object):
             if order_token[1] in scenario.modules.keys():
                 mod = scenario.modules[order_token[1]]                
                 splitdock = mod.equipment[mod.get_random_dock(used=True, unused=False)][3]
+                #print "New mod is Dragon: ",isinstance(mod,DragonCargoModule), mod.id
             else:
                 splitdock = self.mission.dock if self.mission.dock else None
             self.mission.split_dock = splitdock

@@ -153,6 +153,7 @@ class DockingScenario(Scenario):
             
         newStation = self.mission_control.send_resupply_vessel(station.id)
         modDock = newStation.modules.values()[0]
+        
         modD = DestinyModule()
         newStation.dock_module(None,None,modD, None, True)
         modD.equipment['port3'][3]=BiologyExperimentRack().install(modD)   

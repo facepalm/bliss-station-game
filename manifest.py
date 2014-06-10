@@ -63,6 +63,15 @@ class ManifestItem(object):
             obj = item.split(remove_amt)
             self.owner.module.station.get_module_from_loc(task.assigned_to.location).stowage.add(obj)                              
             
+    def conflicts(self,other): #currently unused
+        '''given another manifest item, returns true if the two requirements conflict'''
+        if not isinstance(other,ManifestItem): raise TypeError("ManifestItems must only conflict with other ManifestItems")
+        if (self.tasktype == 'Unload' and other.tasktype == "Load") or (other.tasktype == 'Unload' and self.tasktype == "Load"):
+            if self.itemtype == other.itemtype:
+                if self.subtype == other.subtype or self.subtype == "Any" or other.subtype == "Any":
+                    return True
+        return False                    
+            
 
 class Manifest(object):
     '''Manifests are, essentially, list managers'''
@@ -78,7 +87,7 @@ class Manifest(object):
                     self.item.append(entry)
             if itemtype == 'Equipment': 
                 for e in [m for m in self.module.stowage.contents if isinstance(m,equipment.Equipment)]:
-                    entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=c.name)
+                    entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=e.name)
                     self.item.append(entry)      
         else:
             entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=subtype)
@@ -92,6 +101,13 @@ class Manifest(object):
         if fail: return False
         return True   
     satisfied = property(check_satisfied, None, None, "Check manifest satisfaction" )          
+
+    def append_item(self,entry): #currently unused
+        for i in self.item:            
+            if i.conflicts(entry):
+                entry = i.merge(entry)
+            if not entry: return
+        self.item.append(entry)    
 
     def refresh_station(self, station=None):
         for i in self.item: #New station!  New station! Dump tasks!

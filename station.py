@@ -179,7 +179,7 @@ class Station():
         #TODO calculate boundary of station, multiply by 1.25
         safe_location, safe_orient = self.get_safe_distance_orient()
         
-        module.location = safe_location
+        module.location = 2*safe_location
         module.orientation = safe_orient
         
         if station is not None:

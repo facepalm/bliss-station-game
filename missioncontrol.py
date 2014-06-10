@@ -53,7 +53,7 @@ class MissionControl(object):
                             
                             if v.autodock:
                                 miss_comp, d, d = self.scenario.stations[v.target_id].search( filtering.EquipmentFilter( target='Mission Computer' ) )
-                                modDock = v.station.modules.values()[0]
+                                modDock = [m for m in v.station.modules.values() if isinstance(m,DragonCargoModule)][0]
                                 miss_comp.generate_mission(selection='New Module', target_id = v.station.id, module_id = modDock.id)
                         else:
                             v.launch_prep -= dt                

@@ -79,3 +79,8 @@ class EquipmentFilter(SearchFilter):
         if self.comparison_type == 'Equipment Slot':
             return obj == self.target
       
+      
+class ManifestFilter(SearchFilter):
+    '''Specialized filter for fulfilling manifest results'''
+    pass
+    
