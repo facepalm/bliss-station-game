@@ -117,6 +117,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
         
     def refresh_image(self):     
         super(Window, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('Window',util.load_image("images/window.png"))
         self.sprite.layer['Equipment'].visible=False
         
@@ -140,6 +141,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
             
     def refresh_image(self):     
         super(Machinery, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('Machinery',util.load_image("images/machinery_40x40.png"))
                  
                 
@@ -229,6 +231,7 @@ class DockingRing(Equipment):
         
     def refresh_image(self):     
         super(DockingRing, self).refresh_image()
+        if self.sprite is None: return
         if self.open:
             self.sprite.add_layer('DockingRing',util.load_image("images/open_hatch.png"))
         else:
@@ -315,6 +318,7 @@ class SolarPanel(Equipment):
         
     def refresh_image(self):     
         super(SolarPanel, self).refresh_image()
+        if self.sprite is None: return
         img = util.load_image("images/solarpanel_horiz.png")
         img.anchor_x, img.anchor_y = [2,15]
         self.sprite.add_layer('SolarPanel',img)

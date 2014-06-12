@@ -17,6 +17,7 @@ class UniversalToilet(Machinery):
 
     def refresh_image(self):     
         super(UniversalToilet, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('Toilet',util.load_image("images/14_toilets_40x40.png"))
 
     def deposit(self, amt1=0, amt2=0):

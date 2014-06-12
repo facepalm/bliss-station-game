@@ -23,6 +23,7 @@ class Human(Actor):
         
     def refresh_image(self):       
         super(Human, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('ActorBase',util.load_image("images/doll_wittgenstein__x1_1_png_1354832578_crop.png"))    
         
     def hunger_hit(self):

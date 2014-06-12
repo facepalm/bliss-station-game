@@ -23,6 +23,7 @@ class Computer(Equipment):
         
     def refresh_image(self):     
         super(Computer, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('Computer',util.load_image("images/computer_40x40.png"))
 
 class MissionComputer(Computer, Rack):
@@ -38,6 +39,7 @@ class MissionComputer(Computer, Rack):
     
     def refresh_image(self):     
         super(MissionComputer, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('DockingComputer',util.load_image("images/smallmissionsymbol_40x40.png"))
         
     def update(self,dt):            
@@ -102,6 +104,7 @@ class DockingComputer(Computer, Rack):
     
     def refresh_image(self):     
         super(DockingComputer, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('DockingComputer',util.load_image("images/smalldockingsymbol_40x40.png"))
         
     def dock_module(self,item=[None,None],target=[None, None]):

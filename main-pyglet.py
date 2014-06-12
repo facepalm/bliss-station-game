@@ -1,5 +1,6 @@
 import util
 
+import lib2d
 import math
 import logging
 import pyglet
@@ -54,6 +55,7 @@ util.parent_group = pyglet.graphics.Group()
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
 
+    
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
     #DEBUG INFO WARNING ERROR CRITICAL
@@ -77,7 +79,7 @@ if __name__ == "__main__":
         gl.glLoadIdentity();
         
         gl.glOrtho(-window.width//1,window.width//1,-window.height//1,window.height//1,0,1);
-        gl.glMatrixMode(gl.GL_MODELVIEW);        
+        gl.glMatrixMode(gl.GL_MODELVIEW);                
 
         for s in scenario.get_stations():
             s.draw(window)

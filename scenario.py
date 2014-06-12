@@ -119,12 +119,12 @@ class Scenario(object):
         if not station: return    
         for m in station.actors.values():
             if m.id in self.actors.keys(): 
-                m.sprite.delete()
+                if m.sprite is not None: m.sprite.delete()
                 self.actors.pop(m.id)
         for m in station.modules.values():
             for e in m.equipment.values():
                 if e[3]: 
-                    e[3].sprite.delete()
+                    if e[3].sprite is not None: e[3].sprite.delete()
             if m.id in self.modules.keys(): self.modules.pop(m.id)            
         if station.id in self.stations.keys(): self.stations.pop(station.id)
 

@@ -39,6 +39,7 @@ class Experiment(Equipment):
                 
     def refresh_image(self):     
         super(Experiment, self).refresh_image() #diabolic_acid__x1_1_png_1354832222.png
+        if self.sprite is None: return
         self.sprite.add_layer('Experiment',util.load_image("images/glitch-assets/diabolic_acid/diabolic_acid__x1_1_png_1354832222.png"))
 
 class BiologyExperimentRack(Experiment, Rack):
@@ -48,6 +49,7 @@ class BiologyExperimentRack(Experiment, Rack):
         
     def refresh_image(self):     
         super(BiologyExperimentRack, self).refresh_image()
+        if self.sprite is None: return
         self.sprite.add_layer('Biology Experiment',util.load_image("images/glitch-assets/element_green/element_green__x1_1_png_1354832187.png"))
         self.sprite.layer['Experiment'].visible = False
         

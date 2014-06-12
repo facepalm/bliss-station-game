@@ -28,10 +28,10 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    scenario = ScenarioMaster(scenario='BERTNERNIE',logger=logger)
+    scenario = ScenarioMaster(scenario='DOCKINGTEST',logger=logger)
             
     for i in range(1,10000):
-        scenario.system_tick(util.TIME_FACTOR/20.0)
-        scenario.status_update(util.TIME_FACTOR/20.0)
+        scenario.system_tick(1/20.0)
+        scenario.status_update(1/20.0)
         sleep(1/20.0)
         
