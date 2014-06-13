@@ -64,22 +64,10 @@ class BasicModule():
     def refresh_image(self):
         if not util.GRAPHICS: return                            
                 
-        if True:#not hasattr(self,'imgfile'):
-            if util.GRAPHICS:
-                self.img = util.make_solid_image(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255))
-            else: 
-                self.imgfile = "images/module_placeholder.jpg"            
-
-        #if hasattr(self,'imgfile'):
-        #    self.img = util.load_image(self.imgfile)
-        
-        '''if math.sin(self.orientation[0]) < 0:
-            self.img = self.img.get_transform(flip_y=True)
-            #TODO replace with different image altogether
-        if math.cos(self.orientation[0]) < 0:
-            self.img = self.img.get_transform(flip_x=True)
-           ''' 
-        self.sprite = util.image_to_sprite(self.img,self.location[0],self.location[1], self.orientation[0])
+        if util.GRAPHICS == 'pyglet':
+            self.img = util.make_solid_image(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255))    
+            self.sprite = util.image_to_sprite(self.img,self.location[0],self.location[1], self.orientation[0])
+                    
             
         
      

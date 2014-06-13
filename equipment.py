@@ -34,9 +34,9 @@ class Equipment(object):
         self.refresh_image()    
      
     def refresh_image(self):
-        if not util.GRAPHICS == 'pyglet': return        
-        import graphics
-        if not self.sprite: self.sprite = graphics.LayeredSprite(name=self.name)
+        if not util.GRAPHICS: return        
+        import graphics_pyglet
+        if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
         self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
                
       

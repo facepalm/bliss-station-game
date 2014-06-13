@@ -1,6 +1,5 @@
 import util
 
-import lib2d
 import math
 import logging
 import pyglet

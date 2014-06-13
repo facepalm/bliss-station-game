@@ -64,6 +64,9 @@ def load_sprite(filename):
 def image_to_sprite():
     pass       
     
+def make_solid_sprite():
+    pass    
+    
 station_batch = None
 actor_batch = None
 parent_group = None     
