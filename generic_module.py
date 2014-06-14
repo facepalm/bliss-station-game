@@ -66,6 +66,7 @@ class BasicModule():
                 
         if util.GRAPHICS == 'pyglet':           
             self.sprite = util.make_solid_sprite(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
+            self.sprite.owner = self
         elif util.GRAPHICS == 'cocos2d':
             self.sprite = util.make_solid_sprite(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
             if self.station: self.station.sprite.add(self.sprite)

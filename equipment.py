@@ -39,6 +39,7 @@ class Equipment(object):
             import graphics_pyglet
             if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
             self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
+            self.sprite.owner = self
                    
       
     def update(self,dt):

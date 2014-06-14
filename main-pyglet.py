@@ -3,6 +3,7 @@ import util
 import math
 import logging
 import pyglet
+import gui_pyglet
 
 from pyglet import clock
 from scenario import ScenarioMaster               
@@ -70,7 +71,7 @@ util.parent_group = pyglet.graphics.Group()
                                       
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
-
+    gui = gui_pyglet.gui()
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -86,6 +87,8 @@ if __name__ == "__main__":
     logger.addHandler(ch)
 
     scenario = ScenarioMaster(scenario='DOCKINGTEST',logger=logger)
+    gui.scenario = scenario
+    gui.window = window
 
     @window.event
     def on_draw():
@@ -105,6 +108,8 @@ if __name__ == "__main__":
     #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)
     clock.schedule_interval(scenario.system_tick,0.0250)
+    
+    window.push_handlers(gui)
     
     window.set_visible()
     pyglet.app.run()

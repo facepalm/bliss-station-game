@@ -37,6 +37,7 @@ class Actor(object):
             import graphics_pyglet
             if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name,batch=util.actor_batch)        
             self.sprite.add_layer('ActorBase',util.load_image("images/npc_crafty_bot__x1_idle0_png_1354839494_crop.png"))
+            self.sprite.owner = self
         
     def update_location(self):
         zoom=util.ZOOM
