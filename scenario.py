@@ -87,11 +87,13 @@ class Scenario(object):
             station = Station(modDock, 'NewbieStation',logger)
             self.add_station(station)
             
-    def system_tick(self,dt):    
+    def system_tick(self,dt):
+        self.logger.debug("Begin new system tick")    
         for s in self.stations.values():
             s.update(dt*util.TIME_FACTOR)       
         self.mission_control.update(dt*util.TIME_FACTOR)
         self.time_elapsed += dt   
+        self.logger.debug("End system tick")
         
     def status_update(self,dt):
         print      

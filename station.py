@@ -30,7 +30,17 @@ class Station():
         self.location = 'LEO'
         self.position = 'Approach'
         
+        self.sprite = None
+        self.refresh_image()
+        
         if initial_module: self.dock_module(None,None,initial_module,None)                        
+
+        
+                       
+    def refresh_image(self):
+        if util.GRAPHICS == 'cocos2d':
+            if self.sprite is None:               
+                self.sprite = util.Layer()
                        
     def dock_module(self, my_module, my_dock, module, mod_dock, instant = False):        
         if module and not self.modules:

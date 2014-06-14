@@ -33,11 +33,11 @@ class Actor(object):
         self.refresh_image()
      
     def refresh_image(self):
-        if not util.GRAPHICS == 'pyglet': return        
-        import graphics_pyglet
-        if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name,batch=util.actor_batch)        
-        self.sprite.add_layer('ActorBase',util.load_image("images/npc_crafty_bot__x1_idle0_png_1354839494_crop.png"))
-    
+        if util.GRAPHICS == 'pyglet': 
+            import graphics_pyglet
+            if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name,batch=util.actor_batch)        
+            self.sprite.add_layer('ActorBase',util.load_image("images/npc_crafty_bot__x1_idle0_png_1354839494_crop.png"))
+        
     def update_location(self):
         zoom=util.ZOOM
         l= self.path.current_coords if (self.path and not self.path.completed) else self.station.loc_to_xyz( self.location )

@@ -34,11 +34,12 @@ class Equipment(object):
         self.refresh_image()    
      
     def refresh_image(self):
-        if not util.GRAPHICS: return        
-        import graphics_pyglet
-        if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
-        self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
-               
+        if not util.GRAPHICS: return
+        if util.GRAPHICS == 'pyglet':        
+            import graphics_pyglet
+            if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
+            self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
+                   
       
     def update(self,dt):
         if self.task and self.task.task_ended(): self.task = None        

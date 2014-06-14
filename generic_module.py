@@ -67,7 +67,9 @@ class BasicModule():
         if util.GRAPHICS == 'pyglet':
             self.img = util.make_solid_image(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255))    
             self.sprite = util.image_to_sprite(self.img,self.location[0],self.location[1], self.orientation[0])
-                    
+        elif util.GRAPHICS == 'cocos2d':
+            self.sprite = util.make_solid_sprite(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
+            if self.station: self.station.sprite.add(self.sprite)
             
         
      
@@ -262,6 +264,7 @@ class BasicModule():
 
     def refresh_station(self, station=None):
         if station and station != self.station: self.station = station
+        if util.GRAPHICS == 'cocos2d': self.station.sprite.add(self.sprite)
         if self.manifest: self.manifest.refresh_station(self.station)
         for e in self.equipment:            
             if self.equipment[e][3]: 

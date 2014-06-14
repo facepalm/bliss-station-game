@@ -4,7 +4,7 @@ import string
 
 TIME_FACTOR = 120 # 120# 24
 
-ZOOM = 15
+ZOOM = 5
 
 equipment_targets = dict()
 
@@ -72,3 +72,4 @@ actor_batch = None
 parent_group = None     
 
 scenario = None
+
