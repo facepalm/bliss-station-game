@@ -18,9 +18,16 @@ class CollideSprite(pyglet.sprite.Sprite):
         super( CollideSprite, self ).__init__(*args, **kwargs)
         
     def contains(self,x,y):
+        x *= 2#util.ZOOM
+        y *= 2#util.ZOOM
         #TODO transform (x,y) to image coordinate space (rotate about .anchor)
-        if x >= self.x - self.width//2 and x <= self.x + self.width//2:
-            if y >= self.y - self.height//2 and y <= self.y + self.height//2:
+        theta = math.pi * self.rotation / (180.0)
+        x -= self.x
+        y -= self.y              
+        x1 = math.cos(theta)*x - math.sin(theta)*y
+        y1 = math.sin(theta)*x + math.cos(theta)*y
+        if x1 >= -self.width//2 and x1 <= self.width//2:
+            if y1 >= -self.height//2 and y1 <= self.height//2:
                 return True
         return False
 

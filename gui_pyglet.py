@@ -16,3 +16,14 @@ class gui():
                     return True
         print 'Mouse pressed at: ',(x,y)
         return False     
+        
+    def on_mouse_motion_skip(self, x, y, dx,dy):
+        x -= self.window.width//2
+        y -= self.window.height//2
+        for station in self.scenario.get_stations():
+            for m in station.modules.values():
+                if m.sprite.contains(x,y):
+                    print 'Module',m.short_id
+                    return True
+        print 'Mouse pressed at: ',(x,y)
+        return False         
