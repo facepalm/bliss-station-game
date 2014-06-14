@@ -12,6 +12,17 @@ from pyglet import gl as gl
 
 util.GRAPHICS = 'pyglet'
 
+class CollideSprite(pyglet.sprite.Sprite):
+    def __init__(self, *args, **kwargs):
+        super( CollideSprite, self ).__init__(*args, **kwargs)
+        
+    def contains(self,x,y):
+        #TODO transform (x,y) to image coordinate space (rotate about .anchor)
+        if x >= self.x - self.width//2 and x <= self.x + self.width//2:
+            if y >= self.y - self.height//2 and y <= self.y + self.height//2:
+                return True
+        return False
+
 def load_image(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x else img.width // 2
@@ -32,14 +43,14 @@ def load_sprite(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x else img.width // 2
     img.anchor_y = anchor_y if anchor_y else img.height // 2 
-    sprite = pyglet.sprite.Sprite(img)
+    sprite = CollideSprite(img)
     
     return sprite
     
 util.load_sprite = load_sprite
 
 def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
-    sprite = pyglet.sprite.Sprite(image,x=util.ZOOM*x,y=util.ZOOM*y)
+    sprite = CollideSprite(image,x=util.ZOOM*x,y=util.ZOOM*y)
     sprite.rotation= -1 * 180/math.pi * rot
     return sprite
     
