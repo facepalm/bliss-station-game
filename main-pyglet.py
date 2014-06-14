@@ -45,6 +45,12 @@ def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
     
 util.image_to_sprite = image_to_sprite
     
+def make_solid_sprite(width,height,color=(128,128,128,128), anchor_x = None, anchor_y = None, x=0,y=0,rot=0,batch=None):
+    img = make_solid_image(width,height,color, anchor_x, anchor_y)
+    sprite = image_to_sprite(img,x,y,rot,batch)
+    return sprite
+util.make_solid_sprite = make_solid_sprite
+    
 util.station_batch = pyglet.graphics.Batch()    
 util.actor_batch = pyglet.graphics.Batch()  
 util.parent_group = pyglet.graphics.Group() 

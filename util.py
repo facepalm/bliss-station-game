@@ -4,7 +4,7 @@ import string
 
 TIME_FACTOR = 120 # 120# 24
 
-ZOOM = 5
+ZOOM = 15
 
 equipment_targets = dict()
 

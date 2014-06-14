@@ -83,7 +83,7 @@ if __name__ == "__main__":
     main_scene = cocos.scene.Scene (game_layer)
     
     main_scene.schedule_interval(scenario.status_update,1)
-    main_scene.schedule_interval(scenario.system_tick,0.10)
+    #main_scene.schedule_interval(scenario.system_tick,0.10)
     #main_scene.schedule_interval(cocos_debug,1,station=scenario.get_stations()[0])
     
     cocos.director.director.run (main_scene)
