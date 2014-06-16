@@ -30,5 +30,11 @@ class LayeredSprite(object):
             l.x = x
             l.y = y    
             l.rotation = rot
+            
+    def contains(self,x,y):
+        for l in self.layer.values():
+            if l.visible and l.contains(x,y):
+                return True
+        return False            
                       
                         

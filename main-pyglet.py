@@ -80,7 +80,7 @@ util.parent_group = pyglet.graphics.Group()
 
                                       
 if __name__ == "__main__":    
-    window = pyglet.window.Window(visible=False, resizable=True)    
+    window = pyglet.window.Window(800, visible=False, resizable=True)    
     gui = gui_pyglet.gui(window=window)
 
     

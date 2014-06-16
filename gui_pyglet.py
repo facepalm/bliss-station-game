@@ -28,6 +28,10 @@ class gui():
         for station in self.scenario.get_stations():
             for m in station.modules.values():
                 if m.sprite.contains(x,y):
+                    for e in m.equipment.keys():
+                        if m.equipment[e][3] and m.equipment[e][3].sprite.contains(x,y):
+                            self.create_equipment_dialog(m,e)
+                            return True
                     self.create_module_dialog(m)
                     return True
         print 'Mouse pressed at: ',(x,y)
@@ -51,7 +55,6 @@ class gui():
         
     def create_module_dialog(self, module=None):
         if module is None: return
-        print self.window, self.batch, self.fg_group
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
@@ -65,8 +68,27 @@ class gui():
 	        width=200, height=150)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
-	    anchor=kytten.ANCHOR_CENTER,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)
+	    
+    def create_equipment_dialog(self, module=None, equip_name=''):
+        if module is None or not equip_name: return
+
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout([
+                kytten.Label("Equipment: " + equip_name),                
+				kytten.Button("Close", on_click=on_cancel),
+		    ], align=kytten.HALIGN_LEFT),
+	        width=200, height=150)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)	    
 
 
 
