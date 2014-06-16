@@ -57,7 +57,7 @@ def cocos_debug(dt,station=None):
                                       
 if __name__ == "__main__":    
     cocos.director.director.init()
-    
+    cocos.director.director.set_show_FPS(True)
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)

@@ -5,6 +5,8 @@ import logging
 import pyglet
 import gui_pyglet
 
+pyglet.options['debug_gl'] = False
+
 from pyglet import clock
 from scenario import ScenarioMaster               
       
@@ -78,7 +80,7 @@ util.parent_group = pyglet.graphics.Group()
                                       
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
-    gui = gui_pyglet.gui()
+    gui = gui_pyglet.gui(window=window)
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -96,6 +98,13 @@ if __name__ == "__main__":
     scenario = ScenarioMaster(scenario='DOCKINGTEST',logger=logger)
     gui.scenario = scenario
     gui.window = window
+
+    # Update as often as possible (limited by vsync, if not disabled)
+    window.register_event_type('on_update')
+    def update(dt):
+        window.dispatch_event('on_update', dt)
+    pyglet.clock.schedule(update)
+
 
     @window.event
     def on_draw():
