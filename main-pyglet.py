@@ -14,14 +14,15 @@ from pyglet import gl as gl
 
 
 util.GRAPHICS = 'pyglet'
+zoom = 2
 
 class CollideSprite(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
         super( CollideSprite, self ).__init__(*args, **kwargs)
         
     def contains(self,x,y):
-        x *= 2#util.ZOOM
-        y *= 2#util.ZOOM
+        x *= zoom#util.ZOOM
+        y *= zoom#util.ZOOM
         #TODO transform (x,y) to image coordinate space (rotate about .anchor)
         theta = math.pi * self.rotation / (180.0)
         x -= self.x
@@ -81,6 +82,7 @@ util.parent_group = pyglet.graphics.Group()
 if __name__ == "__main__":    
     window = pyglet.window.Window(visible=False, resizable=True)    
     gui = gui_pyglet.gui(window=window)
+
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -110,16 +112,24 @@ if __name__ == "__main__":
     def on_draw():
         #background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
-        gl.glMatrixMode(gl.GL_PROJECTION);
-        gl.glLoadIdentity();
         
-        gl.glOrtho(-window.width//1,window.width//1,-window.height//1,window.height//1,0,1);
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glLoadIdentity();        
+        gl.glOrtho(-zoom*window.width//2,zoom*window.width//2,-zoom*window.height//2,zoom*window.height//2,0,1);                
         gl.glMatrixMode(gl.GL_MODELVIEW);                
-
+        
         for s in scenario.get_stations():
             s.draw(window)
         util.station_batch.draw()
         util.actor_batch.draw()
+        
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glLoadIdentity();        
+        gl.glOrtho(0,window.width,0,window.height,0,1);                
+        gl.glMatrixMode(gl.GL_MODELVIEW); 
+        gui.batch.draw()
+        
+        
         
     #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)

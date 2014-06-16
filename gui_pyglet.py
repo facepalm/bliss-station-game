@@ -44,24 +44,28 @@ class gui():
         print 'Mouse pressed at: ',(x,y)
         return False         
     
-    def on_draw(self):
+    def on_draw2(self):
     
         #self.window.dispatch_event('on_update', .05)    
         self.batch.draw()
         
     def create_module_dialog(self, module=None):
         if module is None: return
+        print self.window, self.batch, self.fg_group
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout([
-                kytten.Label("Module: ",module.short_id),                
-				kytten.Button("Cancel", on_click=on_escape),
+                kytten.Label("Module: "+module.short_id),                
+				kytten.Button("Close", on_click=on_cancel),
 		    ], align=kytten.HALIGN_LEFT),
 	        width=200, height=150)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
-	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    anchor=kytten.ANCHOR_CENTER,
 	    theme=blue_theme, on_escape=on_escape)
 
 
