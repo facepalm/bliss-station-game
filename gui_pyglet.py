@@ -86,10 +86,15 @@ class gui():
             on_escape(dialog)    
             e.spawn_mc_task()
             #self.create_mission_control_dialog()
+            
+        def uninstall():    
+            e.uninstall_task()
+            on_escape(dialog)            
                 
         entries=[kytten.Label("Equipment: " + equip_name)]
         if isinstance(e,Comms):
             entries.append(kytten.Button("Phone Home", on_click=on_miss_ctrl))
+        entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
         dialog = kytten.Dialog(

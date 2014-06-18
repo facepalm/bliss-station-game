@@ -73,6 +73,7 @@ class Equipment(object):
         if not self.installed: return None # "Can't install the same thing twice!"
         worked = self.installed.uninstall_equipment(self)
         self.installed=None
+        self.refresh_image()
         return worked
         
     def draw_power(self,kilowattage,dt): #kilowatts in per seconds
@@ -91,6 +92,8 @@ class Equipment(object):
                     print "Object not held!"
                 self.installed = task.station.get_module_from_loc(task.location)
                 self.installed.equipment[task.location.split('|')[1]][3] = self      
+            elif task.name == "Uninstall" and self.installed:
+                self.uninstall()
             elif task.name == 'Pick Up':
                 
                 if self.installed: 
@@ -111,7 +114,11 @@ class Equipment(object):
         self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=Searcher(self,station,check_storage=True).search,station=station))
         self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=Searcher(EquipmentFilter(target=self.type, comparison_type="Equipment Slot"),station).search,station=station))
         station.tasks.add_task(self.task)
-        
+
+    def uninstall_task(self):
+        if not self.installed: return
+        self.task = Task(name = ''.join(['Uninstall']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)  
+        self.installed.station.tasks.add_task(self.task)        
         
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
