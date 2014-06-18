@@ -84,9 +84,7 @@ class Scenario(object):
             ernie.needs['Food'].set_amt_to_severity('HIGH')
             ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
             #modB.equipment['Electrolyzer'][3].broken=True
-             
-             
-                                    
+                                                              
         elif name=='DEFAULT':
             modDock = UnityModule()                   
             station = Station(modDock, 'NewbieStation',logger)

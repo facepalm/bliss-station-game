@@ -112,6 +112,7 @@ class gui():
             kytten.Scrollable(
             kytten.VerticalLayout([
                 kytten.Label("Mission Control Dialog:"),                
+                kytten.Label('Funds: '+'{:0.2f}'.format(self.scenario.current_scenario.mission_control.player_nasa_funds)),
 				kytten.Button("Close", on_click=on_cancel),
 		    ], align=kytten.HALIGN_LEFT),
 	        width=200, height=150)

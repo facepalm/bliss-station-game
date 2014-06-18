@@ -14,6 +14,10 @@ class MissionControl(object):
         self.scenario=scenario
         self.vessel_queue=[]
         
+        self.player_nasa_funds = 100000000
+        self.pork = 0.5
+        self.missioncontrol_budget = 0.005
+        self.yearly_budget=100000000
         
     def send_resupply_vessel(self, station="", extras=[]):
         if not self.scenario: return None
@@ -41,6 +45,8 @@ class MissionControl(object):
         self.scenario.remove_station(station)
         
     def update(self,dt):
+        self.player_nasa_funds += dt*self.yearly_budget/util.seconds(1,'year')
+    
         #check vessel queue for active vessel
         for v in self.vessel_queue:
             if v.financing <= 0:
