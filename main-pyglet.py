@@ -83,6 +83,9 @@ if __name__ == "__main__":
     window = pyglet.window.Window(800, visible=False, resizable=True)    
     gui = gui_pyglet.gui(window=window)
 
+    def contact_mission_control():
+        gui.create_mission_control_dialog()
+    util.contact_mission_control = contact_mission_control    
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    scenario = ScenarioMaster(scenario='DOCKINGTEST',logger=logger)
+    scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
     gui.scenario = scenario
     gui.window = window
 

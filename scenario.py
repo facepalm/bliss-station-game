@@ -19,7 +19,12 @@ import filtering
 class ScenarioMaster():
 
     def __init__(self,scenario='DEFAULT',logger=util.generic_logger):
-        self.current_scenario=DockingScenario(scenario,logger)                 
+        if scenario=='DOCKINGTEST':
+            self.current_scenario=DockingScenario(scenario,logger)                 
+        elif scenario=='LORKHAN':
+            self.current_scenario=SeedScenario(scenario,logger)                 
+        else:
+            self.current_scenario=Scenario(scenario,logger)                 
         util.scenario = self.current_scenario
     
     def get_stations(self):
@@ -143,7 +148,7 @@ class DockingScenario(Scenario):
         modB   = ZvezdaModule()
         modB.equipment['Toilet1'][3].tank.add(clutter.Clutter( "Solid Waste", 500.0, 714.0 ))
         modB.stowage.add(clutter.Clutter('Solid Waste', 1.5, 714.0 ))   
-            
+                        
         station = Station(modB, "Docker Station", logger)
             
         ernie = Human('Ernest',station = station, logger = station.logger)
@@ -161,7 +166,26 @@ class DockingScenario(Scenario):
         modD.equipment['port3'][3]=BiologyExperimentRack().install(modD)   
         modD.equipment['port5'][3]=Experiment().install(modD)
         
+class SeedScenario(Scenario):
+    def __init__(self,name='LORKHAN',logger=util.generic_logger):
+        super(SeedScenario, self).__init__(name=name, logger=logger) 
+
+        '''Ernie's the first astronaut of the newly-christened Lorkhan station.  Can he make it happen?'''
+   
+        modB   = ZvezdaModule()      
+        #modDock = UnityModule()      
+        modDrag = DragonCargoModule()
+        modDrag.setup_simple_resupply()            
         
+        station = Station(modB, "Lorkhan Station", logger)
+        #station.dock_module(None,None,modDock, None, True)            
+        station.dock_module(None,None,modDrag, None, True)            
         
+            
+        ernie = Human('Ernest',station = station, logger = station.logger)
+        station.actors[ernie.id] = ernie
+        ernie.location = modB.node('hall0')
+        ernie.xyz = modB.location            
+        self.add_station(station)                           
                                   
                         

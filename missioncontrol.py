@@ -5,7 +5,7 @@ import util
 import filtering
 import numpy as np
 
-'''Mission Control'''
+'''Mission Control.  Totally not NASA you guys.  Totally.'''
 
 class MissionControl(object):
     def __init__(self, scenario=None, logger=None):

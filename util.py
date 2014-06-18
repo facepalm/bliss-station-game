@@ -67,6 +67,9 @@ def image_to_sprite():
 def make_solid_sprite():
     pass    
     
+def contact_mission_control():
+    pass
+    
 station_batch = None
 actor_batch = None
 parent_group = None     

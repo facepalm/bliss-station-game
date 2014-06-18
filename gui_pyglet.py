@@ -1,6 +1,7 @@
 import pyglet
 import kytten
 import os
+from equipment import *
 
 # Default theme, blue-colored
 blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
@@ -74,21 +75,50 @@ class gui():
     def create_equipment_dialog(self, module=None, equip_name=''):
         if module is None or not equip_name: return
 
+        e = module.equipment[equip_name][3]
+
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
+            
+        def on_miss_ctrl():
+            print "Contacting Mission Control!"
+            on_escape(dialog)    
+            e.spawn_mc_task()
+            #self.create_mission_control_dialog()
+                
+        entries=[kytten.Label("Equipment: " + equip_name)]
+        if isinstance(e,Comms):
+            entries.append(kytten.Button("Phone Home", on_click=on_miss_ctrl))
+        entries.append(kytten.Button("Close", on_click=on_cancel))    
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=200, height=150)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)	    
+	    
+    def create_mission_control_dialog(self):        
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)
+            
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout([
-                kytten.Label("Equipment: " + equip_name),                
+                kytten.Label("Mission Control Dialog:"),                
 				kytten.Button("Close", on_click=on_cancel),
 		    ], align=kytten.HALIGN_LEFT),
 	        width=200, height=150)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
-	    theme=blue_theme, on_escape=on_escape)	    
+	    theme=blue_theme, on_escape=on_escape)		    
 
 
 

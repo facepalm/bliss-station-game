@@ -180,6 +180,27 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
             if random.random() > self.wear:
                 self.broken = True
         
+class Comms(Equipment):
+    def __init__(self):   
+        super(Comms, self).__init__()
+        self.type = 'Communication Equipment'
+        self.idle_draw = 0.01 #kW
+                
+    def refresh_image(self):     
+        super(Comms, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('Comms',util.load_image("images/smallcomms_40x40.png"))                 
+                
+    def spawn_mc_task(self):
+        if not self.task or self.task.task_ended():
+            self.task = Task(''.join(['Contact Mission Control']), owner = self, timeout=None, task_duration = 300, severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)  
+            self.installed.station.tasks.add_task(self.task)    
+                    
+    def task_finished(self,task):
+        super(Comms, self).task_finished(task) 
+        if task.name == "Contact Mission Control":
+            util.contact_mission_control()                           
+        
 #miscellaneous equipment
 class Storage(Equipment):
     def __init__(self, **kwargs):
@@ -333,13 +354,17 @@ class SolarPanel(Equipment):
 
 class Battery(Equipment):
     def __init__(self):   
-        self.imgfile = "images/placeholder_battery.tif"
         super(Battery, self).__init__()
         self.type = 'Li-ion'
         self.capacity = 100     #kilowatt-hours            
         self.charge = 0         #kilowatt-hours
         self.discharge_rate = 2 #kilowatts
         self.efficiency = 0.95
+                
+    def refresh_image(self):     
+        super(Battery, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('Battery',util.load_image("images/battery_40x40.png"))                 
                 
     def update(self,dt): 
         #print self.charge

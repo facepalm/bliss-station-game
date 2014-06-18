@@ -1,7 +1,7 @@
 
 
 from generic_module import BasicStationModule
-from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery
+from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery, Comms
 from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
 from equipment_computer import DockingComputer, MissionComputer
 
@@ -78,6 +78,7 @@ class ZvezdaModule(BasicStationModule):
         
         self.add_equipment('Docking Console', DockingComputer().install(self), np.array([ -0.5 , 0.35 , 0 ]), eq_type='CONSOLE' )
         self.add_equipment('Mission Console', MissionComputer().install(self), np.array([ -0.5 , -0.35 , 0 ]), eq_type='CONSOLE' )
+        self.add_equipment('Comms Equip', Comms().install(self), np.array([ -0.7 , 0 , 0 ]), eq_type='CONSOLE' )
         self.add_equipment('BackupBattery', Battery().install(self), np.array([ -0.8 , 0.35 , 0 ]), eq_type='ELECTRICAL' )
         self.equipment['BackupBattery'][3].capacity = 3
         self.equipment['BackupBattery'][3].visible = False
