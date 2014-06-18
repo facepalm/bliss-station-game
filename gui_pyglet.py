@@ -107,14 +107,20 @@ class gui():
             print "Form canceled."
             on_escape(dialog)
             
+        def send_resupply():    
+            print "sending resupply mission"    
+            self.scenario.current_scenario.mission_control.send_resupply_vessel()
+            on_escape(dialog)
+            
+        entries=[kytten.Label("Mission Control")]
+        entries.append(kytten.Label('Funds: '+'{:0.2f}'.format(self.scenario.current_scenario.mission_control.player_nasa_funds)))
+        entries.append(kytten.Button("Send resupply", on_click=send_resupply,disabled=True if self.scenario.current_scenario.mission_control.player_nasa_funds < 50000000 else False))
+        entries.append(kytten.Button("Close", on_click=on_cancel))
+            
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
-            kytten.VerticalLayout([
-                kytten.Label("Mission Control Dialog:"),                
-                kytten.Label('Funds: '+'{:0.2f}'.format(self.scenario.current_scenario.mission_control.player_nasa_funds)),
-				kytten.Button("Close", on_click=on_cancel),
-		    ], align=kytten.HALIGN_LEFT),
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
 	        width=200, height=150)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,

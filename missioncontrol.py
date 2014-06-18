@@ -22,7 +22,7 @@ class MissionControl(object):
     def send_resupply_vessel(self, station="", extras=[]):
         if not self.scenario: return None
         if not station and self.scenario.stations: 
-            station = self.scenario.stations.keys()[0]
+            station = self.scenario.stations.keys()[0]        
         
         modDrag = DragonCargoModule()      
         modDrag.setup_simple_resupply()      
@@ -33,6 +33,8 @@ class MissionControl(object):
         newStation = Station(modDrag,'ResupplyStation', self.logger)
         vessel = VesselPlan( station = newStation, target_station_id = station )
         self.vessel_queue.append( vessel )                                   
+        
+        self.player_nasa_funds -= 50000000
         
         return newStation
         
