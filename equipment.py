@@ -8,6 +8,7 @@ import clutter
 import util
 import logging
 import random
+import numpy as np
 
 DOCK_EQUIPMENT = ['CBM']
         
@@ -27,6 +28,8 @@ class Equipment(object):
         self.satisfies = dict() #what qualities can this equipment provide?
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
         self.visible = True
+        self.local_coords = np.array([random.uniform(-1,1),random.uniform(-1,1),0])
+        
         self.sprite=None
         #basic health stats and such go here, as well as hooking into the task system
         

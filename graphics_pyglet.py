@@ -25,11 +25,18 @@ class LayeredSprite(object):
         for l in self.layer.values():
             l.delete()    
         
-    def update_sprite(self,x,y,rot):
+    def update_sprite(self,x,y,rot=0):
         for l in self.layer.values():
             l.x = x
             l.y = y    
             l.rotation = rot
+            
+    def set_position(self,*args,**kwargs):
+        self.update_sprite(*args,**kwargs)        
+            
+    def draw(self):
+        for l in self.layer.values():
+            l.draw()
             
     def contains(self,x,y):
         for l in self.layer.values():
