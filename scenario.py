@@ -174,6 +174,7 @@ class SeedScenario(Scenario):
         #modDock = UnityModule()      
         modDrag = DragonCargoModule()
         modDrag.setup_simple_resupply()            
+        modDrag.stowage.contents.append(BiologyExperimentRack())
         
         station = Station(modB, "Lorkhan Station", logger)
         #station.dock_module(None,None,modDock, None, True)            

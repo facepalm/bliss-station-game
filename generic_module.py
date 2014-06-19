@@ -285,7 +285,7 @@ class BasicModule():
                 #self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
         for c in self.stowage.contents:
             if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
-                loc_xyz = self.getXYZ( 0.8*c.local_coords )
+                loc_xyz = self.getXYZ( 1.0*c.local_coords )
                 c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
                 c.sprite.rotation = (-180/math.pi)*self.orientation[0]
                 c.sprite.draw()         

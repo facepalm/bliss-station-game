@@ -34,7 +34,7 @@ class Clutter(object):
         self.name = name
         self.mass = mass
         self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None
-        self.local_coords = np.array([random.uniform(-1,1),random.uniform(-1,1),0])
+        self.local_coords = 0.75*np.array([random.uniform(-1,1),random.uniform(-1,1),0])
         self.sprite = None
         if isinstance(self.quality,dict):
             if self.name == 'Medical Supplies': self.quality['Medical'] = self.mass

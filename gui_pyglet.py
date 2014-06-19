@@ -33,6 +33,10 @@ class gui():
                         if m.equipment[e][3] and m.equipment[e][3].sprite.contains(x,y):
                             self.create_equipment_dialog(m,e)
                             return True
+                    for c in m.stowage.contents:
+                        if c.sprite.contains(x,y):
+                            self.create_clutter_dialog(m,c)
+                            return True
                     self.create_module_dialog(m)
                     return True
         print 'Mouse pressed at: ',(x,y)
@@ -106,6 +110,34 @@ class gui():
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)	    
+	    
+    def create_clutter_dialog(self, module = None, clutter = None):
+        if module is None or clutter is None: return
+
+        c=clutter
+
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)            
+            
+        def install():    
+            if hasattr(c,'install_task'): c.install_task(module.station)
+            on_escape(dialog)            
+                
+        entries=[kytten.Label("Clutter: " + c.name)]
+        if isinstance(c,Equipment):
+            entries.append(kytten.Button("Install", on_click=install))
+        entries.append(kytten.Button("Close", on_click=on_cancel))    
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=200, height=150)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)    
 	    
     def create_mission_control_dialog(self):        
         def on_cancel():
