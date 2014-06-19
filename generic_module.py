@@ -120,10 +120,10 @@ class BasicModule():
                 self.equipment[e][3].update( dt )
         self.stowage.update(dt)
         self.exterior_stowage.update(dt)
-        if 'Equipment' not in self.package_material:
-            for c in self.stowage.contents:
-                if isinstance(c,Equipment) and not c.installed and not c.task:
-                    c.install_task(self.station)
+        #if 'Equipment' not in self.package_material:
+        #    for c in self.stowage.contents:
+        #        if isinstance(c,Equipment) and not c.installed and not c.task:
+        #            c.install_task(self.station)
         if self.manifest: 
             satisfaction = self.manifest.check_satisfied()
             #print satisfaction    

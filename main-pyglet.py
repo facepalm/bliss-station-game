@@ -29,6 +29,8 @@ class CollideSprite(pyglet.sprite.Sprite):
         y -= self.y              
         x1 = math.cos(theta)*x - math.sin(theta)*y
         y1 = math.sin(theta)*x + math.cos(theta)*y
+        #x -= self.image.anchor_x
+        #y -= self.image.anchor_y
         if x1 >= -self.width//2 and x1 <= self.width//2:
             if y1 >= -self.height//2 and y1 <= self.height//2:
                 return True

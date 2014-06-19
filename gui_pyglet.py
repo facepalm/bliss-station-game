@@ -36,6 +36,7 @@ class gui():
                     for c in m.stowage.contents:
                         if c.sprite.contains(x,y):
                             self.create_clutter_dialog(m,c)
+                            
                             return True
                     self.create_module_dialog(m)
                     return True
