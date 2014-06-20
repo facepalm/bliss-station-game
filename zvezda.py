@@ -62,8 +62,8 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['Solars0']= [ np.array([ 0 , 1 , 0 ]), np.array([ math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
         self.equipment['Solars1']= [ np.array([ 0 , -1 , 0 ]), np.array([ -math.pi/2 , 0]), 'SOLAR', SolarPanel().install(self)]
         
-        self.equipment['Water1']= [ np.array([ 0 , 0.5 , 0 ]), np.array([ math.pi , 0]), 'LSS', WaterTank().install(self)]
-        self.equipment['Toilet1']= [ np.array([ 0 , -0.5 , 0 ]), np.array([ -math.pi , 0]), 'LSS', UniversalToilet().install(self)]
+        self.equipment['Water1']= [ np.array([ 0 , 0.5 , 0 ]), np.array([ math.pi , 0]), 'STORAGE', WaterTank().install(self)]
+        self.equipment['Toilet1']= [ np.array([ 0 , -0.5 , 0 ]), np.array([ -math.pi , 0]), 'MACHINERY', UniversalToilet().install(self)]
         
         self.equipment['Window01'] = [ np.array([ 0.3 , 0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window02'] = [ np.array([ 0.3 , -0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
@@ -72,9 +72,9 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['Window21'] = [ np.array([ 0.5 , 0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         self.equipment['Window22'] = [ np.array([ 0.5 , -0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         
-        self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', WaterPurifier().install(self)]
-        self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', OxygenElectrolyzer().install(self)]
-        self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'LSS', RegenerableCO2Filter().install(self)]
+        self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', WaterPurifier().install(self)]
+        self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', OxygenElectrolyzer().install(self)]
+        self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', RegenerableCO2Filter().install(self)]
         
         self.add_equipment('Docking Console', DockingComputer().install(self), np.array([ -0.5 , 0.35 , 0 ]), eq_type='CONSOLE' )
         self.add_equipment('Mission Console', MissionComputer().install(self), np.array([ -0.5 , -0.35 , 0 ]), eq_type='CONSOLE' )
@@ -87,7 +87,7 @@ class ZvezdaModule(BasicStationModule):
         graytank.filter = ClutterFilter(['Gray Water'])
         graytank.imgfile = "images/gray_water.tif"
         graytank.refresh_image()
-        self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'LSS' )
+        self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'STORAGE' )
                 
         self.equipment['Solars0'][3].extended=True
         self.equipment['Solars1'][3].extended=True        

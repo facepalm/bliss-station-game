@@ -106,6 +106,7 @@ class Equipment(object):
                 #print module.stowage.contents
                 assert module.stowage.remove(self), 'Equipment not found in targeted module'
                 task.assigned_to.held=self
+                self.refresh_image()
 
     def task_failed(self,task):
         pass     
@@ -115,7 +116,7 @@ class Equipment(object):
         self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW", logger=self.logger)
         self.task.station = station
         self.task.add_task(Task(name = ''.join(['Pick Up']), owner = self, timeout=86400, task_duration = 60, severity='LOW', fetch_location_method=Searcher(self,station,check_storage=True).search,station=station))
-        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=Searcher(EquipmentFilter(target=self.type, comparison_type="Equipment Slot"),station).search,station=station))
+        self.task.add_task(Task(name = ''.join(['Install']), owner = self, timeout=86400, task_duration = 600, severity='LOW', fetch_location_method=Searcher(EquipmentFilter(target=self.type, subtype=self.name, comparison_type="Equipment Slot"),station).search,station=station))
         station.tasks.add_task(self.task)
 
     def uninstall_task(self):
@@ -150,6 +151,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         self.maint_task = None
         self.wear = 1.0
         self.broken = False
+        self.type = 'MACHINERY'
             
     def refresh_image(self):     
         super(Machinery, self).refresh_image()
@@ -218,6 +220,7 @@ class Storage(Equipment):
         self.stowage = clutter.Stowage(1) #things floating around in the rack
         self.filter = ClutterFilter(['All'])
         self.space_trigger = 0.1 #free volume
+        self.type = 'STORAGE'
         
     def update(self,dt):
         #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
@@ -370,6 +373,7 @@ class Battery(Equipment):
         self.charge = 0         #kilowatt-hours
         self.discharge_rate = 2 #kilowatts
         self.efficiency = 0.95
+        self.type = 'ELECTRICAL'
                 
     def refresh_image(self):     
         super(Battery, self).refresh_image()

@@ -110,10 +110,9 @@ class Stowage(object):
         return out
         
     def remove_obj(self,target):
-        for v in self.contents:
-            if v == target:
-                self.contents.remove(v)
-                return [v]
+        if target in self.contents:           
+            self.contents.remove(target)
+            return [target]
         return []
         
                 
