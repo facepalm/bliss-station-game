@@ -24,15 +24,18 @@ class CollideSprite(pyglet.sprite.Sprite):
         x *= zoom#util.ZOOM
         y *= zoom#util.ZOOM
         #TODO transform (x,y) to image coordinate space (rotate about .anchor)
-        theta = math.pi * self.rotation / (180.0)
+        theta = math.pi * (self.rotation) / (180.0)
         x -= self.x
         y -= self.y              
         x1 = math.cos(theta)*x - math.sin(theta)*y
         y1 = math.sin(theta)*x + math.cos(theta)*y
-        #x -= self.image.anchor_x
-        #y -= self.image.anchor_y
-        if x1 >= -self.width//2 and x1 <= self.width//2:
-            if y1 >= -self.height//2 and y1 <= self.height//2:
+        #print self.image.anchor_x
+        x1 += self.image.anchor_x
+        y1 += self.image.anchor_y
+        if x1 >= 0 and x1 <= self.width:
+            if y1 >= 0 and y1 <= self.height:
+                if self.image.anchor_x == 20:
+                    print x,y
                 return True
         return False
 
