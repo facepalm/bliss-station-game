@@ -40,7 +40,7 @@ class Equipment(object):
         if not util.GRAPHICS: return
         if util.GRAPHICS == 'pyglet':        
             import graphics_pyglet
-            if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
+            self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
             self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
             self.sprite.owner = self
                    
@@ -111,6 +111,11 @@ class Equipment(object):
     def task_failed(self,task):
         pass     
         
+    def task_dropped(self,task):
+        if task.assigned_to.held == self:
+            task.assigned_to.drop_held()
+            
+
     def install_task(self,station):
         if self.installed or not station: return
         self.task = TaskSequence(name = ''.join(['Install Equipment']), severity = "LOW", logger=self.logger)

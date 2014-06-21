@@ -35,7 +35,7 @@ class LayeredSprite(object):
         self.update_sprite(*args,**kwargs)        
             
     def draw(self):
-        for l in self.layer.values():
+        for l in sorted(self.layer.values(), key=lambda s: s.group):
             l.draw()
             
     def contains(self,x,y):

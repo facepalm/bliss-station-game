@@ -102,7 +102,7 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-    scenario = ScenarioMaster(scenario='STRESSTEST',logger=logger)
+    scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
     gui.scenario = scenario
     gui.window = window
 

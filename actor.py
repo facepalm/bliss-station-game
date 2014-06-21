@@ -51,8 +51,11 @@ class Actor(object):
         self.sprite.update_sprite(zoom*l[0], zoom*l[1],0)
        
         
-    def drop(self):
-        pass #TODO drop held item        
+    def drop_held(self):
+        if self.held is None: return
+        module = self.station.get_module_from_loc( self.location )
+        module.stowage.add(self.held)
+        self.held = None
         
     def new_idle_task(self,timeout,severity):
         t=Task(''.join(['Satisfy Idle Curiosity']), owner = self, timeout = None, task_duration = 150, severity='IGNORABLE', fetch_location_method=self.station.random_location,logger=self.logger)
