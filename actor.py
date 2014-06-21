@@ -30,6 +30,11 @@ class Actor(object):
         self.orientation = np.array([ 0, 0, 0 ])
         self.speed = 1.0 #meter per second travel time, "A leisurely float"
         
+        if self.station is not None:
+            self.station.actors[self.id] = self
+            self.location = self.station.random_location()[1]
+            self.xyz = self.station.loc_to_xyz(self.location)                         
+        
         self.refresh_image()
      
     def refresh_image(self):

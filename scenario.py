@@ -23,6 +23,8 @@ class ScenarioMaster():
             self.current_scenario=DockingScenario(scenario,logger)                 
         elif scenario=='LORKHAN':
             self.current_scenario=SeedScenario(scenario,logger)                 
+        elif scenario=='STRESSTEST':
+            self.current_scenario=StressTestScenario(scenario,logger)                 
         else:
             self.current_scenario=Scenario(scenario,logger)                 
         util.scenario = self.current_scenario
@@ -150,9 +152,6 @@ class DockingScenario(Scenario):
         station = Station(modB, "Docker Station", logger)
             
         ernie = Human('Ernest',station = station, logger = station.logger)
-        station.actors[ernie.id] = ernie
-        ernie.location = modB.node('hall0')
-        ernie.xyz = modB.location
             
         self.add_station(station)
             
@@ -181,10 +180,33 @@ class SeedScenario(Scenario):
         station.dock_module(None,None,modDrag, None, True)            
         
             
-        ernie = Human('Ernest',station = station, logger = station.logger)
-        station.actors[ernie.id] = ernie
-        ernie.location = modB.node('hall0')
-        ernie.xyz = modB.location            
-        self.add_station(station)                           
+        ernie = Human('Ernest',station = station, logger = station.logger)        
                                   
+        self.add_station(station)                          
+
+class StressTestScenario(Scenario):
+    def __init__(self,name='STRESSTEST',logger=util.generic_logger):
+        super(StressTestScenario, self).__init__(name=name, logger=logger) 
+       
+        modB   = ZvezdaModule()      
+        modDock = UnityModule()      
+        modDrag = DragonCargoModule()
+        modDrag.setup_simple_resupply()            
+        modDrag.stowage.contents.append(BiologyExperimentRack())
+        
+        station = Station(modB, "Lorkhan Station", logger)
+        station.dock_module(None,None,modDock, None, True)            
+        station.dock_module(None,None,modDrag, None, True)            
+        station.dock_module(None,None,DestinyModule(), None, True)
+        station.dock_module(None,None,DestinyModule(), None, True)
+        station.dock_module(None,None,DragonCargoModule(), None, True)
+
+        ernie = Human('Anne',station = station, logger = station.logger)        
+        ernie = Human('Bert',station = station, logger = station.logger)                
+        ernie = Human('Charlie',station = station, logger = station.logger)        
+        ernie = Human('Dana',station = station, logger = station.logger)                    
+        ernie = Human('Ernest',station = station, logger = station.logger)        
+                                  
+        self.add_station(station)                          
+
                         
