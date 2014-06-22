@@ -8,6 +8,7 @@ from equipment_computer import DockingComputer, MissionComputer
 import math
 import numpy as np
 from filtering import ClutterFilter
+import util
 
                                       
 class ZvezdaModule(BasicStationModule):
@@ -84,9 +85,10 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['BackupBattery'][3].visible = False
         
         graytank = WaterTank().install(self)
-        graytank.filter = ClutterFilter(['Gray Water'])
-        graytank.imgfile = "images/gray_water.tif"
+        graytank.filter = ClutterFilter(['Gray Water'])        
         graytank.refresh_image()
+        graytank.sprite.add_layer('GrayDrop',util.load_image("images/graywdrop_40x40.png"))  
+        graytank.sprite.layer['WaterDrop'].visible=False
         self.add_equipment('Gray W Tank', graytank, np.array([ -0.4 , 0.35 , 0 ]), 'hall0', eq_type = 'STORAGE' )
                 
         self.equipment['Solars0'][3].extended=True

@@ -227,6 +227,9 @@ class Storage(Equipment):
         self.space_trigger = 0.1 #free volume
         self.type = 'STORAGE'
         
+    def refresh_image(self):     
+        super(Storage, self).refresh_image()
+        
     def update(self,dt):
         #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
         super(Storage, self).update(dt)
@@ -435,10 +438,14 @@ class BatteryBank(Rack, Battery):
 
 class WaterTank(Storage):
     def __init__(self):   
-        if not hasattr(self,'imgfile'): self.imgfile = "images/potable_water.tif"
         super(WaterTank, self).__init__()         
         self.filter = ClutterFilter(['Potable Water'])
         self.stowage.capacity = 0.5
+        
+    def refresh_image(self):     
+        super(WaterTank, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('WaterDrop',util.load_image("images/waterdrop_40x40.png"))        
 
 class FoodStorageRack(Storage,Rack):
     def __init__(self, **kwargs):   
@@ -455,7 +462,7 @@ class GenericStorageRack(Storage,Rack):
 class WaterStorageRack(WaterTank,Rack):
     def __init__(self):   
         super(WaterStorageRack, self).__init__()                 
-        self.space_trigger = 0.5 #free volume, m^3   
+        self.space_trigger = 0.5 #free volume, m^3      
                     
 
                     

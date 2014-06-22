@@ -64,14 +64,26 @@ class gui():
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
+            
+        def wipe_manifest():
+            module.manifest = None
+            print "Manifest wiped."        
+        
+        manEntries = []
+        if module.manifest and not module.manifest.satisfied:
+            manEntries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))
+                
+        entries=[kytten.Label("Module: "+module.short_id)]
+        entries.append(kytten.FoldingSection("Manifest mgmt",
+			kytten.VerticalLayout(manEntries), is_open=False))    
+        entries.append(kytten.Button("Close", on_click=on_cancel))    
+        
+            
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
-            kytten.VerticalLayout([
-                kytten.Label("Module: "+module.short_id),                
-				kytten.Button("Close", on_click=on_cancel),
-		    ], align=kytten.HALIGN_LEFT),
-	        width=200, height=150)
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=250, height=450)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,

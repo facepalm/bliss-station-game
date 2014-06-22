@@ -121,7 +121,7 @@ class Objective(object):
             if order_token[3] and order_token[3] == 'RESUPPLY':    
                 for module in modules:    
                     module.manifest = manifest.Manifest(module)
-                    #module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+                    module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
                     module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
             self.completed=True                    
         elif order_token[0] == 'SPLIT':
