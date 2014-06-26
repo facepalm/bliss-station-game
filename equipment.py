@@ -206,7 +206,8 @@ class Comms(Equipment):
     def refresh_image(self):     
         super(Comms, self).refresh_image()
         if self.sprite is None: return
-        self.sprite.add_layer('Comms',util.load_image("images/smallcomms_40x40.png"))                 
+        #self.sprite.add_layer('Comms',util.load_image("images/smallcomms_40x40.png"))                 
+        self.sprite.add_layer('Comms',util.load_image("images/mozilla-feed-icon-28x28.png"))
                 
     def spawn_mc_task(self):
         if not self.task or self.task.task_ended():
@@ -272,6 +273,7 @@ class DockingRing(Equipment):
         self.docked = None #a pointer to the module we've docked to        
         self.in_vaccuum = True
         self.partner = None #a pointer to the docking equipment partner
+                
         
     def refresh_image(self):     
         super(DockingRing, self).refresh_image()
@@ -350,6 +352,7 @@ class CBM(DockingRing):
     def __init__(self):   
         super(CBM, self).__init__()     
         self.active = False
+        self.name = 'CBM'
      
 #specialized, installed, single-purpose equipment
 class SolarPanel(Equipment):
@@ -359,6 +362,8 @@ class SolarPanel(Equipment):
         self.extended = False
         self.in_vaccuum = True
         self.capacity= 5 #kW
+        
+        self.name='Solar Panel'
         
     def refresh_image(self):     
         super(SolarPanel, self).refresh_image()
@@ -431,6 +436,7 @@ class BatteryBank(Rack, Battery):
         super(BatteryBank, self).__init__()         
         self.capacity = 50 #kilowatt-hours      
         self.mass += 450                  
+        self.name = self.capacity+"kWh Battery"
         
     def update(self,dt):
         Battery.update(self,dt)    

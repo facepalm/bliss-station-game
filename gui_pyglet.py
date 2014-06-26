@@ -1,6 +1,7 @@
 import pyglet
 import kytten
 import os
+from clutter import Clutter
 from equipment import *
 
 # Default theme, blue-colored
@@ -59,25 +60,20 @@ class gui():
         #self.window.dispatch_event('on_update', .05)    
         self.batch.draw()
         
-    def create_module_dialog(self, module=None):
+    def create_manifest_dialog(self, module=None):
         if module is None: return
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
-            
+        
         def wipe_manifest():
             module.manifest = None
-            print "Manifest wiped."        
+            print "Manifest wiped."
         
-        manEntries = []
-        if module.manifest and not module.manifest.satisfied:
-            manEntries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))
-                
-        entries=[kytten.Label("Module: "+module.short_id)]
-        entries.append(kytten.FoldingSection("Manifest mgmt",
-			kytten.VerticalLayout(manEntries), is_open=False))    
-        entries.append(kytten.Button("Close", on_click=on_cancel))    
-        
+        entries=[kytten.Label("Manifest for "+module.short_id)]
+        if module.manifest:
+            entries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))        
+        entries.append(kytten.Button("Close", on_click=on_cancel))            
             
         dialog = kytten.Dialog(
         kytten.Frame(
@@ -88,6 +84,52 @@ class gui():
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)
+        
+    def clutter_entries(self,stowage):
+        contentEntries = [kytten.Label("Free space: "+'{:.2f}'.format(stowage.free_space)+' m3')]
+        contentEntries.append(kytten.Label("Stored clutter:"))
+        for c in stowage.contents:       
+            if isinstance(c,Clutter):
+                contentEntries.append(kytten.Label('  '+c.name+': '+str(c.mass)+" kg"))
+            elif isinstance(c,Equipment):
+                contentEntries.append(kytten.Label('  '+c.name))    
+        return contentEntries        
+        
+    def create_module_dialog(self, module=None):
+        if module is None: return
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)
+            
+        def on_manifest():
+            self.create_manifest_dialog(module)
+            #on_escape(dialog)        
+                
+        contentEntries = []
+        contentEntries.append(kytten.Label("Installed equipment:"))
+        for e in module.equipment.values():
+            if e[3]:
+                contentEntries.append(kytten.Label('  '+e[3].name))  
+                      
+        contentEntries.extend(self.clutter_entries(module.stowage))                
+                
+        entries=[kytten.Label("Module: "+module.short_id)]
+        entries.append(kytten.Button("Manifest", on_click=on_manifest))
+        entries.append(kytten.FoldingSection("Contents:",
+            kytten.VerticalLayout(contentEntries), is_open=False))
+        entries.append(kytten.Button("Close", on_click=on_cancel))                    
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=250, height=450)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)
+	    
+	    
 	    
     def create_equipment_dialog(self, module=None, equip_name=''):
         if module is None or not equip_name: return
@@ -111,6 +153,8 @@ class gui():
         entries=[kytten.Label("Equipment: " + equip_name)]
         if isinstance(e,Comms):
             entries.append(kytten.Button("Phone Home", on_click=on_miss_ctrl))
+        if isinstance(e,Storage):
+            entries.extend(self.clutter_entries(e.stowage))            
         entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             

@@ -28,6 +28,8 @@ class Experiment(Equipment):
         self.raw_unfiltered_SCIENCE = 0
         self.capacity_for_SCIENCE = 10000
         self.no_more_SCIENCE = False
+        
+        self.name = "Experiment"
 
     def update(self,dt):            
         super(Experiment, self).update(dt)
@@ -46,6 +48,8 @@ class BiologyExperimentRack(Experiment, Rack):
     def __init__(self):
         super(BiologyExperimentRack, self).__init__()              
         self.idle_draw = 1.000 #kW
+        
+        self.name = "Biology Exp."
         
     def refresh_image(self):     
         super(BiologyExperimentRack, self).refresh_image()
