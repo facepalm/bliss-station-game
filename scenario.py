@@ -178,6 +178,10 @@ class SeedScenario(Scenario):
         modB.stowage.contents.append(scienceR)
         modDrag.stowage.contents.append(BiologyExperimentRack())
         
+        modDrag.manifest = manifest.Manifest(modDrag)
+        modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+        modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
+        
         station = Station(modB, "Lorkhan Station", logger)
         #station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            

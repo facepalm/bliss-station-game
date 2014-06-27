@@ -55,10 +55,10 @@ class gui():
         print 'Mouse pressed at: ',(x,y)
         return False         
     
-    def on_draw2(self):
-    
+    def on_draw2(self):    
         #self.window.dispatch_event('on_update', .05)    
         self.batch.draw()
+        
         
     def create_manifest_dialog(self, module=None):
         if module is None: return
@@ -72,6 +72,10 @@ class gui():
         
         entries=[kytten.Label("Manifest for "+module.short_id)]
         if module.manifest:
+            for i in module.manifest.item:
+                color = 'color (128, 255, 128, 255)' if i.check_satisfaction() else 'color (255, 128, 128, 255)'
+                manentry = pyglet.text.decode_attributed(''.join(["  {bold True}{",color,"}",i.tasktype,' ',i.taskamt,' ',i.itemtype,' ',i.subtype,"{color (255, 255, 255, 255}{bold False}"]))
+                entries.append(kytten.Document(manentry))
             entries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))        
         entries.append(kytten.Button("Close", on_click=on_cancel))            
             
@@ -84,6 +88,7 @@ class gui():
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)
+	    
         
     def clutter_entries(self,stowage):
         contentEntries = [kytten.Label("Free space: "+'{:.2f}'.format(stowage.free_space)+' m3')]
@@ -168,6 +173,7 @@ class gui():
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)	    
 	    
+	    
     def create_clutter_dialog(self, module = None, clutter = None):
         if module is None or clutter is None: return
 
@@ -195,6 +201,7 @@ class gui():
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)    
+	    
 	    
     def create_mission_control_dialog(self):        
         def on_cancel():
