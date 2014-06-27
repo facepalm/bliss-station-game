@@ -70,12 +70,27 @@ class gui():
             module.manifest = None
             print "Manifest wiped."
         
+        class DeleteItem():
+            def __init__(self,item,module,gui):
+                self.item_to_delete = item
+                self.module = module
+                self.gui=gui
+                
+            def delete_item(self):
+                if self.item_to_delete and module.manifest:
+                    for i in module.manifest.item:
+                        if i is self.item_to_delete:
+                            module.manifest.item.remove(i)
+                            on_escape(dialog)
+                            self.gui.create_manifest_dialog(self.module)
+                            return
+        
         entries=[kytten.Label("Manifest for "+module.short_id)]
         if module.manifest:
             for i in module.manifest.item:
                 color = 'color (128, 255, 128, 255)' if i.check_satisfaction() else 'color (255, 128, 128, 255)'
                 manentry = pyglet.text.decode_attributed(''.join(["  {bold True}{",color,"}",i.tasktype,' ',i.taskamt,' ',i.itemtype,' ',i.subtype,"{color (255, 255, 255, 255}{bold False}"]))
-                entries.append(kytten.Document(manentry))
+                entries.append( kytten.HorizontalLayout( [ kytten.Document( manentry, width=200 ) , kytten.Button( "X" , on_click = DeleteItem( i , module, self).delete_item ) ] ) )
             entries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))        
         entries.append(kytten.Button("Close", on_click=on_cancel))            
             
