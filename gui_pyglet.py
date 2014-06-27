@@ -62,6 +62,17 @@ class gui():
         
     def create_manifest_dialog(self, module=None):
         if module is None: return
+        dialog = None
+        
+        def on_pass(choice):
+            pass
+        
+        action = kytten.Dropdown(['Load','Unload'],on_select=on_pass)
+        amount = kytten.Dropdown(['All','Some'],on_select=on_pass) 
+        itemtype = kytten.Dropdown(['Clutter','Equipment'],on_select=on_pass)
+        subtype = kytten.Dropdown(['Any', 'Solid Waste', 'Dead Science', 'Live Science'],on_select=on_pass)        
+        gui=self
+        
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
@@ -84,14 +95,28 @@ class gui():
                             on_escape(dialog)
                             self.gui.create_manifest_dialog(self.module)
                             return
+                            
+                            
         
+        def new_item():
+            print "New item to add:",action.selected,amount.selected,itemtype.selected,subtype.selected
+            on_escape(dialog)
+            gui.create_manifest_dialog(module)
+                            
+        
+		
         entries=[kytten.Label("Manifest for "+module.short_id)]
         if module.manifest:
             for i in module.manifest.item:
                 color = 'color (128, 255, 128, 255)' if i.check_satisfaction() else 'color (255, 128, 128, 255)'
                 manentry = pyglet.text.decode_attributed(''.join(["  {bold True}{",color,"}",i.tasktype,' ',i.taskamt,' ',i.itemtype,' ',i.subtype,"{color (255, 255, 255, 255}{bold False}"]))
-                entries.append( kytten.HorizontalLayout( [ kytten.Document( manentry, width=200 ) , kytten.Button( "X" , on_click = DeleteItem( i , module, self).delete_item ) ] ) )
-            entries.append(kytten.Button("Delete manifest", on_click=wipe_manifest))        
+                entries.append( kytten.HorizontalLayout( [ kytten.Document( manentry, width=200 ) , kytten.Button( "X" , on_click = DeleteItem( i , module, self).delete_item ) ] ) )                                                                 
+            entries.append(kytten.FoldingSection("Delete manifest", kytten.Button("Are you sure?", on_click=wipe_manifest), is_open=False ) )
+            
+        entries.append(kytten.FoldingSection("New manifest item:", 
+                    kytten.VerticalLayout ( [ kytten.HorizontalLayout( [ action , amount, itemtype , subtype ] ),
+                    kytten.Button("Add item!", on_click=new_item) ] ) , is_open=False))  
+                                      
         entries.append(kytten.Button("Close", on_click=on_cancel))            
             
         dialog = kytten.Dialog(
