@@ -70,7 +70,7 @@ class gui():
         action = kytten.Dropdown(['Load','Unload'],on_select=on_pass)
         amount = kytten.Dropdown(['All','Some'],on_select=on_pass) 
         itemtype = kytten.Dropdown(['Clutter','Equipment'],on_select=on_pass)
-        subtype = kytten.Dropdown(['Any', 'Solid Waste', 'Dead Science', 'Live Science'],on_select=on_pass)        
+        subtype = kytten.Dropdown(['Any','Water','Food', 'Solid Waste', 'Dead Science', 'Live Science'],on_select=on_pass)        
         gui=self
         
         def on_cancel():
@@ -80,6 +80,8 @@ class gui():
         def wipe_manifest():
             module.manifest = None
             print "Manifest wiped."
+            on_escape(dialog)
+            gui.create_manifest_dialog(module)
         
         class DeleteItem():
             def __init__(self,item,module,gui):
@@ -100,6 +102,11 @@ class gui():
         
         def new_item():
             print "New item to add:",action.selected,amount.selected,itemtype.selected,subtype.selected
+            if not module.manifest:
+                module.new_manifest()
+            module.manifest.new_item(tasktype=action.selected, taskamt = amount.selected, 
+                                     itemtype = itemtype.selected, subtype = subtype.selected)
+                                     
             on_escape(dialog)
             gui.create_manifest_dialog(module)
                             
