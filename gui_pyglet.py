@@ -204,7 +204,7 @@ class gui():
                 
         entries=[kytten.Label("Equipment: " + equip_name)]
         if isinstance(e,Comms):
-            entries.append(kytten.Button("Phone Home", on_click=on_miss_ctrl))
+            entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):
             entries.extend(self.clutter_entries(e.stowage))            
         entries.append(kytten.Button("Uninstall", on_click=uninstall))
@@ -250,26 +250,54 @@ class gui():
 	    theme=blue_theme, on_escape=on_escape)    
 	    
 	    
-    def create_mission_control_dialog(self):        
+    def create_mission_control_dialog(self):  
+        class GUIMission():
+            def __init__(self,name,cost):
+                self.name=name
+                self.cost=cost
+                
+            def action(self):
+                pass                
+          
         def on_cancel():
             print "Form canceled."
             on_escape(dialog)
+        
+        funds=self.scenario.current_scenario.mission_control.player_nasa_funds
+        
+        resupmiss = GUIMission("Resupply Mission (50M)",50000000)
+        astromiss = GUIMission("Recruit Astronauts(3) (100M)",100000000)
+                
+        missions = [] 
+        for r in [resupmiss,astromiss]:
+            missions.append(r.name if funds > r.cost else '-'+r.name)       
+
+        missiondrop = kytten.Dropdown(missions,on_select=None)
             
-        def send_resupply():    
-            print "sending resupply mission"    
-            self.scenario.current_scenario.mission_control.send_resupply_vessel()
+        def send_mission():
+            mission = missiondrop.selected    
+            if mission == resupmiss.name:
+                print "sending resupply mission"    
+                self.scenario.current_scenario.mission_control.send_resupply_vessel()
+            elif mission == astromiss.name:
+                print "Send astronaut replacements"
             on_escape(dialog)
+            
+        
+
+
             
         entries=[kytten.Label("Mission Control")]
         entries.append(kytten.Label('Funds: '+'{:0.2f}'.format(self.scenario.current_scenario.mission_control.player_nasa_funds)))
-        entries.append(kytten.Button("Send resupply", on_click=send_resupply,disabled=True if self.scenario.current_scenario.mission_control.player_nasa_funds < 50000000 else False))
+        
+        entries.append(kytten.FoldingSection("Request new mission",kytten.VerticalLayout([missiondrop,kytten.Button("Send!", on_click=send_mission)]),is_open = False))
         entries.append(kytten.Button("Close", on_click=on_cancel))
             
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
-	        width=200, height=150)
+	        width=250, height=350)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
