@@ -77,6 +77,7 @@ class MissionComputer(Computer, Rack):
         self.installed.station.tasks.add_task(self.task)       
         
     def task_finished(self,task):
+        super(MissionComputer, self).task_finished(task)  
         if not task or not self.installed: return
         if task.name == "Log Mission":
             self.mission = self.task.mission 
@@ -160,6 +161,7 @@ class DockingComputer(Computer, Rack):
         return True
 
     def task_finished(self,task):
+        super(DockingComputer, self).task_finished(task)       
         if not task or not self.installed: return
         if task.name == "Dock module":
             self.docking_item[0].location, self.docking_item[0].orientation = self.docking_path.get_time_point(task.task_duration)

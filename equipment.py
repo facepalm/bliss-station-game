@@ -55,7 +55,7 @@ class Equipment(object):
         self.installed=home
         if loc: self.installed.equipment[loc][3] = self
         if self.installed.station: self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)
-        self.logger.debug(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
+        self.logger.info(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
         return self    
         
     def get_name(self):
@@ -93,8 +93,8 @@ class Equipment(object):
                     task.assigned_to.held = None
                 else:
                     print "Object not held!"
-                self.installed = task.station.get_module_from_loc(task.location)
-                self.installed.equipment[task.location.split('|')[1]][3] = self      
+                self.install(task.station.get_module_from_loc(task.location),task.location.split('|')[1])
+                self.refresh_image()   
             elif task.name == "Uninstall" and self.installed:
                 self.uninstall()
             elif task.name == 'Pick Up':                
@@ -106,7 +106,7 @@ class Equipment(object):
                 self.refresh_image()
             elif task.name == 'Put Down':                  
                 module = task.station.get_module_from_loc(task.location)
-                module.stowage.add(self), 'Equipment not found in targeted module'
+                module.stowage.add(self)
                 task.assigned_to.held=None
                 self.refresh_image()
 
