@@ -3,6 +3,7 @@ import equipment
 import needs
 import util
 
+
 class SearchFilter(object):
     def __init__(self, target=None, **kwargs):
         self.target = target
@@ -71,13 +72,21 @@ class EquipmentFilter(SearchFilter):
         self.equipment_targets = util.equipment_targets
         
     def compare(self,obj):
+        import equipment_science
         if self.target == 'Storage' and isinstance( obj, equipment.Storage):
             #print obj, obj.filter.target, self.subtype, self.subtype in obj.filter.target or self.subtype == 'Any'
             return self.subtype in obj.filter.target or self.subtype == 'Any'
-        if self.target in self.equipment_targets: 
+        elif self.target in self.equipment_targets: 
             return isinstance( obj, self.equipment_targets [ self.target ] )    
-        if self.comparison_type == 'Equipment Slot':
+        elif self.comparison_type == 'Equipment Slot':
             return obj == self.target
+        elif self.subtype == "Dead Science" and isinstance( obj, equipment_science.Experiment):
+            return obj.no_more_SCIENCE
+        elif self.subtype == "Live Science" and isinstance( obj, equipment_science.Experiment):
+            return not obj.no_more_SCIENCE    
+            
+    def target_string(self):        
+        return self.target + "-" + self.subtype            
       
       
 class ManifestFilter(SearchFilter):

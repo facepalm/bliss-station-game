@@ -97,15 +97,17 @@ class Equipment(object):
                 self.installed.equipment[task.location.split('|')[1]][3] = self      
             elif task.name == "Uninstall" and self.installed:
                 self.uninstall()
-            elif task.name == 'Pick Up':
-                
+            elif task.name == 'Pick Up':                
                 if self.installed: 
                     assert self.uninstall(), 'Unknown error after uninstallation'             
-                #print task.location   
                 module = task.station.get_module_from_loc(task.location)
-                #print module.stowage.contents
                 assert module.stowage.remove(self), 'Equipment not found in targeted module'
                 task.assigned_to.held=self
+                self.refresh_image()
+            elif task.name == 'Put Down':                  
+                module = task.station.get_module_from_loc(task.location)
+                module.stowage.add(self), 'Equipment not found in targeted module'
+                task.assigned_to.held=None
                 self.refresh_image()
 
     def task_failed(self,task):

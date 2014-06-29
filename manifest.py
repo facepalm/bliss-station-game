@@ -15,29 +15,51 @@ class ManifestItem(object):
         self.filter = None
         if itemtype=="Clutter":
             self.filter=filtering.ClutterFilter([subtype],check_storage=True)
+        elif itemtype == "Equipment":
+            self.filter=filtering.EquipmentFilter(target="Misc",subtype=subtype)
             
     def check_satisfaction(self):
         if self.task and not self.task.task_ended(): return False
+        station = self.owner.module.station
         if self.tasktype == 'Unload':
             found_any = self.owner.module.stowage.search(self.filter)
             if found_any: 
-                filter_str = self.filter.target_string()
-                self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "MODERATE")
-                self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module).search, owner=clutter.JanitorMon(self.filter.target)))
-                self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: self.owner.module.station.random_location(modules_to_exclude=[self.owner.module]), owner=self))
-                self.owner.module.station.tasks.add_task(self.task)
-                return False
+                if self.itemtype=="Clutter":
+                    filter_str = self.filter.target_string()
+                    self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "MODERATE")
+                    self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module).search, owner=clutter.JanitorMon(self.filter.target)))
+                    self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: station.random_location(modules_to_exclude=[self.owner.module]), owner=self))
+                    station.tasks.add_task(self.task)
+                    return False
+                elif self.itemtype == "Equipment":
+                    eq = found_any
+                    self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "LOW")
+                    self.task.station = self.owner.module.station
+                    self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=filtering.Searcher(eq,station,check_storage=True).search,station=station))
+                    self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=lambda: station.random_location(modules_to_exclude=[self.owner.module]),station=station))
+                    station.tasks.add_task(self.task)
+                    return False
         elif self.tasktype == 'Load':
             found_any = self.owner.module.stowage.search(self.filter)
             if not found_any or (found_any.volume < self.taskamt and self.owner.module.stowage.free_space > 0.25):
                 found_any = self.owner.module.station.search(self.filter,modules_to_exclude=[self.owner.module])   
                 if found_any[0]:
-                    filter_str = self.filter.target_string()
-                    self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "HIGH")
-                    self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "HIGH", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,self.owner.module.station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
-                    self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None], owner=self))
-                    self.owner.module.station.tasks.add_task(self.task)
-                    return False     
+                    if self.itemtype == "Clutter":
+                        filter_str = self.filter.target_string()
+                        self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "HIGH")
+                        self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "HIGH", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
+                        self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None], owner=self))
+                        station.tasks.add_task(self.task)
+                        return False   
+                    elif self.itemtype == "Equipment":
+                        eq = found_any[0]
+                        self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "LOW")
+                        self.task.station = self.owner.module.station
+                        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=filtering.Searcher(eq,station,exclude=[self.owner.module]).search,station=station))
+                        self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None],station=station))
+                        station.tasks.add_task(self.task)
+                        return False    
+                      
         return True
                       
     
