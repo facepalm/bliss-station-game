@@ -25,7 +25,7 @@ class Experiment(Equipment):
         super(Experiment, self).__init__()              
         self.idle_draw = 0.200 #kW
         
-        self.raw_unfiltered_SCIENCE = 0
+        self.raw_unfiltered_SCIENCE = 0.0
         self.capacity_for_SCIENCE = 10000
         self.no_more_SCIENCE = False
         
@@ -38,6 +38,9 @@ class Experiment(Equipment):
         self.raw_unfiltered_SCIENCE += dt
         if self.raw_unfiltered_SCIENCE >= self.capacity_for_SCIENCE:
             self.no_more_SCIENCE = True
+                
+    def science_percentage(self):
+        return self.raw_unfiltered_SCIENCE/self.capacity_for_SCIENCE       
                 
     def refresh_image(self):     
         super(Experiment, self).refresh_image() #diabolic_acid__x1_1_png_1354832222.png

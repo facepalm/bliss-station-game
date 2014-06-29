@@ -3,6 +3,7 @@ import kytten
 import os
 from clutter import Clutter
 from equipment import *
+from equipment_science import *
 
 # Default theme, blue-colored
 blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
@@ -97,9 +98,7 @@ class gui():
                             on_escape(dialog)
                             self.gui.create_manifest_dialog(self.module)
                             return
-                            
-                            
-        
+                                                                
         def new_item():
             print "New item to add:",action.selected,amount.selected,itemtype.selected,subtype.selected
             if not module.manifest:
@@ -108,9 +107,7 @@ class gui():
                                      itemtype = itemtype.selected, subtype = subtype.selected)
                                      
             on_escape(dialog)
-            gui.create_manifest_dialog(module)
-                            
-        
+            gui.create_manifest_dialog(module)                                    
 		
         entries=[kytten.Label("Manifest for "+module.short_id)]
         if module.manifest:
@@ -206,7 +203,9 @@ class gui():
         if isinstance(e,Comms):
             entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):
-            entries.extend(self.clutter_entries(e.stowage))            
+            entries.extend(self.clutter_entries(e.stowage))    
+        if isinstance(e,Experiment):
+            entries.append(kytten.Label("Science usage: " + '{:3.0f}'.format(100*e.science_percentage()) ))            
         entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
@@ -267,6 +266,7 @@ class gui():
         
         resupmiss = GUIMission("Resupply Mission (50M)",50000000)
         astromiss = GUIMission("Recruit Astronauts(3) (100M)",100000000)
+        destmiss = GUIMission("Add Destiny Module (200M)",200000000)
                 
         missions = [] 
         for r in [resupmiss,astromiss]:
@@ -281,6 +281,8 @@ class gui():
                 self.scenario.current_scenario.mission_control.send_resupply_vessel()
             elif mission == astromiss.name:
                 print "Send astronaut replacements"
+            elif mission == destmiss.name:
+                print "Send destiny module"
             on_escape(dialog)
             
         

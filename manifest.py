@@ -33,10 +33,10 @@ class ManifestItem(object):
                     return False
                 elif self.itemtype == "Equipment":
                     eq = found_any
-                    self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "LOW")
+                    self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "MODERATE")
                     self.task.station = self.owner.module.station
-                    self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=filtering.Searcher(eq,station,check_storage=True).search,station=station))
-                    self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=lambda: station.random_location(modules_to_exclude=[self.owner.module]),station=station))
+                    self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='MODERATE', fetch_location_method=filtering.Searcher(eq,station,check_storage=True).search,station=station))
+                    self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='MODERATE', fetch_location_method=lambda: station.random_location(modules_to_exclude=[self.owner.module]),station=station))
                     station.tasks.add_task(self.task)
                     return False
         elif self.tasktype == 'Load':
@@ -46,17 +46,17 @@ class ManifestItem(object):
                 if found_any[0]:
                     if self.itemtype == "Clutter":
                         filter_str = self.filter.target_string()
-                        self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "HIGH")
-                        self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "HIGH", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
+                        self.task = TaskSequence(name = ''.join(['Move ',filter_str]), severity = "MODERATE")
+                        self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method=filtering.Searcher(self.filter,station,exclude=[self.owner.module]).search, owner=clutter.JanitorMon(self.filter.target)))
                         self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "MODERATE", timeout = None, task_duration = 30, fetch_location_method = lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None], owner=self))
                         station.tasks.add_task(self.task)
                         return False   
                     elif self.itemtype == "Equipment":
                         eq = found_any[0]
-                        self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "LOW")
+                        self.task = TaskSequence(name = ''.join(['Move Equipment']), severity = "MODERATE")
                         self.task.station = self.owner.module.station
-                        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=filtering.Searcher(eq,station,exclude=[self.owner.module]).search,station=station))
-                        self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='LOW', fetch_location_method=lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None],station=station))
+                        self.task.add_task(Task(name = ''.join(['Pick Up']), owner = eq, timeout=None, task_duration = 60, severity='MODERATE', fetch_location_method=filtering.Searcher(eq,station,exclude=[self.owner.module]).search,station=station))
+                        self.task.add_task(Task(name = ''.join(['Put Down']), owner = eq, timeout=None, task_duration = 60, severity='MODERATE', fetch_location_method=lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None],station=station))
                         station.tasks.add_task(self.task)
                         return False    
                       

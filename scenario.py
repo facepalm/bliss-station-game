@@ -170,10 +170,11 @@ class SeedScenario(Scenario):
         '''Ernie's the first astronaut of the newly-christened Lorkhan station.  Can he make it happen?'''
    
         modB   = ZvezdaModule()      
-        #modDock = UnityModule()      
+        modDock = UnityModule()      
         modDrag = DragonCargoModule()
         modDrag.setup_simple_resupply()            
         scienceR = Experiment()
+        scienceR.raw_unfiltered_SCIENCE = 10000
         scienceR.no_more_SCIENCE = True 
         modB.stowage.contents.append(scienceR)
         modDrag.stowage.contents.append(BiologyExperimentRack())
@@ -183,7 +184,7 @@ class SeedScenario(Scenario):
         #modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
         
         station = Station(modB, "Lorkhan Station", logger)
-        #station.dock_module(None,None,modDock, None, True)            
+        station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            
         
             
