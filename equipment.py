@@ -389,6 +389,8 @@ class Battery(Equipment):
         self.discharge_rate = 2 #kilowatts
         self.efficiency = 0.95
         self.type = 'ELECTRICAL'
+        
+        self.name = str(self.capacity)+"kWh Battery"
                 
     def refresh_image(self):     
         super(Battery, self).refresh_image()
@@ -438,7 +440,7 @@ class BatteryBank(Rack, Battery):
         super(BatteryBank, self).__init__()         
         self.capacity = 50 #kilowatt-hours      
         self.mass += 450                  
-        self.name = self.capacity+"kWh Battery"
+        
         
     def update(self,dt):
         Battery.update(self,dt)    

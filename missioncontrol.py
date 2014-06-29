@@ -5,7 +5,7 @@ import util
 import filtering
 import numpy as np
 
-'''Mission Control.  Totally not NASA you guys.  Totally.'''
+'''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
 
 class MissionControl(object):
     def __init__(self, scenario=None, logger=None):
@@ -17,7 +17,7 @@ class MissionControl(object):
         self.player_nasa_funds = 100000000
         self.pork = 0.5
         self.missioncontrol_budget = 0.005
-        self.yearly_budget=100000000
+        self.yearly_budget=2000000000
         
     def send_resupply_vessel(self, station="", extras=[]):
         if not self.scenario: return None

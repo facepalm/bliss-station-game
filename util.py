@@ -2,7 +2,9 @@ import logging
 import numpy as np
 import string
 
-TIME_FACTOR = 24#120 # 120# 24
+TIME_FACTOR = 168 # 1 irl hour = 1 week
+#TIME_FACTOR = 24 # 1 irl hour = 1 day
+#TIME_FACTOR = 120
 
 ZOOM = 15
 
