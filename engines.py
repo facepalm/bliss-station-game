@@ -18,10 +18,6 @@ class Engine(Machinery):
         
     def update(self,dt):
         super(Engine, self).update(dt)        
-        #if self.installed and not self.task or self.task.task_ended():
-        #    #work on the box    
-        #    self.task = Task(''.join(['Stare at Mystery Box']), owner = self, timeout=86400, task_duration = 86400, severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search )
-        #    self.installed.station.tasks.add_task(self.task)
         
         
 class Thruster(Machinery):
@@ -32,6 +28,7 @@ class Thruster(Machinery):
         self.Isp = 300
         self.fuel = 'Kerosene'
         self.oxid = 'LOX'
+        self.name = "Thruster"
         
     def update(self,dt):
         super(Engine, self).update(dt)   
@@ -42,6 +39,7 @@ class Merlin_A(Engine):
         if not hasattr(self,'imgfile'): self.imgfile = "images/merlin_engine.tif"
         super(Merlin_A, self).__init__()              
         self.Isp = 450
+        self.name = "Merlin A Engine"
         
 class KeroseneTank(Storage):
     def __init__(self):   
@@ -50,6 +48,7 @@ class KeroseneTank(Storage):
         self.filter = ClutterFilter(['Kerosene'])
         self.stowage.capacity = 2.0
         self.stowage.add(clutter.Clutter('Kerosene', mass = 1600, density = 800.0 ))
+        self.name = "Fuel tank (Kerosene)"
 
 class OxygenTank(Storage):
     def __init__(self):   
@@ -59,3 +58,4 @@ class OxygenTank(Storage):
         self.stowage.capacity = 2.0
         self.stowage.add(clutter.Clutter('LOX', mass = 2252.0, density = 1146.0 ))
         
+        self.name = "Tank (LOX)"

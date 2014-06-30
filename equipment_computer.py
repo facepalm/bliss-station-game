@@ -36,6 +36,8 @@ class MissionComputer(Computer, Rack):
         self.objective = None
         self.objective_timer = 30
         self.objective_tick = 30
+        
+        self.name = "Mission console"
     
     def refresh_image(self):     
         super(MissionComputer, self).refresh_image()
@@ -102,6 +104,7 @@ class DockingComputer(Computer, Rack):
         self.docking_path = None #The path object that will interpolate its journey
         self.docking_task = None
         self.docking_duration = util.seconds(2,'minutes')
+        self.name = "Docking console"
     
     def refresh_image(self):     
         super(DockingComputer, self).refresh_image()

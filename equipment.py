@@ -134,6 +134,7 @@ class Equipment(object):
 class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
         super(Window, self).__init__()       
+        self.name = "Window"
         
     def refresh_image(self):     
         super(Window, self).refresh_image()
@@ -204,6 +205,7 @@ class Comms(Equipment):
         super(Comms, self).__init__()
         self.type = 'Communication Equipment'
         self.idle_draw = 0.01 #kW
+        self.name = 'Comms Equipment'
                 
     def refresh_image(self):     
         super(Comms, self).refresh_image()
@@ -451,6 +453,7 @@ class WaterTank(Storage):
         super(WaterTank, self).__init__()         
         self.filter = ClutterFilter(['Potable Water'])
         self.stowage.capacity = 0.5
+        self.name = "Water tank, "+str(self.stowage.capacity)+"m^3"
         
     def refresh_image(self):     
         super(WaterTank, self).refresh_image()
@@ -462,18 +465,20 @@ class FoodStorageRack(Storage,Rack):
         super(FoodStorageRack, self).__init__(**kwargs)         
         self.filter = ClutterFilter(['Nonperishable Food'])
         self.space_trigger = 0.5 #free volume, m^3   
+        self.name = "Food storage, "+str(self.stowage.capacity)+"m^3"
 
 class GenericStorageRack(Storage,Rack):
     def __init__(self):   
         super(GenericStorageRack, self).__init__()         
         self.filter = ClutterFilter(['Any'])
         self.space_trigger = 0.5 #free volume, m^3  
+        self.name = "Generic storage, "+str(self.stowage.capacity)+"m^3"
 
 class WaterStorageRack(WaterTank,Rack):
     def __init__(self):   
         super(WaterStorageRack, self).__init__()                 
         self.space_trigger = 0.5 #free volume, m^3      
-                    
+                            
 
                     
 util.equipment_targets['Battery'] = Battery

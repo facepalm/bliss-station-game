@@ -14,6 +14,7 @@ class UniversalToilet(Machinery):
         self.processing_speed = 0.01
         self.satisfies['WasteCapacityLiquid'] = 0.5
         self.satisfies['WasteCapacitySolid'] = 0.5
+        self.name = "Toilet"
 
     def refresh_image(self):     
         super(UniversalToilet, self).refresh_image()
@@ -45,6 +46,7 @@ class WaterPurifier(Machinery):
     def __init__(self):   
         super(WaterPurifier, self).__init__()          
         self.processing_speed = 0.001
+        self.name = "Water Purifier"
         
     def update(self,dt):
         super(WaterPurifier, self).update(dt)              
@@ -66,6 +68,7 @@ class OxygenElectrolyzer(Machinery):
         self.process_rate = 0.0001 #kg of water per second
         self.efficiency = 0.5
         self.power_draw = self.process_rate * 1000 / (15.9994+2*1.008) * 237 / self.efficiency
+        self.name = "O2 Electrolyzer"
 
     def update(self,dt):
         super(OxygenElectrolyzer, self).update(dt)              
@@ -89,6 +92,7 @@ class RegenerableCO2Filter(Machinery):
         self.extraction_fraction = 0.5
         self.power_draw = .2 # kW
         self.pp_trigger = 0.4 #CO2 pp at sea level
+        self.name = "CO2 Filter"
 
     def update(self,dt):
         super(RegenerableCO2Filter, self).update(dt)              
