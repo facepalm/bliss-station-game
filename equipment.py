@@ -155,50 +155,51 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_machinery.tif"
         super(Machinery, self).__init__()              
         self.idle_draw = 0.001 #kW
-        self.maint_timer = random.randrange(util.seconds(6,'months'), util.seconds(2,'years') )
+        #self.maint_timer = random.randrange(util.seconds(6,'months'), util.seconds(2,'years') )
         self.maint_task = None
+        self.operating_time_since_last_maintenance = 0
+        self.maintenance_interval = util.seconds(6,'months')
         self.wear = 1.0
         self.broken = False
+        self.active = False
         self.type = 'MACHINERY'
             
     def refresh_image(self):     
         super(Machinery, self).refresh_image()
         if self.sprite is None: return
-        self.sprite.add_layer('Machinery',util.load_image("images/machinery_40x40.png"))
-                 
+        self.sprite.add_layer('Machinery',util.load_image("images/machinery_40x40.png"))                                                 
                 
     def update(self,dt):
         super(Machinery, self).update(dt)     
+  
+        if self.active: 
+            self.operating_time_since_last_maintenance += dt
+            if random.random() < (dt/util.seconds(1,'day'))*self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval):
+                self.broken = True  
         
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
-                self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-                self.installed.station.tasks.add_task(self.maint_task)
-        if self.maint_timer < 0 and ( not self.maint_task or self.maint_task.task_ended() ):
-            self.maint_task = Task(''.join(['Maintain ',self.name]), owner = self, timeout=util.seconds(1,'months'), task_duration = util.seconds(1,'hours'), severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+                self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=None, task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
+                self.installed.station.tasks.add_task(self.maint_task)  
+                
+        if self.operating_time_since_last_maintenance >= self.wear*self.maintenance_interval and ( not self.maint_task or self.maint_task.task_ended() ):
+            self.maint_task = Task(''.join(['Maintain ',self.name]), owner = self, timeout=None, task_duration = util.seconds(1,'hours'), severity='LOW', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             #print self.maint_task.timeout,self.maint_task.task_duration
-            self.installed.station.tasks.add_task(self.maint_task)
-        
-        self.maint_timer -= dt
+            self.installed.station.tasks.add_task(self.maint_task)        
         
     def task_finished(self,task): #TODO add supply usage
         super(Machinery, self).task_finished(task) 
         if not task: return
         if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
             self.maint_task = None
-            self.wear += (1 - self.wear) / 2
-            self.maint_timer = random.randrange(int (util.seconds(1,'months') * self.wear), int( util.seconds(6,'months') * self.wear ) )
+            self.wear -= self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval) - 1
+            self.wear = max(self.wear,0)
+            self.operating_time_since_last_maintenance = 0
         elif task.name == ''.join(['Repair ',self.name]) and task.target == self:
+            self.maint_task = None
             self.broken = False
             self.wear += (1 - self.wear) / 2        
 
-    def task_failed(self,task):
-        super(Machinery, self).task_failed(task)
-        if not task: return
-        if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
-            self.wear -= 0.05
-            if random.random() > self.wear:
-                self.broken = True
         
 class Comms(Equipment):
     def __init__(self):   

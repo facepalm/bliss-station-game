@@ -200,10 +200,14 @@ class gui():
             on_escape(dialog)            
                 
         entries=[kytten.Label("Equipment: " + equip_name)]
+        if isinstance(e,Machinery):
+            entries.append(kytten.Label("Hours since last maint:"+'{:3.0f}'.format( e.operating_time_since_last_maintenance/3600.0 ) ) )
         if isinstance(e,Comms):
             entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):
-            entries.extend(self.clutter_entries(e.stowage))    
+            entries.extend(self.clutter_entries(e.stowage)) 
+        if hasattr(e,'tank'):
+            entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
             entries.append(kytten.Label("Science usage: " + '{:3.0f}'.format(100*e.science_percentage()) ))            
         entries.append(kytten.Button("Uninstall", on_click=uninstall))
@@ -281,6 +285,7 @@ class gui():
                 self.scenario.current_scenario.mission_control.send_resupply_vessel()
             elif mission == astromiss.name:
                 print "Send astronaut replacements"
+                self.scenario.current_scenario.mission_control.send_3man_crew()               
             elif mission == destmiss.name:
                 print "Send destiny module"
             on_escape(dialog)

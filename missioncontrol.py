@@ -4,6 +4,7 @@ from station import Station
 import util
 import filtering
 import numpy as np
+from human import Human
 
 '''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
 
@@ -37,6 +38,30 @@ class MissionControl(object):
         self.player_nasa_funds -= 50000000
         
         return newStation
+        
+    def send_3man_crew(self, station="", extras=[]):
+        if not self.scenario: return None
+        if not station and self.scenario.stations: 
+            station = self.scenario.stations.keys()[0]        
+        
+        modDrag = DragonCargoModule()      
+             
+        modDrag.location = np.array([ -100000 , 0 , 0 ])               
+        
+        self.counter += 1
+        
+        newStation = Station(modDrag,'ResupplyStation', self.logger)
+        
+        Human('Alex',station = newStation)
+        Human('Bert',station = newStation)
+        Human('Charlie',station = newStation)
+        
+        vessel = VesselPlan( station = newStation, target_station_id = station )
+        self.vessel_queue.append( vessel )                                   
+        
+        self.player_nasa_funds -= 100000000
+        
+        return newStation        
         
 
     def accept_vessel(self,station=None):        

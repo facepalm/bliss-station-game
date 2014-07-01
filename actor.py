@@ -14,7 +14,13 @@ class Actor(object):
         self.my_tasks = TaskTracker()
         self.id = str(uuid.uuid4())  
         self.name = name
-        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        if logger:
+            self.logger = logging.getLogger(logger.name + '.' + self.name)
+        elif station:
+            self.logger = logging.getLogger(station.logger.name + '.' + self.name)
+        else: 
+            self.logger = logging.getLogger(util.generic_logger.name + '.' + self.name)
+            
         self.needs = dict()
         self.needs['Idle Curiosity']=Need('Idle Curiosity', self, 100, 0, 0, self.new_idle_task, None)
         self.task = None #currently active task

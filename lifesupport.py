@@ -22,24 +22,26 @@ class UniversalToilet(Machinery):
         self.sprite.add_layer('Toilet',util.load_image("images/14_toilets_40x40.png"))
 
     def deposit(self, amt1=0, amt2=0):
-        print amt1, amt2
         if amt1: self.tank.add( clutter.Clutter( "Waste Water", amt1 ) )
         if amt2: self.tank.add( clutter.Clutter( "Solid Waste", amt2, 714.0 ) )
         
     def update(self,dt):
         super(UniversalToilet, self).update(dt)   
         p = self.tank.search( self.tank.target_1 )
-        if self.installed and p and self.draw_power(0.03,dt):
+        if self.installed and p and self.draw_power(0.03,dt):            
             gray_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) ) 
-            #print 'gray dest', gray_dest
-            if not gray_dest: return            
+
+            if not gray_dest: return   
+            self.active = True         
             proc_amt = max( 0, min( gray_dest.available_space, p.mass , self.processing_speed*dt ) )
-            #print 'proc amt', proc_amt, p
+
             new_p = p.split(proc_amt)
             if not new_p: return
             new_p.quality['Contaminants'] = 0.09
             new_p.quality['Salt'] = 0.09
             gray_dest.stowage.add(new_p)
+        else:
+            self.active = False         
         
 class WaterPurifier(Machinery):
     '''Converts gray water into potable water.  Basically an abstracted still'''
@@ -49,17 +51,20 @@ class WaterPurifier(Machinery):
         self.name = "Water Purifier"
         
     def update(self,dt):
-        super(WaterPurifier, self).update(dt)              
+        super(WaterPurifier, self).update(dt)    
+        self.active = False           
         if self.installed and self.draw_power(0.03,dt): #TODO replace with actual distillation power use
             gray_source, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) )           
             pure_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Potable Water' ) )
-            if not gray_source or not pure_dest: return
+            if not gray_source or not pure_dest: return            
             water = gray_source.stowage.remove('Water',min( self.processing_speed*dt, pure_dest.available_space ) )
             if not water: return
+            self.active = True
             for w in water:
                 w.quality['Contaminants'] = 0.0
                 w.quality['Salt'] = 0.0
-                pure_dest.stowage.add( w )
+                pure_dest.stowage.add( w )        
+                       
 
 class OxygenElectrolyzer(Machinery):
     '''Converts purified water to O2 (and disappears the H2 to space, presumably)'''
@@ -71,13 +76,15 @@ class OxygenElectrolyzer(Machinery):
         self.name = "O2 Electrolyzer"
 
     def update(self,dt):
-        super(OxygenElectrolyzer, self).update(dt)              
+        super(OxygenElectrolyzer, self).update(dt)        
+        self.active = False      
         if self.installed and self.draw_power(self.idle_draw,dt): #idling power use
             O2_content = self.installed.atmo.partial_pressure('O2')            
             if O2_content < 21.27:   #sea-level pp of oxygen.  
                 #*Technically* we should also check for total pp, and release more O2 until like 40 kPa
                 pure_src, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Potable Water' ) )
                 if pure_src and self.draw_power(self.power_draw,dt):
+                    self.active = True
                     water = pure_src.stowage.remove('Water',self.process_rate*dt)
                     for w in water:
                         gasses = atmospherics.decompose_h2o(w.mass) #handle contaminated detritus somehow?
@@ -95,10 +102,12 @@ class RegenerableCO2Filter(Machinery):
         self.name = "CO2 Filter"
 
     def update(self,dt):
-        super(RegenerableCO2Filter, self).update(dt)              
+        super(RegenerableCO2Filter, self).update(dt)       
+        self.active=False       
         if self.installed and self.draw_power(self.idle_draw,dt): #idling power use
             CO2_content = self.installed.atmo.partial_pressure('CO2')            
             if CO2_content > self.pp_trigger and self.draw_power(self.power_draw,dt):
+                self.active = True
                 air_in = self.installed.atmo.extract('volume',self.airflow*dt)
                 air_in['CO2'] = air_in[ 'CO2' ] * (1.0 - self.extraction_fraction)
                 self.installed.atmo.inject(air_in)                                        
