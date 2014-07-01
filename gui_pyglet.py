@@ -253,7 +253,8 @@ class gui():
 	    theme=blue_theme, on_escape=on_escape)    
 	    
 	    
-    def create_mission_control_dialog(self):  
+    def create_mission_control_dialog(self):          
+    
         class GUIMission():
             def __init__(self,name,cost):
                 self.name=name
@@ -264,9 +265,16 @@ class gui():
           
         def on_cancel():
             print "Form canceled."
-            on_escape(dialog)
+            on_escape(dialog)                
         
-        funds=self.scenario.current_scenario.mission_control.player_nasa_funds       
+        funds=self.scenario.current_scenario.mission_control.player_nasa_funds     
+        fundsLabel = kytten.Label('Funds: '+'{:0.2f}'.format(funds))  
+        
+        def refresh_funds(dt):
+            funds=self.scenario.current_scenario.mission_control.player_nasa_funds 
+            fundsLabel.set_text('Funds: '+'{:0.2f}'.format(funds))
+                
+        pyglet.clock.schedule_interval(refresh_funds,5)        
                 
         missions = self.scenario.current_scenario.mission_control.get_available_missions()     
         missiondrop = kytten.Dropdown(sorted([k if funds > missions[k][0] else "-"+k for k in missions.keys() ],key=lambda x:missions[x][1]),on_select=None)
@@ -277,8 +285,9 @@ class gui():
             on_escape(dialog)                    
 
             
+            
         entries=[kytten.Label("Mission Control")]
-        entries.append(kytten.Label('Funds: '+'{:0.2f}'.format(self.scenario.current_scenario.mission_control.player_nasa_funds)))
+        entries.append(fundsLabel)
         
         entries.append(kytten.FoldingSection("Request new mission",kytten.VerticalLayout([missiondrop,kytten.Button("Send!", on_click=send_mission)]),is_open = False))
         entries.append(kytten.Button("Close", on_click=on_cancel))
