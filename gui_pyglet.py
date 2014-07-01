@@ -266,32 +266,15 @@ class gui():
             print "Form canceled."
             on_escape(dialog)
         
-        funds=self.scenario.current_scenario.mission_control.player_nasa_funds
-        
-        resupmiss = GUIMission("Resupply Mission (50M)",50000000)
-        astromiss = GUIMission("Recruit Astronauts(3) (100M)",100000000)
-        destmiss = GUIMission("Add Destiny Module (200M)",200000000)
+        funds=self.scenario.current_scenario.mission_control.player_nasa_funds       
                 
-        missions = [] 
-        for r in [resupmiss,astromiss]:
-            missions.append(r.name if funds > r.cost else '-'+r.name)       
-
-        missiondrop = kytten.Dropdown(missions,on_select=None)
+        missions = self.scenario.current_scenario.mission_control.get_available_missions()     
+        missiondrop = kytten.Dropdown(sorted([k if funds > missions[k][0] else "-"+k for k in missions.keys() ],key=lambda x:missions[x][1]),on_select=None)
             
         def send_mission():
-            mission = missiondrop.selected    
-            if mission == resupmiss.name:
-                print "sending resupply mission"    
-                self.scenario.current_scenario.mission_control.send_resupply_vessel()
-            elif mission == astromiss.name:
-                print "Send astronaut replacements"
-                self.scenario.current_scenario.mission_control.send_3man_crew()               
-            elif mission == destmiss.name:
-                print "Send destiny module"
-            on_escape(dialog)
-            
-        
-
+            mission = missiondrop.selected                
+            missions[mission][1]()
+            on_escape(dialog)                    
 
             
         entries=[kytten.Label("Mission Control")]

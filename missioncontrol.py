@@ -1,4 +1,5 @@
 from cargo_modules import DragonCargoModule
+from generic_module import DestinyModule
 import manifest
 from station import Station  
 import util
@@ -15,10 +16,17 @@ class MissionControl(object):
         self.scenario=scenario
         self.vessel_queue=[]
         
-        self.player_nasa_funds = 100000000
+        self.player_nasa_funds = 1000000000
         self.pork = 0.5
         self.missioncontrol_budget = 0.005
         self.yearly_budget=2000000000
+        
+    def get_available_missions(self):
+        out=dict()        
+        out["Recruit Astronauts(3) (100M)"]=[100000000,self.send_3man_crew]
+        out["Resupply Mission (50M)"]=[50000000,self.send_resupply_vessel]  
+        out["Add Destiny Module (200M)"]=[200000000,self.send_destiny]
+        return out
         
     def send_resupply_vessel(self, station="", extras=[]):
         if not self.scenario: return None
@@ -61,7 +69,30 @@ class MissionControl(object):
         
         self.player_nasa_funds -= 100000000
         
-        return newStation        
+        return newStation   
+        
+    def send_destiny(self, station="", extras=[]):
+        if not self.scenario: return None
+        if not station and self.scenario.stations: 
+            station = self.scenario.stations.keys()[0]        
+        
+        modDest = DestinyModule()                   
+        modDest.location = np.array([ -100000 , 0 , 0 ])               
+        
+        modDrag = DragonCargoModule() 
+        modDrag.location = np.array([ -100000 , 0 , 0 ]) 
+        
+        self.counter += 1
+        
+        
+        
+        newStation = Station(modDrag,'AddStation', self.logger) 
+        newStation.dock_module(None,None,modDest, None, True)                      
+        vessel = VesselPlan( station = newStation, target_station_id = station )
+        self.vessel_queue.append( vessel )                                   
+        
+        self.player_nasa_funds -= 200000000        
+        return newStation          
         
 
     def accept_vessel(self,station=None):        
