@@ -29,71 +29,41 @@ class MissionControl(object):
         return out
         
     def send_resupply_vessel(self, station="", extras=[]):
-        if not self.scenario: return None
-        if not station and self.scenario.stations: 
-            station = self.scenario.stations.keys()[0]        
-        
-        modDrag = DragonCargoModule()      
-        modDrag.setup_simple_resupply()      
-        modDrag.location = np.array([ -100000 , 0 , 0 ])
-        
-        self.counter += 1
-        
-        newStation = Station(modDrag,'ResupplyStation', self.logger)
-        vessel = VesselPlan( station = newStation, target_station_id = station )
-        self.vessel_queue.append( vessel )                                   
-        
-        self.player_nasa_funds -= 50000000
-        
+        newStation = self.send_module(cost=50000000)
+        newStation.modules.values()[0].setup_simple_resupply()
         return newStation
         
-    def send_3man_crew(self, station="", extras=[]):
-        if not self.scenario: return None
-        if not station and self.scenario.stations: 
-            station = self.scenario.stations.keys()[0]        
-        
-        modDrag = DragonCargoModule()      
-             
-        modDrag.location = np.array([ -100000 , 0 , 0 ])               
-        
-        self.counter += 1
-        
-        newStation = Station(modDrag,'ResupplyStation', self.logger)
-        
+    def send_3man_crew(self, station="", extras=[]):        
+        newStation = self.send_module(cost=100000000)
         Human('Alex',station = newStation)
         Human('Bert',station = newStation)
         Human('Charlie',station = newStation)
-        
-        vessel = VesselPlan( station = newStation, target_station_id = station )
-        self.vessel_queue.append( vessel )                                   
-        
-        self.player_nasa_funds -= 100000000
-        
-        return newStation   
+        return newStation             
         
     def send_destiny(self, station="", extras=[]):
+        modDest = DestinyModule()     
+        newS = self.send_module(module=modDest,cost=200000000)     
+        return newS
+        
+    def send_module(self, module=None, station="", extras=[],cost=200000000):
         if not self.scenario: return None
         if not station and self.scenario.stations: 
             station = self.scenario.stations.keys()[0]        
-        
-        modDest = DestinyModule()                   
-        modDest.location = np.array([ -100000 , 0 , 0 ])               
+                                   
         
         modDrag = DragonCargoModule() 
         modDrag.location = np.array([ -100000 , 0 , 0 ]) 
-        
-        self.counter += 1
-        
-        
-        
         newStation = Station(modDrag,'AddStation', self.logger) 
-        newStation.dock_module(None,None,modDest, None, True)                      
+        self.counter += 1                        
+        
+        if module: 
+            module.location = np.array([ -100000 , 0 , 0 ])               
+            newStation.dock_module(None,None,module, None, True)                      
         vessel = VesselPlan( station = newStation, target_station_id = station )
         self.vessel_queue.append( vessel )                                   
         
-        self.player_nasa_funds -= 200000000        
-        return newStation          
-        
+        self.player_nasa_funds -= cost      
+        return newStation
 
     def accept_vessel(self,station=None):        
         if not station: return
