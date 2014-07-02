@@ -17,6 +17,26 @@ GLOBAL_Y=0
 def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)
     
+def timestring(seconds):
+    seconds = int(seconds)
+    time=''
+    div, rem = (seconds/(2592000*12),seconds%(2592000*12))    
+    if div: time = ''.join([time,str(div),' year ' if div==1 else ' years ' ])
+    seconds = rem
+    div, rem = (seconds/(2592000),seconds%(2592000))    
+    if div: time = ''.join([time,str(div),' month ' if div==1 else ' months ' ])
+    seconds = rem
+    div, rem = (seconds/(86400),seconds%(86400))    
+    if div: time = ''.join([time,str(div),' day ' if div==1 else ' days ' ])
+    seconds = rem
+    div, rem = (seconds/(3600),seconds%(3600))    
+    if div: time = ''.join([time,str(div),' hour ' if div==1 else ' hours ' ])
+    seconds = rem
+    time = ''.join([time,str(seconds),' seconds' ])
+    return time    
+    
+    
+    
 def seconds(time=1,units='minutes'):
     return time*60 if units == 'minutes' or units == 'minute' \
                                          else time*3600 if units == 'hours' or units == 'hour' \

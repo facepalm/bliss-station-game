@@ -102,7 +102,7 @@ class Scenario(object):
         
     def status_update(self,dt):
         print      
-        util.generic_logger.info('System time:%d' %(int(util.TIME_FACTOR*self.time_elapsed)))
+        util.generic_logger.info('System time:' +util.timestring(int(util.TIME_FACTOR*self.time_elapsed)))
         for a in self.actors.values():
             a.log_status()
 
