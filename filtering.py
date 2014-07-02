@@ -66,18 +66,20 @@ class NeedFilter(SearchFilter):
         
         
 class EquipmentFilter(SearchFilter):        
-    def __init__(self,target='Storage', comparison_type='Equipment', subtype='Any', **kwargs):    
+    def __init__(self,target='Storage', comparison_type='Equipment', subtype='Any', is_installed=False, **kwargs):    
         super(EquipmentFilter, self).__init__(target=target, comparison_type=comparison_type, **kwargs)       
         self.subtype=subtype
         self.equipment_targets = util.equipment_targets
+        self.check_if_installed = is_installed
         
     def compare(self,obj):
         import equipment_science
+        if self.check_if_installed and (not hasattr(obj, 'installed') or not obj.installed): return False
         if self.target == 'Storage' and isinstance( obj, equipment.Storage):
             #print obj, obj.filter.target, self.subtype, self.subtype in obj.filter.target or self.subtype == 'Any'
             return self.subtype in obj.filter.target or self.subtype == 'Any'
         elif self.target in self.equipment_targets: 
-            return isinstance( obj, self.equipment_targets [ self.target ] )    
+            return isinstance( obj, self.equipment_targets [ self.target ] ) 
         elif self.comparison_type == 'Equipment Slot':
             return obj == self.target
         elif self.subtype == "Dead Science" and isinstance( obj, equipment_science.Experiment):

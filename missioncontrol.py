@@ -48,7 +48,7 @@ class MissionControl(object):
     def send_module(self, module=None, station="", extras=[],cost=200000000):
         if not self.scenario: return None
         if not station and self.scenario.stations: 
-            station = self.scenario.stations.keys()[0]        
+            station = self.scenario.focus_station.id
                                    
         
         modDrag = DragonCargoModule() 
@@ -86,7 +86,7 @@ class MissionControl(object):
                             self.vessel_queue.remove(v)
                             
                             if v.autodock:
-                                miss_comp, d, d = self.scenario.stations[v.target_id].search( filtering.EquipmentFilter( target='Mission Computer' ) )
+                                miss_comp, d, d = self.scenario.stations[v.target_id].search( filtering.EquipmentFilter( target='Mission Computer', is_installed=True ) )
                                 modDock = [m for m in v.station.modules.values() if isinstance(m,DragonCargoModule)][0]
                                 miss_comp.generate_mission(selection='New Module', target_id = v.station.id, module_id = modDock.id)
                         else:
@@ -102,7 +102,7 @@ class VesselPlan(object):
     def __init__(self, station = None, target_station_id=None, autodock = True):
         self.financing = util.seconds(30,'seconds')
         self.design = util.seconds(30,'seconds')
-        self.construction = util.seconds(30,'minutes')
+        self.construction = 0#util.seconds(30,'minutes')
         self.launch_prep = util.seconds(30,'seconds')      
         
         self.station = station

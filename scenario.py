@@ -51,7 +51,7 @@ class Scenario(object):
         self.logger=logger
         
         self.mission_control = missioncontrol.MissionControl(self,self.logger)
-        
+        self.focus_station = None
         
         if name=='BERTNERNIE':
 
@@ -112,10 +112,11 @@ class Scenario(object):
     def get_station(self,name=None):
         stations = [s for s in self.get_stations() if s.name == name]
         if stations: return stations[0]
-        return None        
+        return self.focus_station       
         
     def add_station(self,station=None):
-        if not station: return    
+        if not station: return
+        if not self.focus_station: self.focus_station = station
         self.stations[station.id]=station
         for m in station.modules.values():
             self.modules[m.id]=m
