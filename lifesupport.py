@@ -72,7 +72,7 @@ class OxygenElectrolyzer(Machinery):
         super(OxygenElectrolyzer, self).__init__()
         self.process_rate = 0.0001 #kg of water per second
         self.efficiency = 0.5
-        self.power_draw = self.process_rate * 1000 / (15.9994+2*1.008) * 237 / self.efficiency
+        self.power_draw = (self.process_rate * 1000 / (15.9994+2*1.008)) * 237 / self.efficiency
         self.name = "O2 Electrolyzer"
 
     def update(self,dt):

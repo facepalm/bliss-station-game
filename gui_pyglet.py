@@ -262,6 +262,13 @@ class gui():
         if actor is None: return
 
         a=actor
+        
+        taskLabel = kytten.Label( '' )
+        def refresh_task(dt=0):
+            taskLabel.set_text('Task:'+ a.task.name if a.task else 'Idling')
+        refresh_task()
+        
+        pyglet.clock.schedule_interval(refresh_task,1)
 
         def on_cancel():
             print "Form canceled."
@@ -274,13 +281,14 @@ class gui():
         entries=[kytten.Label(a.name)]
         entries.append(kytten.FoldingSection("Needs:",
             kytten.VerticalLayout(needEntries), is_open=False))
+        entries.append(taskLabel)
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
         dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
-	        width=200, height=150)
+	        width=300, height=250)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,

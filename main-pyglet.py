@@ -32,12 +32,10 @@ class CollideSprite(pyglet.sprite.Sprite):
         x1 = math.cos(theta)*x - math.sin(theta)*y
         y1 = math.sin(theta)*x + math.cos(theta)*y
         #print self.image.anchor_x
-        x1 += self.image.anchor_x
-        y1 += self.image.anchor_y
+        x1 += self.image.anchor_x if not isinstance (self.image,pyglet.image.Animation) else self.image.frames[0].image.anchor_x
+        y1 += self.image.anchor_y if not isinstance (self.image,pyglet.image.Animation) else self.image.frames[0].image.anchor_y
         if x1 >= 0 and x1 <= self.width:
-            if y1 >= 0 and y1 <= self.height:
-                if self.image.anchor_x == 20:
-                    print x,y
+            if y1 >= 0 and y1 <= self.height:                
                 return True
         return False
 

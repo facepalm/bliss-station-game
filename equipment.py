@@ -152,7 +152,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
         
 class Machinery(Equipment): #ancestor class for things that need regular maintenance
     def __init__(self):
-        if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_machinery.tif"
+        self.active = False
         super(Machinery, self).__init__()              
         self.idle_draw = 0.001 #kW
         #self.maint_timer = random.randrange(util.seconds(6,'months'), util.seconds(2,'years') )
@@ -161,22 +161,36 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         self.maintenance_interval = util.seconds(6,'months')
         self.wear = 1.0
         self.broken = False
-        self.active = False
+        self.recently_active=False
         self.type = 'MACHINERY'
             
     def refresh_image(self):     
         super(Machinery, self).refresh_image()
         if self.sprite is None: return
-        self.sprite.add_layer('Machinery',util.load_image("images/machinery_40x40.png"))                                                 
+        import pyglet
+        img1=pyglet.image.AnimationFrame(util.load_image("images/machinery_40x40.png"),0.5 if self.active else None)
+        img2=pyglet.image.AnimationFrame(util.load_image("images/machinery_40x40_1.png"),0.5)
+        
+        animation = pyglet.image.Animation([img1,img2])
+        
+        self.sprite.add_layer('Machinery',animation)                                                 
                 
     def update(self,dt):
         super(Machinery, self).update(dt)     
   
         if self.active: 
+            if not self.recently_active:
+                self.recently_active = True
+                self.refresh_image()
+            
             self.operating_time_since_last_maintenance += dt
             if random.random() < (dt/util.seconds(1,'day'))*self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval):
-                self.broken = True  
-        
+                self.broken = True
+        else:
+            if self.recently_active:
+                self.recently_active = False
+                self.refresh_image()
+            
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
                 self.maint_task = Task(''.join(['Repair ',self.name]), owner = self, timeout=None, task_duration = util.seconds(4,'hours'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
@@ -467,6 +481,13 @@ class FoodStorageRack(Storage,Rack):
         self.filter = ClutterFilter(['Nonperishable Food'])
         self.space_trigger = 0.5 #free volume, m^3   
         self.name = "Food storage, "+str(self.stowage.capacity)+"m^3"
+    
+    def refresh_image(self):     
+        super(FoodStorageRack, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('FoodSmall',util.load_image("images/glitch-assets/pi/pi__x1_rescaled_iconic_png_1354839579.png"))
+        self.sprite.layer['FoodSmall'].scale=0.75
+    
 
 class GenericStorageRack(Storage,Rack):
     def __init__(self):   
@@ -478,8 +499,7 @@ class GenericStorageRack(Storage,Rack):
 class WaterStorageRack(WaterTank,Rack):
     def __init__(self):   
         super(WaterStorageRack, self).__init__()                 
-        self.space_trigger = 0.5 #free volume, m^3      
-                            
+        self.space_trigger = 0.5 #free volume, m^3                                          
 
                     
 util.equipment_targets['Battery'] = Battery
