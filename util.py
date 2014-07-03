@@ -97,4 +97,5 @@ actor_batch = None
 parent_group = None     
 
 scenario = None
+universe = None
 

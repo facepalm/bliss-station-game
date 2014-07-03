@@ -41,6 +41,11 @@ class Merlin_A(Engine):
         self.Isp = 450
         self.name = "Merlin A Engine"
         
+    def refresh_image(self):     
+        super(Merlin_A, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('Nozzle',util.load_image("images/merlin_engine.tif")) 
+        
 class KeroseneTank(Storage):
     def __init__(self):   
         if not hasattr(self,'imgfile'): self.imgfile = "images/flammable_fuel.tif"

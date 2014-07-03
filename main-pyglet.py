@@ -12,6 +12,8 @@ from scenario import ScenarioMaster
       
 from pyglet import gl as gl     
 
+import universe
+
 
 util.GRAPHICS = 'pyglet'
 zoom = 2
@@ -92,6 +94,9 @@ if __name__ == "__main__":
         gui.create_mission_control_dialog()
     util.contact_mission_control = contact_mission_control    
     
+    util.universe = universe.Universe()
+    util.universe.generate_background('LEO')
+    
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
     #DEBUG INFO WARNING ERROR CRITICAL
@@ -120,11 +125,13 @@ if __name__ == "__main__":
     def on_draw():
         #background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
+        util.universe.draw_background()
         
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();        
         gl.glOrtho(-zoom*window.width//2,zoom*window.width//2,-zoom*window.height//2,zoom*window.height//2,0,1);                
         gl.glMatrixMode(gl.GL_MODELVIEW);                
+        
         
         for s in scenario.get_stations():
             s.draw(window)
@@ -142,6 +149,7 @@ if __name__ == "__main__":
     #clock.set_fps_limit(30)
     clock.schedule_interval(scenario.status_update,1)
     clock.schedule_interval(scenario.system_tick,0.0250)
+    clock.schedule_interval(util.universe.update,0.02)
     
     window.push_handlers(gui)
     
