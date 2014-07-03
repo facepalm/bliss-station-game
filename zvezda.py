@@ -33,7 +33,7 @@ class ZvezdaModule(BasicStationModule):
                     self.node('Window21'): np.array([ 0.5,  0.1 , -0.1 ]),
                     self.node('Window22'): np.array([ 0.5, -0.1 , -0.1 ]),
                     self.node('H2OStill'): np.array([ -0.2,  -0.35 , 0 ]),
-                    self.node('Electrolyzer'): np.array([ -0.2,  0.35 , 0 ]),
+                    self.node('Electrolyzer'): np.array([ -0.75,  0.5 , 0 ]),
                     self.node('CO2Filter'): np.array([ -0.3,  0.35 , 0 ]),
                     }
                     
@@ -74,7 +74,7 @@ class ZvezdaModule(BasicStationModule):
         self.equipment['Window22'] = [ np.array([ 0.5 , -0.2 , -0.15 ]), np.array([ 0 , -math.pi]), 'WINDOW', Window().install(self)]
         
         self.equipment['H2OStill'] = [ np.array([ -0.2 , -0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', WaterPurifier().install(self)]
-        self.equipment['Electrolyzer'] = [ np.array([ -0.2 , 0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', OxygenElectrolyzer().install(self)]
+        self.equipment['Electrolyzer'] = [ np.array([ -0.75 , 0.5 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', OxygenElectrolyzer().install(self)]
         self.equipment['CO2Filter'] = [ np.array([ -0.3 , 0.35 , 0 ]), np.array([ 0 , 0]), 'MACHINERY', RegenerableCO2Filter().install(self)]
         
         self.add_equipment('Docking Console', DockingComputer().install(self), np.array([ -0.5 , 0.35 , 0 ]), eq_type='CONSOLE' )
@@ -82,7 +82,7 @@ class ZvezdaModule(BasicStationModule):
         self.add_equipment('Comms Equip', Comms().install(self), np.array([ -0.7 , 0 , 0 ]), eq_type='CONSOLE' )
         self.add_equipment('BackupBattery', Battery().install(self), np.array([ -0.8 , 0.35 , 0 ]), eq_type='ELECTRICAL' )
         self.equipment['BackupBattery'][3].capacity = 3
-        self.equipment['BackupBattery'][3].visible = False
+        #self.equipment['BackupBattery'][3].visible = False
         
         graytank = WaterTank().install(self)
         graytank.filter = ClutterFilter(['Gray Water'])        

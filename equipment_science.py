@@ -61,5 +61,6 @@ class BiologyExperimentRack(Experiment, Rack):
         self.sprite.layer['Experiment'].visible = False
         
     def update(self,dt):            
-        super(BiologyExperimentRack, self).update(dt)                
+        super(BiologyExperimentRack, self).update(dt)   
+        #print self.no_more_SCIENCE, self.installed is None, self.powered             
 

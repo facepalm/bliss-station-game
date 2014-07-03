@@ -4,6 +4,7 @@ import os
 from clutter import Clutter
 from equipment import *
 from equipment_science import *
+from lifesupport import *
 
 # Default theme, blue-colored
 blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
@@ -213,7 +214,11 @@ class gui():
         if hasattr(e,'tank'):
             entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
-            entries.append(kytten.Label("Science usage: " + '{:3.0f}'.format(100*e.science_percentage()) ))            
+            entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage()) )) 
+        if isinstance(e,RegenerableCO2Filter):
+            entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
+        if isinstance(e,Battery):
+            entries.append(kytten.Label('Charge: '+'{:3.2f}'.format( e.charge ) +' kWh') )
         entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
