@@ -28,7 +28,7 @@ class Need():
         self.logger = logging.getLogger(self.owner.logger.name + '.' + self.name)
         
     def update(self,dt):
-        assert(self.owner, "Need has no owner.  This should never happen.")
+        assert self.owner, "Need has no owner.  This should never happen."
         if self.touched > 0: self.touched -= dt
         if self.amt < 0 and self.on_fail and self.touched <= 0:
             self.on_fail()
@@ -43,7 +43,7 @@ class Need():
         if _need_task: 
             _need_task.severity = _need_severity        
             #if _need_ratio > 0.95 and self.owner.task == _need_task: _need_task.flag('IGNORED')
-        elif self.on_task:
+        elif self.on_task and _need_severity != 'IGNORABLE':
             t=self.on_task(self.amt/(self.depletion_rate+0.00001),_need_severity)
             t.flag('OPEN')
             self.owner.my_tasks.add_task(t)
@@ -65,6 +65,9 @@ class Need():
     def supply(self, available_amt, dt):
         _amt = min( available_amt, dt*self.replenish_rate, self.max_amt - self.amt )
         self.amt += _amt            
+        if self.amt >= 0.99*self.max_amt:
+            _need_task = self.owner.my_tasks.find_task(''.join(['Satisfy ',self.name]))
+            if _need_task: _need_task.flag('COMPLETED')
         return _amt    
         
     def set_amt_to_severity(self,severity='IGNORABLE'):

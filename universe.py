@@ -19,8 +19,8 @@ class Universe(object):
             self.background[0].x = -width*orbit_position
             self.background[2].x = -width*orbit_position + 10
             
-            self.background[0].y = 200*math.sin(2*math.pi*orbit_position)
-            self.background[2].y = 200*math.sin(2*math.pi*orbit_position)
+            self.background[0].y = 150*math.sin(2*math.pi*orbit_position)
+            self.background[2].y = 150*math.sin(2*math.pi*orbit_position)
             
             self.background[1].x = width + self.background[0].x
             self.background[3].x = width + self.background[2].x
