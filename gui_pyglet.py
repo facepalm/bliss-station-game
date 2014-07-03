@@ -29,6 +29,10 @@ class gui():
         x -= self.window.width//2
         y -= self.window.height//2
         for station in self.scenario.get_stations():
+            for a in station.actors.values():
+                if a.sprite.contains(x,y):
+                    self.create_actor_dialog(a)
+                    return True
             for m in station.modules.values():
                 if m.sprite.contains(x,y):
                     for e in m.equipment.keys():
@@ -252,6 +256,33 @@ class gui():
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)    
 	    
+    def create_actor_dialog(self, actor = None):
+        if actor is None: return
+
+        a=actor
+
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog)                                           
+        
+        needEntries=[]
+        for n in a.needs.keys():
+            needEntries.append(kytten.Label(a.needs[n].name+" "+a.needs[n].current_severity()))
+                
+        entries=[kytten.Label(a.name)]
+        entries.append(kytten.FoldingSection("Needs:",
+            kytten.VerticalLayout(needEntries), is_open=False))
+        entries.append(kytten.Button("Close", on_click=on_cancel))    
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=200, height=150)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)    
 	    
     def create_mission_control_dialog(self):          
     
