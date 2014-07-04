@@ -86,6 +86,9 @@ class EquipmentFilter(SearchFilter):
             return obj.no_more_SCIENCE
         elif self.subtype == "Live Science" and isinstance( obj, equipment_science.Experiment):
             return not obj.no_more_SCIENCE    
+        elif self.target=="By Name":
+            return hasattr(obj, 'name') and obj.name == self.subtype
+            
             
     def target_string(self):        
         return self.target + "-" + self.subtype            
