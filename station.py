@@ -14,7 +14,7 @@ import util
 import logging
 
 class Station():
-    def __init__(self,initial_module=None, name=None, logger=None):
+    def __init__(self,initial_module=None, name=None, logger=None, mission_control = None):
         self.modules=dict()
         self.id = str(uuid.uuid4())   
         self.exterior_objects=[]
@@ -29,6 +29,8 @@ class Station():
 
         self.location = 'LEO'
         self.position = 'Approach'
+        
+        self.mission_control = mission_control
         
         self.sprite = None
         self.refresh_image()

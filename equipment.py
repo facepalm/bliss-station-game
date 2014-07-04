@@ -147,9 +147,14 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
     def update(self,dt):
         super(Window, self).update(dt)        
         if self.installed and not self.task or self.task.task_ended():
-            #stellar observations
-            self.task = Task(''.join(['Collect Observational Data']), owner = self, timeout=86400, task_duration = 180, severity='IGNORABLE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
-            self.installed.station.tasks.add_task(self.task)  
+            comms, d, d = self.installed.station.search( EquipmentFilter( target='Comms' ) )
+            if comms:
+                #stellar observations TODO vary the observables - military spying, geological data, etc
+                self.task = TaskSequence(name = ''.join(['Conduct Stellar Observations']), severity = "IGNORABLE", logger=self.logger)            
+                self.task.add_task(Task(''.join(['Collect Data']), owner = self, timeout=None, task_duration = 1800, severity='IGNORABLE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger))
+                self.task.add_task(Task(''.join(['Report Star Data']), owner = comms, timeout=None, task_duration = 300, severity='IGNORABLE', fetch_location_method=Searcher(comms,self.installed.station).search,logger=self.logger))
+                
+                self.installed.station.tasks.add_task(self.task)  
                                    
         
 class Machinery(Equipment): #ancestor class for things that need regular maintenance
@@ -238,7 +243,10 @@ class Comms(Equipment):
     def task_finished(self,task):
         super(Comms, self).task_finished(task) 
         if task.name == "Contact Mission Control":
-            util.contact_mission_control()                           
+            util.contact_mission_control()  
+        elif task.name == 'Report Star Data':
+            if self.installed.station.mission_control:
+                self.installed.station.mission_control.add_science(field='Astronomy', amt = 1)
         
 #miscellaneous equipment
 class Storage(Equipment):
@@ -510,4 +518,5 @@ class WaterStorageRack(WaterTank,Rack):
                     
 util.equipment_targets['Battery'] = Battery
 util.equipment_targets['Storage'] = Storage
+util.equipment_targets['Comms'] = Comms
 

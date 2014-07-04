@@ -184,7 +184,7 @@ class SeedScenario(Scenario):
         #modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
         #modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
         
-        station = Station(modB, "Lorkhan Station", logger)
+        station = Station(modB, "Lorkhan Station", logger, mission_control = self.mission_control)
         station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            
         
@@ -204,7 +204,7 @@ class StressTestScenario(Scenario):
         modDrag.setup_simple_resupply()            
         modDrag.stowage.contents.append(BiologyExperimentRack())
         
-        station = Station(modB, "Lorkhan Station", logger)
+        station = Station(modB, "Lorkhan Station", logger, mission_control = self.mission_control)
         station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            
         station.dock_module(None,None,DestinyModule(), None, True)

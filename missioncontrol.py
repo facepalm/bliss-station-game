@@ -72,6 +72,9 @@ class MissionControl(object):
         
         self.scenario.remove_station(station)
         
+    def add_science(self,field='Astronomy', amt=0):
+        self.logger.info('New astro data: '+str(amt))
+        
     def update(self,dt):
         self.player_nasa_funds += dt*self.yearly_budget/util.seconds(1,'year')
     
