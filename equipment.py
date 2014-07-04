@@ -40,6 +40,7 @@ class Equipment(object):
         if not util.GRAPHICS: return
         if util.GRAPHICS == 'pyglet':        
             import graphics_pyglet
+            if self.sprite: self.sprite.delete()
             self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
             self.sprite.add_layer('Equipment',util.make_solid_image(40,40,(100,100,100,255)))
             self.sprite.owner = self

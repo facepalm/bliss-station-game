@@ -1,6 +1,7 @@
 import util
 import clutter
 import filtering
+import equipment
 from tasks import TaskSequence, Task
 
 class ManifestItem(object):
