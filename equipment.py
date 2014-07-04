@@ -46,9 +46,9 @@ class Equipment(object):
                    
       
     def update(self,dt):
-        if self.task and self.task.task_ended(): self.task = None        
-        
+        if self.task and self.task.task_ended(): self.task = None                
         self.powered = self.idle_draw > 0 and self.draw_power(self.idle_draw,dt) > 0
+        
 
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
@@ -395,6 +395,7 @@ class SolarPanel(Equipment):
     def update(self,dt):
         super(SolarPanel, self).update(dt)    
         if self.installed and self.extended:
+            #print dt, self.installed.station.resources.resources['Electricity'].available, self.capacity*dt/3600.0
             self.installed.station.resources.resources['Electricity'].available += self.capacity*dt/3600.0
 
 class Battery(Equipment):
@@ -426,14 +427,14 @@ class Battery(Equipment):
                 _charge = max(power_situation, -dt * self.discharge_rate) if self.charge > 0 else 0
                 self.charge += _charge / 3600
             self.installed.station.resources.resources['Electricity'].available -= _charge
-        #print _charge, self.charge, self.capacity
+        #print dt, self.installed.station.resources.resources['Electricity'].available, _charge, self.charge, self.capacity
      
 #rack equipment            
 class Rack(Equipment):
     def __init__(self):   
         super(Rack, self).__init__()                    
-        self.mass=104
-        self.type='RACK'
+        self.mass = 104
+        self.type = 'RACK'
        
     def update(self,dt):
         pass

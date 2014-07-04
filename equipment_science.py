@@ -47,20 +47,23 @@ class Experiment(Equipment):
         if self.sprite is None: return
         self.sprite.add_layer('Experiment',util.load_image("images/glitch-assets/diabolic_acid/diabolic_acid__x1_1_png_1354832222.png"))
 
-class BiologyExperimentRack(Experiment, Rack):
+class BiologyExperimentRack(Rack, Experiment):
     def __init__(self):
-        super(BiologyExperimentRack, self).__init__()              
+        
+        Experiment.__init__(self) 
+        Rack.__init__(self)            
         self.idle_draw = 1.000 #kW
         
         self.name = "Biology Exp."
         
     def refresh_image(self):     
-        super(BiologyExperimentRack, self).refresh_image()
+        Rack.refresh_image(self)
+        Experiment.refresh_image(self)        
         if self.sprite is None: return
         self.sprite.add_layer('Biology Experiment',util.load_image("images/glitch-assets/element_green/element_green__x1_1_png_1354832187.png"))
         self.sprite.layer['Experiment'].visible = False
         
     def update(self,dt):            
-        super(BiologyExperimentRack, self).update(dt)   
-        #print self.no_more_SCIENCE, self.installed is None, self.powered             
+        Experiment.update(self,dt)
+        Rack.update(self,dt)              
 
