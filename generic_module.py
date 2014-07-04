@@ -133,8 +133,8 @@ class BasicModule():
         
     def get_random_dock(self, side_port_allowed=True, unused = True, used = False):
         docks=[]
-        if unused: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ])
-        if used: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) ])
+        if unused: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and not self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) and self.equipment[f][3].player_usable ])
+        if used: docks.extend([f for f in self.equipment.keys() if self.equipment[f][2] in DOCK_EQUIPMENT and self.equipment[f][3] and self.equipment[f][3].docked and ( side_port_allowed or not ( '2' in f or '3' in f ) ) and self.equipment[f][3].player_usable ])
         if not docks: return None
         return random.choice(docks)    
             

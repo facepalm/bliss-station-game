@@ -20,7 +20,7 @@ class Equipment(object):
         self.power_usage = 0 #in kilowatts        
         self.powered = False
         self.idle_draw = 0 #in kilowatts
-        self.in_vaccuum = False #if True, requires EVA to service        
+        self.in_vaccuum = False #if True, requires EVA to service       
         self.volume = 1.3 #m^3
         self.broken = False
         self.name = name
@@ -136,6 +136,7 @@ class Window(Equipment): #might even be too basic for equipment, but ah well.
     def __init__(self):
         super(Window, self).__init__()       
         self.name = "Window"
+        self.in_vaccuum = True
         
     def refresh_image(self):     
         super(Window, self).refresh_image()
@@ -289,11 +290,14 @@ class DockingRing(Equipment):
     def __init__(self):   
         if not hasattr(self,'imgfile'): self.imgfile = "images/closed_hatch.tif"
         self.open = False
+        self.player_usable = True #toggle to allow player to "turn off" hatches
         super(DockingRing, self).__init__()     
         self.docked = None #a pointer to the module we've docked to        
         self.in_vaccuum = True
         self.partner = None #a pointer to the docking equipment partner
                 
+    def toggle_player_usable(self):
+        self.player_usable = not self.player_usable            
         
     def refresh_image(self):     
         super(DockingRing, self).refresh_image()

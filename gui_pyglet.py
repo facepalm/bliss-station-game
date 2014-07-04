@@ -194,6 +194,10 @@ class gui():
             print "Form canceled."
             on_escape(dialog)
             
+        def refresh():
+            self.create_equipment_dialog(module, equip_name)
+            on_escape(dialog)    
+            
         def on_miss_ctrl():
             print "Contacting Mission Control!"
             on_escape(dialog)    
@@ -219,7 +223,14 @@ class gui():
             entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
         if isinstance(e,Battery):
             entries.append(kytten.Label('Charge: '+'{:3.2f}'.format( e.charge ) +' kWh') )
-        entries.append(kytten.Button("Uninstall", on_click=uninstall))
+        if isinstance(e,DockingRing):
+            text = "Available" if e.docked or e.player_usable else "Forbidden"            
+            def dockbutton():
+                e.toggle_player_usable()
+                refresh()            
+            entries.append(kytten.Button(text, on_click = dockbutton) )
+            
+        if not e.in_vaccuum: entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
         dialog = kytten.Dialog(
