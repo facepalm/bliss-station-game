@@ -4,6 +4,7 @@ import math
 import logging
 import pyglet
 import gui_pyglet
+import json
 
 pyglet.options['debug_gl'] = False
 
@@ -109,6 +110,17 @@ if __name__ == "__main__":
     logger.addHandler(ch)
 
     scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
+    
+    '''datafile = open('pickleData','w')
+    pickle.dump(scenario.current_scenario.mission_control,datafile,2)
+    datafile.close()
+    
+    datafile = open('pickleData','r')
+    scenario = pickle.load(datafile)
+    datafile.close()'''
+    #print json.dumps(scenario.current_scenario.mission_control)
+    
+    
     gui.scenario = scenario
     gui.window = window
 
