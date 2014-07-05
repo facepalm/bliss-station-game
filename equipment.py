@@ -9,12 +9,14 @@ import util
 import logging
 import random
 import numpy as np
-import globalvars as gl
+import globalvars as gv
 
 DOCK_EQUIPMENT = ['CBM']
         
 class Equipment(object):
     def __init__(self, installed=None, logger=None, name='UnspecifiedEquipment'):
+        self.id=util.register(self)
+            
         self.installed=None #pointer to module if installed, none if loose
         self.mass=100
         self.task=None
@@ -38,8 +40,8 @@ class Equipment(object):
         self.refresh_image()    
      
     def refresh_image(self):
-        if not util.GRAPHICS: return
-        if util.GRAPHICS == 'pyglet':        
+        if not gv.config['GRAPHICS']: return
+        if gv.config['GRAPHICS'] == 'pyglet':        
             import graphics_pyglet
             if self.sprite: self.sprite.delete()
             self.sprite = graphics_pyglet.LayeredSprite(name=self.name)
@@ -55,9 +57,9 @@ class Equipment(object):
     def install(self,home,loc=None):
         if self.installed: return None # "Can't install the same thing twice!"
         self.installed=home
-        if loc: self.installed.equipment[loc][3] = self
-        if self.installed.station: self.logger = logging.getLogger(self.installed.station.logger.name +'.' + self.installed.short_id+ '.' + self.name)
-        self.logger.info(''.join([self.name," installed in ",self.installed.id,' at ',str(loc)]))
+        if loc: home.equipment[loc][3] = self
+        if home.station: self.logger = logging.getLogger(home.station.logger.name +'.' + home.short_id+ '.' + self.name)
+        self.logger.info(''.join([self.name," installed in ", home.short_id,' at ',str(loc)]))
         return self    
         
     def get_name(self):

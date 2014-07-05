@@ -9,14 +9,14 @@ from docking_modules import UnityModule
 from cargo_modules import DragonCargoModule
 from module_resources import ResourceBundle
 from tasks import TaskTracker
-import random, math, uuid
+import random, math
 import util
 import logging
 
 class Station():
     def __init__(self,initial_module=None, name=None, logger=None, mission_control = None):
         self.modules=dict()
-        self.id = str(uuid.uuid4())   
+        self.id = util.register(self)
         self.exterior_objects=[]
         self.resources=ResourceBundle()
         self.paths=nx.Graph()

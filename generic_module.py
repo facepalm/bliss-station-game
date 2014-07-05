@@ -7,8 +7,6 @@ from clutter import Stowage
 from filtering import ClutterFilter
 import clutter
 from equipment_science import MysteryBoxRack
-
-import uuid
 from module_resources import ResourceBundle
 
 import math
@@ -16,6 +14,7 @@ import numpy as np
 import random
 import string
 import util
+import globalvars as gv
 
 import manifest
 
@@ -35,7 +34,8 @@ def separate_node(node):
 class BasicModule():
     '''Basic Module: literally just a tin can'''
     def __init__(self):
-        self.id = str(uuid.uuid4())        
+        self.id = util.register(self)     
+        print self.id
         if not hasattr(self,'size'): self.size = np.array([ 3 , 2 , 2 ])
         self.stowage = Stowage(10) #things floating around in the module
         self.exterior_stowage = Stowage(0) #things strapped to the outside of the module
@@ -64,13 +64,13 @@ class BasicModule():
         self.refresh_image()
      
     def refresh_image(self):
-        if not util.GRAPHICS: return                            
+        if not gv.config['GRAPHICS']: return                            
                 
-        if util.GRAPHICS == 'pyglet':           
-            self.sprite = util.make_solid_sprite(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
+        if gv.config['GRAPHICS'] == 'pyglet':           
+            self.sprite = util.make_solid_sprite(int(2*self.size[0]*gv.config['ZOOM']),int(2*self.size[1]*gv.config['ZOOM']),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
             self.sprite.owner = self
-        elif util.GRAPHICS == 'cocos2d':
-            self.sprite = util.make_solid_sprite(int(2*self.size[0]*util.ZOOM),int(2*self.size[1]*util.ZOOM),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
+        elif gv.config['GRAPHICS'] == 'cocos2d':
+            self.sprite = util.make_solid_sprite(int(2*self.size[0]*gv.config['ZOOM']),int(2*self.size[1]*gv.config['ZOOM']),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
             if self.station: self.station.sprite.add(self.sprite)
             
     def new_manifest(self):
@@ -267,14 +267,14 @@ class BasicModule():
 
     def refresh_station(self, station=None):
         if station and station != self.station: self.station = station
-        if util.GRAPHICS == 'cocos2d': self.station.sprite.add(self.sprite)
+        if gv.config['GRAPHICS'] == 'cocos2d': self.station.sprite.add(self.sprite)
         if self.manifest: self.manifest.refresh_station(self.station)
         for e in self.equipment:            
             if self.equipment[e][3]: 
                 self.equipment[e][3].refresh_station()
                 
     def draw(self,window):
-        zoom=util.ZOOM
+        zoom=gv.config['ZOOM']
         #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
         self.sprite.draw()
         

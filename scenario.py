@@ -15,6 +15,7 @@ import manifest
 import util
 import logging
 import filtering
+import globalvars as gv
 
 class ScenarioMaster():
 
@@ -95,14 +96,14 @@ class Scenario(object):
     def system_tick(self,dt):
         self.logger.debug("Begin new system tick")    
         for s in self.stations.values():
-            s.update(dt*util.TIME_FACTOR)       
-        self.mission_control.update(dt*util.TIME_FACTOR)
+            s.update(dt*gv.config['TIME FACTOR'])       
+        self.mission_control.update(dt*gv.config['TIME FACTOR'])
         self.time_elapsed += dt   
         self.logger.debug("End system tick")
         
     def status_update(self,dt):
         print      
-        util.generic_logger.info('System time:' +util.timestring(int(util.TIME_FACTOR*self.time_elapsed)))
+        util.generic_logger.info('System time:' +util.timestring(int(gv.config['TIME FACTOR']*self.time_elapsed)))
         for a in self.actors.values():
             a.log_status()
 

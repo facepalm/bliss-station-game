@@ -30,7 +30,8 @@ def equals(type1,type2):
     return False    
     
 class Clutter(object):    
-    def __init__(self, name='Trash', mass=0.1, density=0.1, quality=None):    
+    def __init__(self, name='Trash', mass=0.1, density=0.1, quality=None): 
+        self.id = util.register(self)   
         self.name = name
         self.mass = mass
         self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None

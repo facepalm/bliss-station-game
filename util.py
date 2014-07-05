@@ -1,6 +1,8 @@
 import logging
 import numpy as np
 import string
+import globalvars
+import uuid
 
 TIME_FACTOR = 168 # 1 irl hour = 1 week
 #TIME_FACTOR = 24 # 1 irl hour = 1 day
@@ -13,6 +15,14 @@ equipment_targets = dict()
 GRAPHICS = None
 GLOBAL_X=0
 GLOBAL_Y=0
+
+def register(obj):
+    new_id = str(uuid.uuid4())    
+    try:
+        globalvars.ids[new_id] = obj
+    except:
+        assert False, "global id collision!"
+    return new_id
 
 def quad_mean(x,y,wx=1,wy=1):
     return pow( (1.0*wx*x*x + wy*y*y)/(wx + wy) ,0.5)

@@ -14,6 +14,7 @@ from scenario import ScenarioMaster
 from pyglet import gl as gl     
 
 import universe
+import globalvars as gv
 
 
 util.GRAPHICS = 'pyglet'
@@ -67,7 +68,7 @@ def load_sprite(filename, anchor_x=None, anchor_y=None):
 util.load_sprite = load_sprite
 
 def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
-    sprite = CollideSprite(image,x=util.ZOOM*x,y=util.ZOOM*y)
+    sprite = CollideSprite(image,x=gv.config['ZOOM']*x,y=gv.config['ZOOM']*y)
     sprite.rotation= -1 * 180/math.pi * rot
     return sprite
     

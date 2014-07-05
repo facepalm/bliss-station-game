@@ -12,7 +12,7 @@ from filtering import Searcher,EquipmentFilter
 class Actor(object):
     def __init__(self,name='Place Holder',station=None, logger=None):
         self.my_tasks = TaskTracker()
-        self.id = str(uuid.uuid4())  
+        self.id = util.register(self) 
         self.name = name
         if logger:
             self.logger = logging.getLogger(logger.name + '.' + self.name)
