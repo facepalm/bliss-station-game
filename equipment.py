@@ -9,6 +9,7 @@ import util
 import logging
 import random
 import numpy as np
+import globalvars as gl
 
 DOCK_EQUIPMENT = ['CBM']
         
