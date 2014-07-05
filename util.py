@@ -4,15 +4,15 @@ import string
 import globalvars
 import uuid
 
-TIME_FACTOR = 168 # 1 irl hour = 1 week
+#TIME_FACTOR = 168 # 1 irl hour = 1 week
 #TIME_FACTOR = 24 # 1 irl hour = 1 day
 #TIME_FACTOR = 120
 
-ZOOM = 15
+#ZOOM = 15
 
 equipment_targets = dict()
 
-GRAPHICS = None
+#GRAPHICS = None
 GLOBAL_X=0
 GLOBAL_Y=0
 

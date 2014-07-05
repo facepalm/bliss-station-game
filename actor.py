@@ -8,6 +8,7 @@ import numpy as np
 from util import separate_node
 import util, logging
 from filtering import Searcher,EquipmentFilter
+import globalvars as gv
 
 class Actor(object):
     def __init__(self,name='Place Holder',station=None, logger=None):
@@ -44,14 +45,14 @@ class Actor(object):
         self.refresh_image()
      
     def refresh_image(self):
-        if util.GRAPHICS == 'pyglet': 
+        if gv.config['GRAPHICS'] == 'pyglet': 
             import graphics_pyglet
             if not self.sprite: self.sprite = graphics_pyglet.LayeredSprite(name=self.name,batch=util.actor_batch)        
             self.sprite.add_layer('ActorBase',util.load_image("images/npc_crafty_bot__x1_idle0_png_1354839494_crop.png"))
             self.sprite.owner = self
         
     def update_location(self):
-        zoom=util.ZOOM
+        zoom = gv.config['ZOOM']
         l= self.path.current_coords if (self.path and not self.path.completed) else self.station.loc_to_xyz( self.location )
         self.xyz=l
         self.sprite.update_sprite(zoom*l[0], zoom*l[1],0)

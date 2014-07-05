@@ -10,6 +10,7 @@ from scipy.interpolate import UnivariateSpline
 import random, math
 from generic_module import absolute_xyz
 import mission
+import globalvars as gv
      
 class Computer(Equipment):
     '''Progenitor class for non-moving computery bits'''

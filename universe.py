@@ -1,5 +1,6 @@
 import util
 import math
+import globalvars as gv
 
 class Universe(object):
     def __init__(self):
@@ -8,7 +9,7 @@ class Universe(object):
         self.time = 0
         
     def update(self,dt):
-        dt = dt*util.TIME_FACTOR
+        dt = dt*gv.config['TIME FACTOR']
         self.time += dt
         if self.background_loc == 'LEO':
             #in LEO, orbital period  = 90 minutes = 5400 sec

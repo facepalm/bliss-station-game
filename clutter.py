@@ -1,6 +1,7 @@
 import random
 import util
 import numpy as np
+import globalvars as gv
 
 #miscellaneous stuff related to the loose objects one might find floating around the station
 
@@ -50,7 +51,7 @@ class Clutter(object):
         
         
     def refresh_image(self):    
-        if not util.GRAPHICS: return                
+        if not gv.config['GRAPHICS']: return                
         if self.name == 'Water': 
             self.imgfile = 'images/glitch-assets/cup_of_water/cup_of_water__x1_iconic_png_1354833111.png'
         elif self.name == 'Food':    
