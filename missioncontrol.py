@@ -6,6 +6,7 @@ import util
 import filtering
 import numpy as np
 from human import Human
+import random
 
 '''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
 
@@ -17,9 +18,17 @@ class MissionControl(object):
         self.vessel_queue=[]
         
         self.player_nasa_funds = 1000000000
-        self.pork = 0.5
-        self.missioncontrol_budget = 0.005
+        self.pork = 0.25
+        self.base_budget=2000000000
         self.yearly_budget=2000000000
+        
+        self.time_elapsed = 0.0
+        self.local_economy = 1.0 #1.0 = business as usual.  Higher is better.
+        self.stored_science = 0
+        self.science_quota = 1000 #abstract science units the station must produce yearly to remain at current budget
+        
+        self.protected_years = 5 #Years set aside in initial plan to build station
+        
         
     def get_available_missions(self):
         out=dict()        
@@ -75,8 +84,40 @@ class MissionControl(object):
     def add_science(self,field='Astronomy', amt=0):
         self.logger.info('New astro data: '+str(amt))
         
+    def yearly_account(self):
+        #economic growth?
+        growth = 1+0.5*random.random() if random.random() > 0.5*self.local_economy else 1-0.25*random.random()
+        self.local_economy *= growth
+        
+        strikes=0
+        if growth < 1: strikes += 1
+        if self.stored_science < self.science_quota/2:
+            strikes += 2
+            self.science_quota *= 0.75
+        elif self.stored_science < self.science_quota:
+            strikes += 1
+            self.science_quota *= 0.95
+        else:
+            strikes -= 1
+            self.science_quota *= 1.1
+        self.stored_science = 0
+        
+        if self.protected_years > 0:
+            if strikes > 0: strikes = 0
+            self.protected_years -= 1
+        
+        self.base_budget *= 1 - 0.05*strikes        
+        self.yearly_budget = self.base_budget * (1-self.pork)                                                                
+            
+        
     def update(self,dt):
         self.player_nasa_funds += dt*self.yearly_budget/util.seconds(1,'year')
+        if self.time_elapsed//util.seconds(1,'year') != (dt+self.time_elapsed)//util.seconds(1,'year'):
+            #we're at a year boundary.  Recompute budget
+            self.yearly_account()
+        self.time_elapsed += dt
+        
+        
     
         #check vessel queue for active vessel
         for v in self.vessel_queue:
@@ -113,4 +154,9 @@ class VesselPlan(object):
         self.autodock = autodock
                                                
         
-      
+if __name__ == "__main__":    
+    mc=MissionControl()
+    for i in range(100):
+        mc.stored_science = 1000+11000 * random.random()
+        mc.yearly_account()
+        print mc.base_budget
