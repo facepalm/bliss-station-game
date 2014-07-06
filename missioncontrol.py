@@ -34,7 +34,7 @@ class MissionControl(object):
     def __getstate__(self):
         d = dict(self.__dict__)
         del d['logger']
-        d.pop('scenario') #TODO return scenario when we can pickle it
+        #d.pop('scenario') #TODO return scenario when we can pickle it
         return d    
         
     def __setstate__(self, d):

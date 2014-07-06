@@ -25,7 +25,8 @@ class Task(object):
         self.assigned_to = assigned_to
         self.target = None
         self.location = None
-        if fetch_location_method: self.fetch_location = fetch_location_method 
+        if fetch_location_method: 
+            self.fetch_location = fetch_location_method             
         self.severity = severity
         self.timeout = timeout #Setting timeout to None will result in a task that never ends
         self.task_duration = task_duration #30 minutes
@@ -37,6 +38,22 @@ class Task(object):
         self.status = 'NEW'
         self.station = station
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if (self.owner and hasattr(self.owner,'logger')) else util.generic_logger
+        self.loggername = self.logger.name
+        
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        if 'fetch_location' in d: 
+            d['fetch_location_name'] = d['fetch_location'].__name__
+            d['fetch_location_instance'] = d['fetch_location'].__self__
+            d.pop('fetch_location')
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger     
+        if 'fetch_location_instance' in d:
+            self.fetch_location = getattr(d['fetch_location_instance'],d['fetch_location_name'])       
         
     def update(self,dt):
         if self.timeout: self.timeout -= dt        

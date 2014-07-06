@@ -3,6 +3,8 @@ import numpy as np
 import string
 import globalvars
 import uuid
+import pickle
+import os
 
 #TIME_FACTOR = 168 # 1 irl hour = 1 week
 #TIME_FACTOR = 24 # 1 irl hour = 1 day
@@ -108,4 +110,15 @@ parent_group = None
 
 scenario = None
 universe = None
+
+def autosave():
+    datafile = open(os.path.join('save','autosave'),'w')
+    pickle.dump(universe,datafile,2)
+    datafile.close()
+    
+def autoload():
+    datafile = open(os.path.join('save','autosave'),'r')
+    global universe
+    universe = pickle.load(datafile)
+    datafile.close()
 

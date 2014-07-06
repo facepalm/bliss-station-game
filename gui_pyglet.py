@@ -65,6 +65,36 @@ class gui():
         #self.window.dispatch_event('on_update', .05)    
         self.batch.draw()
         
+    def create_escape_menu(self):        
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog) 
+         
+        def on_just_quit():
+            print "Quitting."
+            self.window.close()             
+            
+        def on_save_and_quit():
+            print "Saving."
+            util.autosave()
+            on_just_quit()     
+                                                         
+        entries=[]
+        entries.append(kytten.Button("Return to game", on_click=on_cancel))
+        entries.append(kytten.Button("Save and Quit", on_click=on_save_and_quit))
+        entries.append(kytten.Button("Just Quit", on_click=on_just_quit))        
+                            
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=250, height=450)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_CENTER,
+	    theme=blue_theme, on_escape=on_escape)    
+        
         
     def create_manifest_dialog(self, module=None):
         if module is None: return

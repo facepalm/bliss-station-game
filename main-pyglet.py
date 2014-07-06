@@ -97,7 +97,11 @@ if __name__ == "__main__":
         gui.create_mission_control_dialog()
     util.contact_mission_control = contact_mission_control    
     
-    
+    @window.event
+    def on_key_press(symbol, modifiers):
+        if symbol == pyglet.window.key.ESCAPE:
+            gui.create_escape_menu()
+            return pyglet.event.EVENT_HANDLED
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -115,13 +119,12 @@ if __name__ == "__main__":
     skip=False
     if gv.config['AUTOLOAD']:
         try:
-            datafile = open(os.path.join('save','autosave'),'r')
-            util.universe = pickle.load(datafile)
-            datafile.close()
+            util.autoload()
             
             skip=True
         except Exception,e: 
-            logger.critical( str(e), ' Defaulting to new save')
+            print str(e)
+            logger.critical(' Defaulting to new save')
             
     if not skip:             
         util.universe = universe.Universe()
@@ -129,9 +132,7 @@ if __name__ == "__main__":
         gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
         util.universe.scenario = gv.scenario
                 
-        datafile = open(os.path.join('save','autosave'),'w')
-        pickle.dump(util.universe,datafile,2)
-        datafile.close()
+        util.autosave()
         
     gui.scenario = util.universe.scenario
     gui.window = window
