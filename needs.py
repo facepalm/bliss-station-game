@@ -22,10 +22,26 @@ class Need():
         self.depletion_rate = depletion_rate
         self.replenish_rate = replenish_rate
         self.on_task = on_task
+        self.on_task_name = on_task.__name__ if self.on_task else None
         self.on_fail = on_fail
+        self.on_fail_name = on_fail.__name__ if self.on_fail else None
         self.severity = severity
         self.touched = 0
         self.logger = logging.getLogger(self.owner.logger.name + '.' + self.name)
+        self.loggername = self.logger.name  
+        
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']       
+        d.pop('on_task')
+        d.pop('on_fail')
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger    
+        self.on_task = getattr( self.owner, self.on_task_name) if self.on_task_name else None
+        self.on_fail = getattr( self.owner, self.on_fail_name) if self.on_fail_name else None
         
     def update(self,dt):
         assert self.owner, "Need has no owner.  This should never happen."

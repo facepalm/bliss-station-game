@@ -7,6 +7,7 @@ import filtering
 import numpy as np
 from human import Human
 import random
+import logging
 
 '''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
 
@@ -14,6 +15,7 @@ class MissionControl(object):
     def __init__(self, scenario=None, logger=None):
         self.counter=0
         self.logger=logger
+        self.loggername = self.logger.name if self.logger else ''
         self.scenario=scenario
         self.vessel_queue=[]
         
@@ -28,6 +30,16 @@ class MissionControl(object):
         self.science_quota = 1000 #abstract science units the station must produce yearly to remain at current budget
         
         self.protected_years = 5 #Years set aside in initial plan to build station
+        
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        d.pop('scenario') #TODO return scenario when we can pickle it
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger
         
         
     def get_available_missions(self):

@@ -50,48 +50,24 @@ class Scenario(object):
         self.modules=dict()
         self.actors=dict()
         self.logger=logger
+        self.loggername=self.logger.name
         
         self.mission_control = missioncontrol.MissionControl(self,self.logger)
         self.focus_station = None
         
-        if name=='BERTNERNIE':
-
-            modA  = DestinyModule()
-            modDock = UnityModule()    
-            modB   = ZvezdaModule()
-            modDrag = DragonCargoModule()
-            modDrag.setup_simple_resupply()
-                   
-            station = Station(modDock, "BnE Station", logger)
-            station.dock_module(None,None,modB, None, True)
-            station.dock_module(None,None,modA, None, True)    
-            station.dock_module(None,None,modDrag, None, True)
-            
-            '''rob = Robot('Robby')     
-            rob.station = station
-            station.actors[rob.id]=rob
-            rob.location = modB.node('hall0')
-            rob.xyz = modB.location'''
-            
-            ernie = Human('Ernest',station=station,logger=self.logger)
-            station.actors[ernie.id] = ernie
-            ernie.location = modA.node('hall0')
-            ernie.xyz = modA.location
-            
-            bert = Human('Bertholomew',station=station,logger=self.logger)
-            station.actors[bert.id] = bert
-            bert.location = modB.node('hall0')
-            bert.xyz = modB.location
-            
-            ernie.needs['WasteCapacityLiquid'].amt=0.1
-            ernie.needs['Food'].set_amt_to_severity('HIGH')
-            ernie.nutrition = [0.5, 0.5, 0.5, 0.5, 0.5]
-            #modB.equipment['Electrolyzer'][3].broken=True
-                                                              
-        elif name=='DEFAULT':
+        if name=='DEFAULT':
             modDock = UnityModule()                   
             station = Station(modDock, 'NewbieStation',logger)
             self.add_station(station)
+            
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']        
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger            
             
     def system_tick(self,dt):
         self.logger.debug("Begin new system tick")    

@@ -24,6 +24,7 @@ class Station():
         self.actors=dict()
         self.name = name if name else "GenericStation"
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger        
+        self.loggername = self.logger.name
         
         self.docked_stations = []
 
@@ -37,7 +38,14 @@ class Station():
         
         if initial_module: self.dock_module(None,None,initial_module,None)                        
 
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        return d    
         
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger    
                        
     def refresh_image(self):
         if util.GRAPHICS == 'cocos2d':

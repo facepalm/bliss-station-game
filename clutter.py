@@ -49,6 +49,16 @@ class Clutter(object):
         
         self.refresh_image()
         
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['sprite']
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)      
+        self.sprite=None
+        self.refresh_image()
+        
         
     def refresh_image(self):    
         if not gv.config['GRAPHICS']: return                

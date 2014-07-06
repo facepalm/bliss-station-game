@@ -30,6 +30,7 @@ class Equipment(object):
         self.type = 'Misc'
         self.satisfies = dict() #what qualities can this equipment provide?
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        self.loggername = self.logger.name
         self.visible = True
         self.local_coords = 0.75*np.array([random.uniform(-1,1),random.uniform(-1,1),0])
         
@@ -38,6 +39,19 @@ class Equipment(object):
         
         #if not hasattr(self,'imgfile'): self.imgfile = "images/placeholder_equipment.tif"
         self.refresh_image()    
+        
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        del d['sprite']
+        #if 'docked' in d: d.pop('docked')
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger    
+        self.sprite=None
+        self.refresh_image()
      
     def refresh_image(self):
         if not gv.config['GRAPHICS']: return

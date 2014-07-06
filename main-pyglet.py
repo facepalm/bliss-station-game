@@ -110,10 +110,14 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
+
     scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
     
-    '''datafile = open('pickleData','w')
-    pickle.dump(scenario.current_scenario.mission_control,datafile,2)
+
+    '''import pickle
+    datafile = open('pickleData','w')
+    t1 = scenario
+    pickle.dump(t1,datafile,2)
     datafile.close()
     
     datafile = open('pickleData','r')

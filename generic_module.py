@@ -15,6 +15,7 @@ import random
 import string
 import util
 import globalvars as gv
+import logging
 
 import manifest
 
@@ -33,7 +34,7 @@ def separate_node(node):
 
 class BasicModule():
     '''Basic Module: literally just a tin can'''
-    def __init__(self):
+    def __init__(self, logger=None):
         self.id = util.register(self)     
         print self.id
         if not hasattr(self,'size'): self.size = np.array([ 3 , 2 , 2 ])
@@ -49,6 +50,8 @@ class BasicModule():
         self.package_material = [] #if a list of filters, material put in this will not be removed
         self.station = None
         self.manifest=None
+        self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else util.generic_logger
+        self.loggername = self.logger.name
         
         self.atmo = Atmosphere()
         self.atmo.volume= math.pi * 2*self.size[0] * pow (self.size[1], 2)   
@@ -62,6 +65,18 @@ class BasicModule():
         self.touched = False
         
         self.refresh_image()
+     
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['logger']
+        del d['sprite']
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger    
+        self.sprite=None
+        self.refresh_image() 
      
     def refresh_image(self):
         if not gv.config['GRAPHICS']: return                            
