@@ -21,3 +21,5 @@ def load_config():
     outfile.close()
     
 load_config()
+
+scenario = None

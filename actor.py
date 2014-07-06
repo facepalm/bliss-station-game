@@ -48,13 +48,14 @@ class Actor(object):
     def __getstate__(self):
         d = dict(self.__dict__)
         del d['logger']
-        del d['sprite']
+        del d['sprite']        
         #d.pop('station') #TODO delete
         #d.pop('needs')#TODO delete
         return d    
         
     def __setstate__(self, d):
         self.__dict__.update(d)   
+        util.register(self,self.id) 
         self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger    
         self.sprite=None
         self.refresh_image()           

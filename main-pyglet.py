@@ -15,6 +15,9 @@ from pyglet import gl as gl
 
 import universe
 import globalvars as gv
+import os
+
+import pickle
 
 
 util.GRAPHICS = 'pyglet'
@@ -94,8 +97,7 @@ if __name__ == "__main__":
         gui.create_mission_control_dialog()
     util.contact_mission_control = contact_mission_control    
     
-    util.universe = universe.Universe()
-    util.universe.generate_background('LEO')
+    
     
     logger=logging.getLogger("Universe")
     logger.setLevel(logging.DEBUG)
@@ -110,24 +112,28 @@ if __name__ == "__main__":
     #add ch to logger
     logger.addHandler(ch)
 
-
-    scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
-    util.universe.scenario = scenario
-    
-
-    import pickle
-    datafile = open('pickleData','w')
-    pickle.dump(util.universe,datafile,2)
-    datafile.close()
-    
-    datafile = open('pickleData','r')
-    util.universe = pickle.load(datafile)
-    
-    datafile.close()
-    #print json.dumps(scenario.current_scenario.mission_control)
-    
-    
-    gui.scenario = scenario
+    skip=False
+    if gv.config['AUTOLOAD']:
+        try:
+            datafile = open(os.path.join('save','autosave'),'r')
+            util.universe = pickle.load(datafile)
+            datafile.close()
+            
+            skip=True
+        except Exception,e: 
+            logger.critical( str(e), ' Defaulting to new save')
+            
+    if not skip:             
+        util.universe = universe.Universe()
+        util.universe.generate_background('LEO')
+        gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
+        util.universe.scenario = gv.scenario
+                
+        datafile = open(os.path.join('save','autosave'),'w')
+        pickle.dump(util.universe,datafile,2)
+        datafile.close()
+        
+    gui.scenario = util.universe.scenario
     gui.window = window
 
     # Update as often as possible (limited by vsync, if not disabled)
@@ -149,7 +155,7 @@ if __name__ == "__main__":
         gl.glMatrixMode(gl.GL_MODELVIEW);                
         
         
-        for s in scenario.get_stations():
+        for s in util.universe.scenario.get_stations():
             s.draw(window)
         util.station_batch.draw()
         util.actor_batch.draw()
@@ -163,8 +169,8 @@ if __name__ == "__main__":
         
         
     #clock.set_fps_limit(30)
-    clock.schedule_interval(scenario.status_update,1)
-    clock.schedule_interval(scenario.system_tick,0.0250)
+    clock.schedule_interval(util.universe.scenario.status_update,1)
+    clock.schedule_interval(util.universe.scenario.system_tick,0.0250)
     clock.schedule_interval(util.universe.update,0.02)
     
     window.push_handlers(gui)

@@ -16,8 +16,8 @@ equipment_targets = dict()
 GLOBAL_X=0
 GLOBAL_Y=0
 
-def register(obj):
-    new_id = str(uuid.uuid4())    
+def register(obj, oid=''):
+    new_id = oid if oid else str(uuid.uuid4())
     try:
         globalvars.ids[new_id] = obj
     except:
