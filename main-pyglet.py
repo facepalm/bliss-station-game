@@ -112,17 +112,18 @@ if __name__ == "__main__":
 
 
     scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
+    util.universe.scenario = scenario
     
 
-    '''import pickle
+    import pickle
     datafile = open('pickleData','w')
-    t1 = scenario
-    pickle.dump(t1,datafile,2)
+    pickle.dump(util.universe,datafile,2)
     datafile.close()
     
     datafile = open('pickleData','r')
-    scenario = pickle.load(datafile)
-    datafile.close()'''
+    util.universe = pickle.load(datafile)
+    
+    datafile.close()
     #print json.dumps(scenario.current_scenario.mission_control)
     
     

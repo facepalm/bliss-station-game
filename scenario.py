@@ -70,7 +70,7 @@ class Scenario(object):
         self.logger = logging.getLogger(self.loggername) if self.loggername else util.generic_logger            
             
     def system_tick(self,dt):
-        self.logger.debug("Begin new system tick")    
+        self.logger.debug("Begin new system tick! dt: " + str(dt))    
         for s in self.stations.values():
             s.update(dt*gv.config['TIME FACTOR'])       
         self.mission_control.update(dt*gv.config['TIME FACTOR'])

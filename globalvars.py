@@ -6,7 +6,7 @@ config = {
     'TIME FACTOR' : 24,
     'ZOOM' : 15,
     'GRAPHICS' : 'pyglet',
-    
+    'AUTOLOAD': True,
 }
 
 def save_config():

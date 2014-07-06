@@ -7,6 +7,16 @@ class Universe(object):
         self.background = []
         self.background_loc='LEO'
         self.time = 0
+        self.scenario=None
+        
+    def __getstate__(self):
+        d = dict(self.__dict__)
+        del d['background']
+        return d    
+        
+    def __setstate__(self, d):
+        self.__dict__.update(d)   
+        self.generate_background(self.background_loc)     
         
     def update(self,dt):
         dt = dt*gv.config['TIME FACTOR']
