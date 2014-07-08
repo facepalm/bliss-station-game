@@ -102,12 +102,27 @@ class gui():
         
         def on_pass(choice):
             pass
+            
         
         action = kytten.Dropdown(['Load','Unload'],on_select=on_pass)
         amount = kytten.Dropdown(['All','Some'],on_select=on_pass) 
-        itemtype = kytten.Dropdown(['Clutter','Equipment'],on_select=on_pass)
-        subtype = kytten.Dropdown(['Any','Water','Food', 'Solid Waste', 'Dead Science', 'Live Science'],on_select=on_pass)        
+        
+        subtype = kytten.Dropdown(['ERROR'],on_select=on_pass)        
         gui=self
+        
+            
+        def on_type(choice):
+            if choice == 'Clutter':
+                subtype.options=['Any','Water','Food', 'Solid Waste']
+            elif choice == 'Equipment':
+                subtype.options=['Any','Dead Science', 'Live Science']
+            elif choice == 'Actors':
+                subtype.options=['All']
+                subtype.options.extend([ a.name for a in module.station.actors.values()])
+            subtype.selected=subtype.options[0]
+        
+        itemtype = kytten.Dropdown(['Clutter','Equipment','Actors'],on_select=on_type)
+        on_type('Clutter')
         
         def on_cancel():
             print "Form canceled."

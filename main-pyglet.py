@@ -19,7 +19,6 @@ import os
 
 import pickle
 
-
 util.GRAPHICS = 'pyglet'
 zoom = 2
 

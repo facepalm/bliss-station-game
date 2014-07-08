@@ -504,7 +504,10 @@ class WaterTank(Storage):
     def refresh_image(self):     
         super(WaterTank, self).refresh_image()
         if self.sprite is None: return
-        self.sprite.add_layer('WaterDrop',util.load_image("images/waterdrop_40x40.png"))        
+        if 'Gray Water' in self.filter.target:
+            self.sprite.add_layer('GrayDrop',util.load_image("images/graywdrop_40x40.png"))  
+        else:
+            self.sprite.add_layer('WaterDrop',util.load_image("images/waterdrop_40x40.png"))        
 
 class FoodStorageRack(Storage,Rack):
     def __init__(self, **kwargs):   
