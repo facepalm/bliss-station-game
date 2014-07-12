@@ -23,11 +23,14 @@ class ManifestItem(object):
         if self.task and not self.task.task_ended(): return False
         station = self.owner.module.station
         if self.itemtype == 'Actors':
-            loc = lambda: station.random_location(modules_to_exclude=[self.owner.module]) if self.tasktype == 'Unload' else lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None]
+            if self.tasktype == 'Unload':
+                loc = lambda: lambda: station.random_location(modules_to_exclude=[self.owner.module])  
+            else: 
+                loc = lambda: lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None]
             for a in station.actors.values():
                 if self.subtype=='All' or a.name == self.subtype:
-                    task = Task(name = 'Move', severity = "HIGH", task_duration = 3600, fetch_location_method = loc(), owner=a)
-                    a.my_tasks.add_task(task)
+                    self.task = Task(name = 'Move', severity = "HIGH", task_duration = 3600, fetch_location_method = loc(), owner=a)
+                    a.my_tasks.add_task(self.task)
         elif self.tasktype == 'Unload':
             found_any = self.owner.module.stowage.search(self.filter)
             if found_any: 
@@ -99,7 +102,17 @@ class ManifestItem(object):
             if self.itemtype == other.itemtype:
                 if self.subtype == other.subtype or self.subtype == "Any" or other.subtype == "Any":
                     return True
-        return False                    
+        return False 
+        
+    def cancel(self): #when removed, manifest tasks should be dropped
+        if self.task and not self.task.task_ended():
+            self.task.drop()
+        if self.itemtype == 'Actors':            
+            for a in self.owner.module.station.actors.values():
+                if self.subtype=='All' or a.name == self.subtype:
+                    #task = Task(name = 'Move', severity = "HIGH", task_duration = 3600, fetch_location_method = loc(), owner=a)
+                    #a.my_tasks.add_task(task)    
+                    a.my_tasks.cancel_task('Move')
             
 
 class Manifest(object):

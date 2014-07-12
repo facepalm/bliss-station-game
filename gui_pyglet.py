@@ -144,6 +144,7 @@ class gui():
                 if self.item_to_delete and module.manifest:
                     for i in module.manifest.item:
                         if i is self.item_to_delete:
+                            i.cancel()
                             module.manifest.item.remove(i)
                             on_escape(dialog)
                             self.gui.create_manifest_dialog(self.module)

@@ -250,7 +250,7 @@ class Station():
         if [m for m in self.modules.values() if not m in modules_to_exclude] == []:
             return [None, None, None]
         module = random.choice([m for m in self.modules.values() if not m in modules_to_exclude])
-        return None, module.filterNode( module.node('Inside') ), None
+        return [None, module.filterNode( module.node('Inside') ), None]
         
     def update(self,dt):
         self.resources.update(dt)

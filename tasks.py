@@ -105,6 +105,7 @@ class Task(object):
         
     def task_ended(self):
         return self.status == 'COMPLETED' or self.status == 'CLOSED'    
+    active = property(lambda x: not x.task_ended(), None, None, "Is task active?" )  
         
     def task_value(self):
         if self.task_ended(): return 0 
@@ -204,7 +205,13 @@ class TaskTracker():
                 return f
         return None   
               
-         
+    def cancel_task(self,name):
+        t = self.find_task(name)
+        if t and t.active:
+            t.flag('CLOSED')
+            self.tasks.remove(t)          
+        
+             
     def fetch_open_task(self):
         self.update(0)
         open_tasks = sorted([t for t in self.tasks if t.status == 'OPEN' and t.touched <= 0])
