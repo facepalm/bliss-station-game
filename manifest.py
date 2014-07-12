@@ -22,7 +22,13 @@ class ManifestItem(object):
     def check_satisfaction(self):
         if self.task and not self.task.task_ended(): return False
         station = self.owner.module.station
-        if self.tasktype == 'Unload':
+        if self.itemtype == 'Actors':
+            loc = lambda: station.random_location(modules_to_exclude=[self.owner.module]) if self.tasktype == 'Unload' else lambda: [None, self.owner.module.filterNode( self.owner.module.node('Inside') ), None]
+            for a in station.actors.values():
+                if self.subtype=='All' or a.name == self.subtype:
+                    task = Task(name = 'Move', severity = "HIGH", task_duration = 3600, fetch_location_method = loc(), owner=a)
+                    a.my_tasks.add_task(task)
+        elif self.tasktype == 'Unload':
             found_any = self.owner.module.stowage.search(self.filter)
             if found_any: 
                 if self.itemtype=="Clutter":
