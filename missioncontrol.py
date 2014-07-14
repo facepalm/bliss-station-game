@@ -8,6 +8,8 @@ import numpy as np
 from human import Human
 import random
 import logging
+from equipment_science import Experiment
+
 
 '''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
 
@@ -91,12 +93,17 @@ class MissionControl(object):
         
         #calculate station value (if possible/necessary)
         
+        #unload scientific equipment
+        for m in station.modules.values():
+            for e in m.equipment: #TODO AH, clutter!
+                if e[3] and isinstance(e[3],Experiment):
+                    util.universe.science.process_experiment(e[3])
+                    self.logger.info("Science added!")
         self.scenario.remove_station(station)
         
-    def add_science(self,field='Astronomy', amt=0):
-        self.logger.info('New astro data: '+str(amt))
+    
         
-    def yearly_account(self):
+    def yearly_update(self):
         #economic growth?
         growth = 1+0.5*random.random() if random.random() > 0.5*self.local_economy else 1-0.25*random.random()
         self.local_economy *= growth
@@ -126,7 +133,7 @@ class MissionControl(object):
         self.player_nasa_funds += dt*self.yearly_budget/util.seconds(1,'year')
         if self.time_elapsed//util.seconds(1,'year') != (dt+self.time_elapsed)//util.seconds(1,'year'):
             #we're at a year boundary.  Recompute budget
-            self.yearly_account()
+            self.yearly_update()
         self.time_elapsed += dt
         
         

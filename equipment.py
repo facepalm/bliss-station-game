@@ -262,8 +262,7 @@ class Comms(Equipment):
         if task.name == "Contact Mission Control":
             util.contact_mission_control()  
         elif task.name == 'Report Star Data':
-            if self.installed.station.mission_control:
-                self.installed.station.mission_control.add_science(field='Astronomy', amt = 1)
+            util.universe.science.field['Astronomy'].add_progress(prog_amt = 5)
         
 #miscellaneous equipment
 class Storage(Equipment):
@@ -496,8 +495,9 @@ class BatteryBank(Rack, Battery):
 
 class WaterTank(Storage):
     def __init__(self):   
-        super(WaterTank, self).__init__()         
         self.filter = ClutterFilter(['Potable Water'])
+        
+        super(WaterTank, self).__init__()         
         self.stowage.capacity = 0.5
         self.name = "Water tank, "+str(self.stowage.capacity)+"m^3"
         

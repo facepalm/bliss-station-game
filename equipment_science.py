@@ -30,6 +30,9 @@ class Experiment(Equipment):
         self.no_more_SCIENCE = False
         
         self.name = "Experiment"
+        
+        self.field = 'Physics'
+        self.level = 1
 
     def update(self,dt):            
         super(Experiment, self).update(dt)

@@ -1,6 +1,7 @@
 import util
 import math
 import globalvars as gv
+import science
 
 class Universe(object):
     def __init__(self):
@@ -8,6 +9,7 @@ class Universe(object):
         self.background_loc='LEO'
         self.time = 0
         self.scenario=None
+        self.science = science.Science()
         
     def __getstate__(self):
         d = dict(self.__dict__)
@@ -20,6 +22,9 @@ class Universe(object):
         
     def update(self,dt):
         dt = dt*gv.config['TIME FACTOR']
+        if (self.time + dt)//(3600*24*365) > (self.time)//(3600*24*365):
+            self.yearly_update()
+        
         self.time += dt
         if self.background_loc == 'LEO':
             #in LEO, orbital period  = 90 minutes = 5400 sec
@@ -42,6 +47,8 @@ class Universe(object):
             self.background[2].opacity = int(255*(self.day/2.0+0.5))
             self.background[3].opacity = self.background[2].opacity
                         
+    def yearly_update(self, dt = 3600*24*365):
+        self.science.yearly_update(dt)
                     
     def generate_background(self, loc="LEO"):
         self.background_loc = loc
