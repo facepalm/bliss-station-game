@@ -322,6 +322,7 @@ class DockingRing(Equipment):
                 
     def toggle_player_usable(self):
         self.player_usable = not self.player_usable            
+        self.refresh_image()
         
     def refresh_image(self):     
         super(DockingRing, self).refresh_image()
@@ -330,6 +331,18 @@ class DockingRing(Equipment):
             self.sprite.add_layer('DockingRing',util.load_image("images/open_hatch.png"))
         else:
             self.sprite.add_layer('DockingRing',util.load_image("images/closed_hatch.png"))
+        
+        #import pyglet
+        #img1=pyglet.image.AnimationFrame(util.load_image("images/blank_40x40.png"),0.5 if not self.player_usable else None)
+        #img2=pyglet.image.AnimationFrame(util.load_image("images/half_red.png"),0.5)
+        
+        #animation = pyglet.image.Animation([img1,img2])
+        
+        if self.player_usable:
+            self.sprite.add_layer('Forbidden',util.load_image("images/blank_40x40.png"))
+        else:
+            self.sprite.add_layer('Forbidden',util.load_image("images/half_red.png"))
+        
         self.sprite.layer['Equipment'].visible=False    
         
     #these two need to generate tasks for unpowered rings
@@ -425,7 +438,7 @@ class SolarPanel(Equipment):
         super(SolarPanel, self).update(dt)    
         if self.installed and self.extended:
             #print dt, self.installed.station.resources.resources['Electricity'].available, self.capacity*dt/3600.0
-            self.installed.station.resources.resources['Electricity'].available += self.capacity*dt/3600.0
+            self.installed.station.resources.resources['Electricity'].available += self.capacity*dt
 
 class Battery(Equipment):
     def __init__(self):   
@@ -438,6 +451,7 @@ class Battery(Equipment):
         self.type = 'ELECTRICAL'
         
         self.name = str(self.capacity)+"kWh Battery"
+        self.avg_charge = 0.0
                 
     def refresh_image(self):     
         super(Battery, self).refresh_image()
@@ -455,8 +469,12 @@ class Battery(Equipment):
             else:
                 _charge = max(power_situation, -dt * self.discharge_rate) if self.charge > 0 else 0
                 self.charge += _charge / 3600
+            time_slice = dt/300.0
+            cps = _charge/dt
+            self.avg_charge = time_slice*cps + (1-time_slice)*self.avg_charge
             self.installed.station.resources.resources['Electricity'].available -= _charge
         #print dt, self.installed.station.resources.resources['Electricity'].available, _charge, self.charge, self.capacity
+     
      
 #rack equipment            
 class Rack(Equipment):

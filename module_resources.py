@@ -19,7 +19,7 @@ class Resource():
 
     def update(self,dt):
         if self.name == "Electricity":
-            #print self.available, self.previously_available
+            print self.available/dt, self.previously_available
             rate = 0.5
             frac = rate#*(dt/3600.0)
             self.previously_available *= 1-frac

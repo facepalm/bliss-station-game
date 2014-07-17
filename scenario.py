@@ -165,6 +165,8 @@ class SeedScenario(Scenario):
         station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            
         
+        #modDest = DestinyModule()
+        #station.dock_module(None,None,modDest, None, True)                            
             
         ernie = Human('Ernest',station = station, logger = station.logger)    
         ernie.needs['WasteCapacityLiquid'].amt=0.1    

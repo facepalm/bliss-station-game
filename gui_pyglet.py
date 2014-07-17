@@ -268,12 +268,16 @@ class gui():
         if isinstance(e,RegenerableCO2Filter):
             entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
         if isinstance(e,Battery):
-            entries.append(kytten.Label('Charge: '+'{:3.2f}'.format( e.charge ) +' kWh') )
+            if e.avg_charge >= 0:
+                entries.append(kytten.Label('Discharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                
+            else:
+                entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                            
+            entries.append(kytten.Label('Charge: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
         if isinstance(e,DockingRing):
             text = "Available" if e.docked or e.player_usable else "Forbidden"            
             def dockbutton():
                 e.toggle_player_usable()
-                refresh()            
+                on_escape(dialog)            
             entries.append(kytten.Button(text, on_click = dockbutton) )
             
         if not e.in_vaccuum: entries.append(kytten.Button("Uninstall", on_click=uninstall))

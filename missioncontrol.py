@@ -95,6 +95,10 @@ class MissionControl(object):
         
         #unload scientific equipment
         for m in station.modules.values():
+            for c in m.stowage.contents:
+                if isinstance (c,Experiment):
+                    util.universe.science.process_experiment(c)
+                    self.logger.info("Science added!")
             for e in m.equipment: #TODO AH, clutter!
                 if e[3] and isinstance(e[3],Experiment):
                     util.universe.science.process_experiment(e[3])
