@@ -97,11 +97,11 @@ class Equipment(object):
         self.refresh_image()
         return worked
         
-    def draw_power(self,kilowattage,dt): #kilowatts in per seconds
+    def draw_power(self,kilowattage,dt): #kilowatts
         if self.installed and (not hasattr(self,'broken') or not self.broken): #it's installed, not broken or can't break          
             #self.installed.station.resources.resources['Electricity'].available -= kilowattage*dt/3600            
             #TODO add equivalent heat into module
-            return self.installed.station.resources.resources['Electricity'].draw(kilowattage*dt/3600)
+            return self.installed.station.resources.resources['Electricity'].draw(kilowattage*dt)
         return 0
         
     def task_finished(self,task):
@@ -464,10 +464,10 @@ class Battery(Equipment):
         if self.installed:
             power_situation = self.installed.station.resources.resources['Electricity'].previously_available
             if power_situation > 0:
-                _charge = min(power_situation, dt * self.discharge_rate) if self.charge < self.capacity else 0
+                _charge = min(power_situation*dt, dt * self.discharge_rate) if self.charge < self.capacity else 0
                 self.charge += self.efficiency * _charge / 3600
             else:
-                _charge = max(power_situation, -dt * self.discharge_rate) if self.charge > 0 else 0
+                _charge = max(power_situation*dt, -dt * self.discharge_rate) if self.charge > 0 else 0
                 self.charge += _charge / 3600
             time_slice = dt/300.0
             cps = _charge/dt
