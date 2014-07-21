@@ -153,10 +153,20 @@ if __name__ == "__main__":
         
     def flick_zoom(tot):
         global user_zoom
+        global user_x
+        global user_y
+        
+        big_cap = 5.0
+        sml_cap = 0.5
+        step = 0.1
+        
         if abs(tot) < 1:
-            return
-        user_zoom *= 0.9 if tot > 0 else 1.1
-        user_zoom = min(5.0,max(0.5,user_zoom))
+            return        
+        if user_zoom > sml_cap and user_zoom < big_cap:
+            user_x *=  1 + step if tot > 0 else 1 - step
+            user_y *= 1 + step if tot > 0 else 1 - step
+        user_zoom *= 1 - step if tot > 0 else 1 + step
+        user_zoom = min( big_cap , max( sml_cap , user_zoom ) )        
         flick_zoom(tot + (1 if tot < 0 else -1))
      
     @window.event       
