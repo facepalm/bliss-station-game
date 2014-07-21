@@ -9,6 +9,7 @@ import json
 pyglet.options['debug_gl'] = False
 
 from pyglet import clock
+from pyglet.window import mouse
 from scenario import ScenarioMaster               
       
 from pyglet import gl as gl     
@@ -20,15 +21,19 @@ import os
 import pickle
 
 util.GRAPHICS = 'pyglet'
-zoom = 2
+user_zoom = 2
+user_x = 0
+user_y = 0
 
 class CollideSprite(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
         super( CollideSprite, self ).__init__(*args, **kwargs)
         
     def contains(self,x,y):
-        x *= zoom#util.ZOOM
-        y *= zoom#util.ZOOM
+        x += user_x
+        y += user_y
+        x *= user_zoom
+        y *= user_zoom
         #TODO transform (x,y) to image coordinate space (rotate about .anchor)
         theta = math.pi * (self.rotation) / (180.0)
         x -= self.x
@@ -142,6 +147,25 @@ if __name__ == "__main__":
         window.dispatch_event('on_update', dt)
     pyglet.clock.schedule(update)
 
+    @window.event
+    def on_mouse_scroll(x, y, scroll_x, scroll_y):
+        flick_zoom(scroll_y)
+        
+    def flick_zoom(tot):
+        global user_zoom
+        if abs(tot) < 1:
+            return
+        user_zoom *= 0.9 if tot > 0 else 1.1
+        user_zoom = min(5.0,max(0.5,user_zoom))
+        flick_zoom(tot + (1 if tot < 0 else -1))
+     
+    @window.event       
+    def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+        if buttons & mouse.LEFT:
+            global user_x
+            global user_y
+            user_x -= dx
+            user_y -= dy
 
     @window.event
     def on_draw():
@@ -151,7 +175,7 @@ if __name__ == "__main__":
         
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();        
-        gl.glOrtho(-zoom*window.width//2,zoom*window.width//2,-zoom*window.height//2,zoom*window.height//2,0,1);                
+        gl.glOrtho(-user_zoom*(window.width//2 - user_x), user_zoom*(window.width//2 + user_x), -user_zoom*(window.height//2 - user_y), user_zoom*(window.height//2 + user_y),0,1)
         gl.glMatrixMode(gl.GL_MODELVIEW);                
         
         
