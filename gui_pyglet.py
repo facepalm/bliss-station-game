@@ -269,16 +269,16 @@ class gui():
             entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
         if isinstance(e,Battery):
             if e.avg_charge >= 0:
-                entries.append(kytten.Label('Discharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                
+                entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                
             else:
-                entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                            
-            entries.append(kytten.Label('Charge: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
+                entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                            
+            entries.append(kytten.Label('Available: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
         if isinstance(e,DockingRing):
-            text = "Available" if e.docked or e.player_usable else "Forbidden"            
+            text = "mark Forbid" if e.docked or e.player_usable else "mark Permit"            
             def dockbutton():
                 e.toggle_player_usable()
                 on_escape(dialog)            
-            entries.append(kytten.Button(text, on_click = dockbutton) )
+            entries.append(kytten.Button(text, on_click = dockbutton, disabled = (e.docked==True) ) )
             
         if not e.in_vaccuum: entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
