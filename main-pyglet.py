@@ -50,24 +50,24 @@ class CollideSprite(pyglet.sprite.Sprite):
 
 def load_image(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
-    img.anchor_x = anchor_x if anchor_x else img.width // 2
-    img.anchor_y = anchor_y if anchor_y else img.height // 2 
+    img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
+    img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
     return img
     
 util.load_image = load_image      
     
 def make_solid_image(width,height,color=(128,128,128,128), anchor_x = None, anchor_y = None):
     img = pyglet.image.SolidColorImagePattern(color).create_image(width,height)#.get_texture(rectangle=False)   
-    img.anchor_x = anchor_x if anchor_x else img.width // 2
-    img.anchor_y = anchor_y if anchor_y else img.height // 2 
+    img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
+    img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
     return img
     
 util.make_solid_image = make_solid_image
 
 def load_sprite(filename, anchor_x=None, anchor_y=None):
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
-    img.anchor_x = anchor_x if anchor_x else img.width // 2
-    img.anchor_y = anchor_y if anchor_y else img.height // 2 
+    img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
+    img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
     sprite = CollideSprite(img)
     
     return sprite

@@ -25,8 +25,7 @@ class ModuleComponent(object):
                 
     def refresh_image(self, imgfile, x_off = 0):     
         if self.sprite is None: return
-        img = util.load_image(imgfile,anchor_x= int(gv.config['ZOOM'] * 2 * x_off))                
-        
+        img = util.load_image(imgfile,anchor_x= int(-gv.config['ZOOM'] * 2 * x_off ))                
         self.sprite.add_layer(self.name,img)
         
     def __getstate__(self):
@@ -39,10 +38,11 @@ class DockingCap(ModuleComponent):
         self.name = 'OpenDock'+str(pos)
         ModuleComponent.__init__(self,pos)
         self.equipment.append( [ 'CBM'+str(pos), np.array([ -1 , 0 , 0 ]), np.array([ math.pi , 0]), 'CBM', CBM() ] )
+        
         #self.edges.append( [  ''.join(['hall',str(pos)])  ,  ''.join(['CBM',str(pos)])  ] )
         
     def refresh_image(self, x_off = 0):     
-        super(DockingCap, self).refresh_image('images/dockcap_comp_flip.png',x_off)
+        super(DockingCap, self).refresh_image('images/dockcap_comp.png',x_off)
 
 class DockingCapClosed(DockingCap):
     def __init__(self,pos=0):
@@ -51,7 +51,7 @@ class DockingCapClosed(DockingCap):
         self.equipment[0][2] = np.array([ 0 , 0])
 
     def refresh_image(self, x_off = 0):     
-        super(DockingCap, self).refresh_image('images/dockcap_comp.png',x_off)
+        super(DockingCap, self).refresh_image('images/dockcap_comp_flip.png',x_off)
 
 
 class DockingHub(ModuleComponent):
@@ -94,7 +94,7 @@ def spawn_component(letter,pos=0):
 
 
 class ModularModule(BasicModule):
-    def __init__(self,name = "Module", build_str = "{rrOrr}" ):   
+    def __init__(self,name = "Module", build_str = "{rOrrr}" ):   
         self.component_string = build_str
         self.components=[]
         self.name=name
@@ -107,7 +107,7 @@ class ModularModule(BasicModule):
         path_node = None
         for c in self.components:            
             for n in c.nodes:
-                self.nodes[self.node(n[0])] = 2*(np.array([x_off,0,0]) + c.size*(n[1]+np.array([1,1,1]))/2 )/self.size
+                self.nodes[self.node(n[0])] = np.array([2,1,1])*(np.array([x_off,0,0]) + c.size*(n[1]+np.array([1,0,0]))/np.array([2,1,1]) )/self.size
             for e in c.equipment:
                 #self.add_equipment(e[0], e[4].install(self) if e[4] else None, e[1], eq_orientation=e[2], eq_type=e[3] )
                 loc = np.array([2,1,1])*(np.array([x_off,0,0]) + c.size*(e[1]+np.array([1,0,0]))/np.array([2,1,1]) )/self.size
@@ -138,8 +138,8 @@ class ModularModule(BasicModule):
             if self.sprite: self.sprite.delete()
             self.sprite = graphics_pyglet.LayeredSprite(name=self.name,start_order = -20)
             x_off = -self.size[0]/2
-            for c in self.components:
-                x_off += c.size[0]
+            for c in self.components:                
                 c.sprite = self.sprite
                 c.refresh_image(x_off)
+                x_off += c.size[0]
             
