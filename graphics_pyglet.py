@@ -2,10 +2,10 @@ import pyglet
 import util
 
 class LayeredSprite(object):
-    def __init__(self,name='GenericSprite',batch=None):
+    def __init__(self,name='GenericSprite',batch=None, start_order=0):
         self.batch = batch if batch else util.station_batch
         self.layer = dict()
-        self.order = 0
+        self.order = start_order
         
     def add_layer_sprite(self,name,sprite):
         sprite.batch = self.batch

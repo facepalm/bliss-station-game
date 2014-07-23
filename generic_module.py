@@ -291,6 +291,9 @@ class BasicModule():
     def draw(self,window):
         zoom=gv.config['ZOOM']
         #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
+        if hasattr(self.sprite, 'update_sprite'):
+            l=self.location
+            self.sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.orientation[0])/math.pi)
         self.sprite.draw()
         
         for e in self.equipment.keys():

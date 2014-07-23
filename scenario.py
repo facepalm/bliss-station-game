@@ -1,5 +1,6 @@
 from generic_module import DestinyModule
 from zvezda import ZvezdaModule
+from modular_module import ModularModule
 from docking_modules import UnityModule
 from cargo_modules import DragonCargoModule
 from module_resources import ResourceBundle
@@ -148,7 +149,7 @@ class SeedScenario(Scenario):
         '''Ernie's the first astronaut of the newly-christened Lorkhan station.  Can he make it happen?'''
    
         modB   = ZvezdaModule()      
-        modDock = UnityModule()      
+        #modDock = UnityModule()      
         modDrag = DragonCargoModule()
         modDrag.setup_simple_resupply()            
         scienceR = Experiment()
@@ -162,11 +163,15 @@ class SeedScenario(Scenario):
         #modDrag.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
         
         station = Station(modB, "Lorkhan Station", logger, mission_control = self.mission_control)
-        station.dock_module(None,None,modDock, None, True)            
+        #station.dock_module(None,None,modDock, None, True)            
         station.dock_module(None,None,modDrag, None, True)            
         
-        modDest = DestinyModule()
-        station.dock_module(None,None,modDest, None, True)                            
+        #modDest = DestinyModule()
+        #station.dock_module(None,None,modDest, None, True)                            
+            
+        modComp = ModularModule()
+        station.dock_module(None,None,modComp, None, True)                            
+            
             
         ernie = Human('Ernest',station = station, logger = station.logger)    
         ernie.needs['WasteCapacityLiquid'].amt=0.1    

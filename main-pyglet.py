@@ -94,7 +94,8 @@ util.parent_group = pyglet.graphics.Group()
 
                                       
 if __name__ == "__main__":    
-    window = pyglet.window.Window(800, visible=False, resizable=True)    
+    config = pyglet.gl.Config(sample_buffers=1, samples=4)
+    window = pyglet.window.Window(800, config=config, visible=False, resizable=True)    
     gui = gui_pyglet.gui(window=window)
 
     def contact_mission_control():
@@ -191,6 +192,7 @@ if __name__ == "__main__":
         
         for s in util.universe.scenario.get_stations():
             s.draw(window)
+            
         util.station_batch.draw()
         util.actor_batch.draw()
         
