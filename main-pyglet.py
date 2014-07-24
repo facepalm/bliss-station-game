@@ -49,6 +49,8 @@ class CollideSprite(pyglet.sprite.Sprite):
         return False
 
 def load_image(filename, anchor_x=None, anchor_y=None):
+    gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE ) 
+    gl.glTexParameteri( gl.GL_TEXTURE_2D,  gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )    
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
     img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
@@ -65,6 +67,8 @@ def make_solid_image(width,height,color=(128,128,128,128), anchor_x = None, anch
 util.make_solid_image = make_solid_image
 
 def load_sprite(filename, anchor_x=None, anchor_y=None):
+    gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE ) 
+    gl.glTexParameteri( gl.GL_TEXTURE_2D,  gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
     img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
@@ -94,6 +98,7 @@ util.parent_group = pyglet.graphics.Group()
 
                                       
 if __name__ == "__main__":    
+
     config = pyglet.gl.Config(sample_buffers=1, samples=4)
     window = pyglet.window.Window(800, config=config, visible=False, resizable=True)    
     gui = gui_pyglet.gui(window=window)

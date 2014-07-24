@@ -78,7 +78,7 @@ class RackRing(ModuleComponent):
         
     
     def refresh_image(self, x_off = 0):     
-        super(RackRing, self).refresh_image('images/rack_comp.tif',x_off)
+        super(RackRing, self).refresh_image('images/rack_comp.png',x_off)
     
         
 
