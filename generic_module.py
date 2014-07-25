@@ -58,11 +58,13 @@ class BasicModule():
         self.atmo.initialize('Air')  
         
         self.equipment=dict() #miscellaneous (or unremovable) non-rack equipment
+        self.player_installable = True
+        
         self.paths = nx.Graph() 
         
         self.nodes=dict()
         
-        self.touched = False
+        self.touched = False        
         
         self.refresh_image()
      
@@ -100,7 +102,7 @@ class BasicModule():
             #hits.append( self.exterior_stowage.find_resource( filter_ ) )
 
         if "Equipment Slot" in filter_.comparison_type or 'All' in filter_.comparison_type:
-            hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys()  if not self.equipment[e][3]])
+            hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys()  if not self.equipment[e][3] and self.player_installable])
  
         if "Clutter" in filter_.comparison_type:
             hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
@@ -188,6 +190,7 @@ class BasicModule():
              n.percolate_location()           
             
     def get_empty_slot(self,slot_type='LSS'):
+        if not self.player_installable: return None
         slots = [s for s in self.equipment.keys() if ( self.equipment[s][2] == slot_type or slot_type=='ANY' ) and not self.equipment[s][3]]
         if not slots: return None
         return random.choice(slots)

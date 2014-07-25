@@ -7,7 +7,7 @@ from engines import Merlin_A, Engine, KeroseneTank, OxygenTank
 
 import math
 import numpy as np
-
+from equipment_science import ExperimentRack
                                       
 class DragonCargoModule(BasicModule):
     """ Modeled after SpaceX's Dragon capsule.  Mostly empty space for cargo. """
@@ -53,6 +53,9 @@ class DragonCargoModule(BasicModule):
         self.stowage.add(Clutter('Water',466.4 )) #six person-months of water
         #self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
         self.stowage.add(Clutter('General Supplies', 100 ))
+        
+        for i in range(15):
+            self.stowage.add(ExperimentRack())
                 
         
 

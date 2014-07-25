@@ -65,6 +65,31 @@ class gui():
         #self.window.dispatch_event('on_update', .05)    
         self.batch.draw()
         
+    def create_options_menu(self):        
+        def on_cancel():
+            print "Form canceled."
+            on_escape(dialog) 
+         
+            
+        def on_set(value):
+	        gv.config['TIME FACTOR'] = value
+            
+                                                         
+        entries=[]
+        entries.append(kytten.Label("Game Options"))
+        entries.append(kytten.Label("Simulation speed:"))
+        entries.append(kytten.Slider(gv.config['TIME FACTOR'], 24.0, 480.0, steps=15, on_set=on_set))
+            
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=250, height=450)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_CENTER,
+	    theme=blue_theme, on_escape=on_escape)      
+        
     def create_escape_menu(self):        
         def on_cancel():
             print "Form canceled."
@@ -80,6 +105,7 @@ class gui():
             on_just_quit()     
                                                          
         entries=[]
+        entries.append(kytten.Button("Options", on_click=self.create_options_menu))
         entries.append(kytten.Button("Return to game", on_click=on_cancel))
         entries.append(kytten.Button("Save and Quit", on_click=on_save_and_quit))
         entries.append(kytten.Button("Just Quit", on_click=on_just_quit))        
@@ -204,19 +230,30 @@ class gui():
         def on_manifest():
             self.create_manifest_dialog(module)
             #on_escape(dialog)        
+            
+        def quick_install_all():
+            for c in module.stowage.contents:
+                if isinstance(c, Equipment):
+                    c.install_task(module.station)
+           
+        def install_checked(*args):
+            module.player_installable = not module.player_installable   
                 
         contentEntries = []
+        contentEntries.append(kytten.Button("Install Equip",on_click = quick_install_all))
         contentEntries.append(kytten.Label("Installed equipment:"))
         for e in module.equipment.values():
             if e[3]:
                 contentEntries.append(kytten.Label('  '+e[3].name))  
-                      
-        contentEntries.extend(self.clutter_entries(module.stowage))                
-                
+                       
+        contentEntries.extend(self.clutter_entries(module.stowage))
+                                                       
         entries=[kytten.Label("Module: "+module.short_id)]
         entries.append(kytten.Button("Manifest", on_click=on_manifest))
         entries.append(kytten.FoldingSection("Contents:",
             kytten.VerticalLayout(contentEntries), is_open=False))
+        
+        entries.append( kytten.Checkbox("Permit installation", is_checked = module.player_installable, on_click=install_checked) )
         entries.append(kytten.Button("Close", on_click=on_cancel))                    
             
         dialog = kytten.Dialog(
@@ -273,13 +310,11 @@ class gui():
             else:
                 entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                            
             entries.append(kytten.Label('Available: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
-        if isinstance(e,DockingRing):
-            text = "mark Forbid" if e.docked or e.player_usable else "mark Permit"            
-            def dockbutton():
+        if isinstance(e,DockingRing):           
+            def dockbutton(*args):
                 e.toggle_player_usable()
-                on_escape(dialog)            
-            entries.append(kytten.Button(text, on_click = dockbutton, disabled = (e.docked==True) ) )
-            
+            check = kytten.Checkbox("Permitted", is_checked = e.player_usable, on_click=dockbutton, disabled = (e.docked==True))
+            entries.append( check )
         if not e.in_vaccuum: entries.append(kytten.Button("Uninstall", on_click=uninstall))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             

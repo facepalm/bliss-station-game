@@ -8,7 +8,7 @@ from tasks import TaskTracker
 from station import Station        
 from actor import Robot
 from human import Human        
-from equipment_science import Experiment, BiologyExperimentRack
+from equipment_science import Experiment, ExperimentRack
 import missioncontrol
 import mission
 import clutter
@@ -152,11 +152,6 @@ class SeedScenario(Scenario):
         #modDock = UnityModule()      
         modDrag = DragonCargoModule()
         modDrag.setup_simple_resupply()            
-        scienceR = Experiment()
-        scienceR.raw_unfiltered_SCIENCE = 10000
-        scienceR.no_more_SCIENCE = True 
-        modB.stowage.contents.append(scienceR)
-        modDrag.stowage.contents.append(BiologyExperimentRack())
         
         #modDrag.manifest = manifest.Manifest(modDrag)
         #modDrag.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
@@ -186,7 +181,7 @@ class StressTestScenario(Scenario):
         modDock = UnityModule()      
         modDrag = DragonCargoModule()
         modDrag.setup_simple_resupply()            
-        modDrag.stowage.contents.append(BiologyExperimentRack())
+        modDrag.stowage.contents.append(ExperimentRack())
         
         station = Station(modB, "Lorkhan Station", logger, mission_control = self.mission_control)
         station.dock_module(None,None,modDock, None, True)            

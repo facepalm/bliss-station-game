@@ -107,11 +107,15 @@ class Equipment(object):
     def task_finished(self,task):
         if task:
             if task.name == "Install" and not self.installed:
+                home, loc = task.station.get_module_from_loc(task.location) , task.location.split('|')[1]
+                if home.equipment[loc][3]: #this slot already has something installed!
+                    task.drop()
+                    return
                 if task.assigned_to.held == self:
                     task.assigned_to.held = None
                 else:
-                    print "Object not held!"
-                self.install(task.station.get_module_from_loc(task.location),task.location.split('|')[1])
+                    print "Object not held!"                
+                self.install(home,loc)
                 self.refresh_image()   
             elif task.name == "Uninstall" and self.installed:
                 self.uninstall()

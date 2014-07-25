@@ -50,7 +50,7 @@ class CollideSprite(pyglet.sprite.Sprite):
 
 def load_image(filename, anchor_x=None, anchor_y=None):
     gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE ) 
-    gl.glTexParameteri( gl.GL_TEXTURE_2D,  gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )    
+    gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )    
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
     img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
@@ -68,7 +68,7 @@ util.make_solid_image = make_solid_image
 
 def load_sprite(filename, anchor_x=None, anchor_y=None):
     gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE ) 
-    gl.glTexParameteri( gl.GL_TEXTURE_2D,  gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )
+    gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE )
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
     img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     if not skip:             
         util.universe = universe.Universe()
         util.universe.generate_background('LEO')
-        gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)
+        gv.scenario = ScenarioMaster(scenario='STRESSTEST',logger=logger)
         util.universe.scenario = gv.scenario
                 
         util.autosave()
