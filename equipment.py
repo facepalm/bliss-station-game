@@ -273,7 +273,7 @@ class Storage(Equipment):
     def __init__(self, **kwargs):
         super(Storage, self).__init__(**kwargs)         
         self.stowage = clutter.Stowage(1) #things floating around in the rack
-        self.filter = ClutterFilter(['All'])
+        if not hasattr(self,'filter'): self.filter = ClutterFilter(['All']) 
         self.space_trigger = 0.1 #free volume
         self.type = 'STORAGE'
         
@@ -516,10 +516,10 @@ class BatteryBank(Rack, Battery):
         
 
 class WaterTank(Storage):
-    def __init__(self):   
+    def __init__(self):                   
         self.filter = ClutterFilter(['Potable Water'])
-        
         super(WaterTank, self).__init__()         
+        
         self.stowage.capacity = 0.5
         self.name = "Water tank, "+str(self.stowage.capacity)+"m^3"
         

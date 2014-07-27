@@ -11,7 +11,7 @@ common_densities =   {  'Food' : 714.33,
                         'Supplies' : 1000.0 }
                         
 common_qualities = {    'Water' : {'Contaminants' : 0.0, 'Salt': 0.0, 'pH' : 7.0 }, #distilled water
-                        'Waste Water' : {'Contaminants' : 2.0, 'Salt': 3.0, 'pH' : 7.0 }, #distilled water
+                        'Waste Water' : {'Contaminants' : 2.0, 'Salt': 3.0, 'pH' : 7.0 }, #used distilled water
                         'Food' : {'Freshness': 1.0, 'Contaminants' : 0.0, 'Perishability': 0.00002, 'Spoilage':0.0, 'Nutrient': [1.0, 1.0, 1.0, 1.0, 1.0], 'Flavor': [0.5, 0.5, 0.5, 0.5, 0.5] }, #Bland, nutritious, lasting food
                         'Supplies' : {'Medical':0.0, 'Tools':0.0, 'Spare Parts':0.0, 'Chemicals':0.0, 'Electronics':0.0 }
                    }

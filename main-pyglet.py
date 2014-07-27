@@ -140,6 +140,7 @@ if __name__ == "__main__":
         util.universe = universe.Universe()
         util.universe.generate_background('LEO')
         gv.scenario = ScenarioMaster(scenario='STRESSTEST',logger=logger)
+        #gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)       
         util.universe.scenario = gv.scenario
                 
         util.autosave()
