@@ -5,6 +5,7 @@ from clutter import Clutter
 from equipment import *
 from equipment_science import *
 from lifesupport import *
+import math
 
 # Default theme, blue-colored
 blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
@@ -72,13 +73,14 @@ class gui():
          
             
         def on_set(value):
-	        gv.config['TIME FACTOR'] = value
+	        gv.config['TIME FACTOR'] = 24 * value * value
             
                                                          
         entries=[]
         entries.append(kytten.Label("Game Options"))
         entries.append(kytten.Label("Simulation speed:"))
-        entries.append(kytten.Slider(gv.config['TIME FACTOR'], 24.0, 480.0, steps=15, on_set=on_set))
+        entries.append(kytten.Label("24<-     ->2400"))
+        entries.append(kytten.Slider( math.sqrt(gv.config['TIME FACTOR']/24.0), 1, 10, steps=15, on_set=on_set))
             
         dialog = kytten.Dialog(
         kytten.Frame(
