@@ -75,6 +75,8 @@ class Human(Actor):
             CO2_frac = breath['O2']*0.05
             breath['O2'] -= CO2_frac
             breath['CO2'] += CO2_frac
+            H2O_frac = 43.934444183 * .0005/3*dt / 18 # g/m^3 (internet) * volume / H2Oweight
+            breath['H2O'] += H2O_frac
             module.atmo.inject(breath)
             if O2_pp < 7.5 or O2_pp > 300.0 or CO2_pp > 7.0: #Everest vs oxygen toxicity
                 self.suffocate(dt) 

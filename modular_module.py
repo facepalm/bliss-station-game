@@ -109,7 +109,6 @@ class ModularModule(BasicModule):
             for n in c.nodes:
                 self.nodes[self.node(n[0])] = np.array([2,1,1])*(np.array([x_off,0,0]) + c.size*(n[1]+np.array([1,0,0]))/np.array([2,1,1]) )/self.size
             for e in c.equipment:
-                #self.add_equipment(e[0], e[4].install(self) if e[4] else None, e[1], eq_orientation=e[2], eq_type=e[3] )
                 loc = np.array([2,1,1])*(np.array([x_off,0,0]) + c.size*(e[1]+np.array([1,0,0]))/np.array([2,1,1]) )/self.size
                 
                 self.add_equipment(e[0], e[4].install(self) if e[4] else None, loc, eq_orientation=e[2], eq_type=e[3] )
@@ -119,8 +118,6 @@ class ModularModule(BasicModule):
                 self.add_edge( self.node(path_node), self.node(c.entry_node) )
             path_node = c.exit_node                
             x_off += c.size[0]
-        print [e for e in self.equipment.values() if e[3]]
-        #quit()
         self.refresh_image()
         
     def refresh_size(self):

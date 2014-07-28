@@ -363,9 +363,13 @@ class gui():
                 
         entries=[kytten.Label("Clutter: " + c.name)]
         entries.append(kytten.Label("Mass: " + '{:0.2f}'.format(c.mass)+ ' kg') )
-        entries.append(kytten.Label("Volume: "+'{:0.2f}'.format(c.volume)+ ' m3') )
+        entries.append(kytten.Label("Volume: "+'{:0.2f}'.format(c.volume)+ ' m3') )        
         if isinstance(c,Equipment):
             entries.append(kytten.Button("Install", on_click=install))
+        elif hasattr(c,'quality') and c.quality:
+            entries.append(kytten.Label("Misc Qualities:"))
+            for q in c.quality.keys():
+                entries.append(kytten.Label("  "+q+" "+str(c.quality[q])))
         entries.append(kytten.Button("Close", on_click=on_cancel))    
             
         dialog = kytten.Dialog(

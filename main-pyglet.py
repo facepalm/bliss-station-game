@@ -29,6 +29,7 @@ user_y = 0
 class CollideSprite(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
         super( CollideSprite, self ).__init__(*args, **kwargs)
+        self.subpixel=True
         
     def contains(self,x,y):
         x += user_x

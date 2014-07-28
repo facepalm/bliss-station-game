@@ -76,7 +76,7 @@ class Clutter(object):
     volume = property(get_volume, None, None, "Clutter volume" )  
     
     def split(self, amt, subtype=None):
-        if amt < 0: assert False, 'Requested to split a negative amount. Denied.'
+        if amt <= 0: return None
         curr_amt = min(amt, self.mass)   
         self.mass -= curr_amt
         return Clutter(self.name, curr_amt, self.density)

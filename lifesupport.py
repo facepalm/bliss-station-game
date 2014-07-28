@@ -34,11 +34,10 @@ class UniversalToilet(Machinery):
             if not gray_dest: return   
             self.active = True         
             proc_amt = max( 0, min( gray_dest.available_space, p.mass , self.processing_speed*dt ) )
-
             new_p = p.split(proc_amt)
             if not new_p: return
             new_p.quality['Contaminants'] = 0.09
-            new_p.quality['Salt'] = 0.09
+            new_p.quality['Salt'] = 0.09            
             gray_dest.stowage.add(new_p)
         else:
             self.active = False         

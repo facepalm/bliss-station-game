@@ -6,6 +6,7 @@ class LayeredSprite(object):
         self.batch = batch if batch else util.station_batch
         self.layer = dict()
         self.order = start_order
+        self.name=name
         
     def add_layer_sprite(self,name,sprite):
         sprite.batch = self.batch
@@ -27,6 +28,8 @@ class LayeredSprite(object):
         
     def update_sprite(self,x,y,rot=0):
         for l in self.layer.values():
+            #if 'Module' is self.name:
+            #    print x,y,rot, l.image.anchor_x,l.image.anchor_y
             l.x = x
             l.y = y    
             l.rotation = rot
