@@ -34,8 +34,7 @@ class ClutterFilter(SearchFilter):
             if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
                 return obj.quality['Contaminants'] <= 0.01 and obj.quality['Salt'] <= 0.01
         elif 'Gray Water' in self.target and obj.name == 'Water':             
-            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
-                print obj.name, obj.quality, obj.mass, obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1 and obj.quality['Contaminants'] > 0.01 and obj.quality['Salt'] > 0.01
+            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:               
                 return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1 and obj.quality['Contaminants'] > 0.01 and obj.quality['Salt'] > 0.01
         elif 'Waste Water' in self.target and obj.name == 'Water': 
             if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
