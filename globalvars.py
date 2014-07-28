@@ -23,3 +23,4 @@ def load_config():
 load_config()
 
 scenario = None
+mousedown=False

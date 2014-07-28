@@ -547,10 +547,18 @@ class FoodStorageRack(Storage,Rack):
 
 class GenericStorageRack(Storage,Rack):
     def __init__(self):   
-        super(GenericStorageRack, self).__init__()         
-        self.filter = ClutterFilter(['Any'])
+        Storage.__init__(self)
+        Rack.__init__(self)         
+        self.filter = ClutterFilter(['Supplies'])
         self.space_trigger = 0.5 #free volume, m^3  
         self.name = "Generic storage, "+str(self.stowage.capacity)+"m^3"
+
+    def refresh_image(self):     
+        super(GenericStorageRack, self).refresh_image()
+        if self.sprite is None: return
+        self.sprite.add_layer('SuppSmall',util.load_image('images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'))
+        self.sprite.layer['SuppSmall'].scale=0.75
+    
 
 class WaterStorageRack(WaterTank,Rack):
     def __init__(self):   

@@ -221,7 +221,14 @@ class gui():
                 contentEntries.append(kytten.Label('  '+c.name+': '+str(c.mass)+" kg"))
             elif isinstance(c,Equipment):
                 contentEntries.append(kytten.Label('  '+c.name))    
-        return contentEntries        
+        return contentEntries
+        
+    def atmo_entries(self,atmo):
+        entries=[kytten.Label('Total pressure: '+'{:.2f}'.format(atmo.pressure)+' kPa')]        
+        for c in atmo.composition.keys():
+            if atmo.composition[c] > 0:
+                entries.append(kytten.Label(''.join(['  ',c,': ','{:.2f}'.format(atmo.partial_pressure(c)),' kPa']))) 
+        return entries   
         
     def create_module_dialog(self, module=None):
         if module is None: return
@@ -240,22 +247,32 @@ class gui():
            
         def install_checked(*args):
             module.player_installable = not module.player_installable   
+        
+        optionEntries = []
+        optionEntries.append(kytten.Button("Install Equip",on_click = quick_install_all))
+        optionEntries.append(kytten.Button("Cargo Manifest", on_click=on_manifest))
+        optionEntries.append( kytten.Checkbox("Permit installation", is_checked = module.player_installable, on_click=install_checked) )
                 
-        contentEntries = []
-        contentEntries.append(kytten.Button("Install Equip",on_click = quick_install_all))
+        contentEntries = []        
         contentEntries.append(kytten.Label("Installed equipment:"))
         for e in module.equipment.values():
             if e[3]:
                 contentEntries.append(kytten.Label('  '+e[3].name))  
                        
+        contentEntries.append(kytten.Label("Loose stowage:"))
         contentEntries.extend(self.clutter_entries(module.stowage))
                                                        
         entries=[kytten.Label("Module: "+module.short_id)]
-        entries.append(kytten.Button("Manifest", on_click=on_manifest))
+        entries.append(kytten.Label("Atmospherics:"))
+        entries.extend(self.atmo_entries(module.atmo))
+        
+        entries.append(kytten.FoldingSection("Options:",
+            kytten.VerticalLayout(optionEntries), is_open=False))
+        
         entries.append(kytten.FoldingSection("Contents:",
             kytten.VerticalLayout(contentEntries), is_open=False))
         
-        entries.append( kytten.Checkbox("Permit installation", is_checked = module.player_installable, on_click=install_checked) )
+        
         entries.append(kytten.Button("Close", on_click=on_cancel))                    
             
         dialog = kytten.Dialog(
@@ -303,7 +320,7 @@ class gui():
         if hasattr(e,'tank'):
             entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
-            entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage()) )) 
+            entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage())+'%' )) 
         if isinstance(e,RegenerableCO2Filter):
             entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
         if isinstance(e,Battery):

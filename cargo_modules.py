@@ -55,7 +55,8 @@ class DragonCargoModule(BasicModule):
         self.stowage.add(Clutter('General Supplies', 100 ))
         
         for i in range(15):
-            self.stowage.add(ExperimentRack())
+            if self.stowage.free_space > 1.3:
+                self.stowage.add(ExperimentRack())
                 
         
 

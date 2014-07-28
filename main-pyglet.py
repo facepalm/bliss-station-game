@@ -17,6 +17,7 @@ from pyglet import gl as gl
 import universe
 import globalvars as gv
 import os
+import kytten
 
 import pickle
 

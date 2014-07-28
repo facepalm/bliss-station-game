@@ -365,12 +365,11 @@ class DestinyModule(BasicStationModule):
                 
                 
                  
-        self.equipment['port1'][3]=O2TankRack().install(self)              
+        #self.equipment['port1'][3]=O2TankRack().install(self)              
         self.equipment['starboard5'][3]=BatteryBank().install(self)              
         self.equipment['starboard3'][3]=FoodStorageRack().install(self) 
         
         stuffrack = GenericStorageRack() 
-        stuffrack.filter = ClutterFilter(['Supplies'])
         self.stowage.add( stuffrack )
         #self.equipment['nadir0'][3]=MysteryBoxRack().install(self)              
         
