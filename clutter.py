@@ -35,7 +35,7 @@ class Clutter(object):
         self.id = util.register(self)   
         self.name = name
         self.mass = mass
-        self.quality = quality if quality else common_qualities[self.name] if self.name in common_qualities.keys() else None
+        self.quality = quality if quality else common_qualities[self.name].copy() if self.name in common_qualities.keys() else None
         self.local_coords = 0.75*np.array([random.uniform(-1,1),random.uniform(-1,1),0])
         self.sprite = None
         if isinstance(self.quality,dict):
@@ -79,13 +79,13 @@ class Clutter(object):
         if amt <= 0: return None
         curr_amt = min(amt, self.mass)   
         self.mass -= curr_amt
-        return Clutter(self.name, curr_amt, self.density)
+        return Clutter(self.name, curr_amt, self.density, quality= self.quality.copy())
         
     def merge(self, other):        
         if not isinstance(other, Clutter): assert False, 'Requested merge a nonClutter object. Denied.'
         if not equals(self.name,other.name): return False
         self.mass += other.mass
-        #TODO merge qualities as well, if water
+        #TODO merge qualities as well
         return True
         
     

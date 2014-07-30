@@ -266,52 +266,7 @@ class Comms(Equipment):
         if task.name == "Contact Mission Control":
             util.contact_mission_control()  
         elif task.name == 'Report Star Data':
-            util.universe.science.field['Astronomy'].add_progress(prog_amt = 5)
-        
-#miscellaneous equipment
-class Storage(Equipment):
-    def __init__(self, **kwargs):
-        super(Storage, self).__init__(**kwargs)         
-        self.stowage = clutter.Stowage(1) #things floating around in the rack
-        if not hasattr(self,'filter'): self.filter = ClutterFilter(['All']) 
-        self.space_trigger = 0.1 #free volume
-        self.type = 'STORAGE'
-        
-    def refresh_image(self):     
-        super(Storage, self).refresh_image()
-        
-    def update(self,dt):
-        #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
-        super(Storage, self).update(dt)
-        self.stowage.update(dt)        
-        #if self.task: print self.task.name
-        if self.installed and (not self.task or self.task.task_ended()) and \
-                            self.get_available_space() >= self.space_trigger:
-            #find stuff to store    
-            #sequence! 
-            #Task 1: find stuff to store, go to, pick up  #Task 2: find self, go to, deposit
-            filter_str = self.filter.target_string()
-            self.task = TaskSequence(name = ''.join(['Store ',filter_str]), severity = "LOW",logger=self.logger)
-            self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=Searcher(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target),logger=self.logger))
-            self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method = Searcher( SearchFilter( self ), self.installed.station ).search, owner=self,logger=self.logger))
-            self.installed.station.tasks.add_task(self.task)
-        
-    def get_available_space(self): return self.stowage.free_space       
-    available_space = property(get_available_space, None, None, "Available storage space" )    
-    
-    def task_work_report(self,task,dt):
-        if task.name.startswith('Put Away'):
-            item = task.assigned_to.inventory.search(self.filter)
-            if not item: return
-            remove_amt = min(clutter.gather_rate*dt*item.density,self.available_space*item.density,item.mass)
-            if remove_amt <= 0: return         
-            obj = item.split(remove_amt)
-            self.stowage.add(obj)       
-            
-    def task_finished(self,task):
-        super(Storage, self).task_finished(task) 
-        self.update(0)         
-
+            util.universe.science.field['Astronomy'].add_progress(prog_amt = 5)              
         
 #docking equipment        
 class DockingRing(Equipment):
@@ -513,6 +468,61 @@ class BatteryBank(Rack, Battery):
         
     def update(self,dt):
         Battery.update(self,dt)    
+        
+#miscellaneous equipment
+class Storage(Equipment):
+    def __init__(self, **kwargs):
+        super(Storage, self).__init__(**kwargs)         
+        self.stowage = clutter.Stowage(1) #things floating around in the rack
+        if not hasattr(self,'filter'): self.filter = ClutterFilter(['All']) 
+        self.space_trigger = 0.1 #free volume
+        self.type = 'STORAGE'
+                    
+    def refresh_image(self):     
+        super(Storage, self).refresh_image()
+        
+    def dump_task(self):
+        if self.task and self.task.active and self.task.name is "Dump Out": return
+        self.task = Task(name = ''.join(['Dump Out']), owner = self, task_duration = 60, fetch_location_method=Searcher(self,self.installed.station).search,station=self.installed.station)
+        self.installed.station.tasks.add_task(self.task)    
+        
+    def update(self,dt):
+        #print 'Available storage for ',self.filter.target_string(),': ',self.available_space
+        super(Storage, self).update(dt)
+        self.stowage.update(dt)        
+        #if self.task: print self.task.name
+        if self.installed and (not self.task or self.task.task_ended()) and \
+                            self.get_available_space() >= self.space_trigger:
+            #find stuff to store    
+            #sequence! 
+            #Task 1: find stuff to store, go to, pick up  #Task 2: find self, go to, deposit
+            filter_str = self.filter.target_string()
+            self.task = TaskSequence(name = ''.join(['Store ',filter_str]), severity = "LOW",logger=self.logger)
+            self.task.add_task(Task(name = ''.join(['Pick Up ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method=Searcher(self.filter,self.installed.station).search, owner=clutter.JanitorMon(self.filter.target),logger=self.logger))
+            self.task.add_task(Task(name = ''.join(['Put Away ',filter_str]), severity = "LOW", timeout = 86400, task_duration = 30, fetch_location_method = Searcher( SearchFilter( self ), self.installed.station ).search, owner=self,logger=self.logger))
+            self.installed.station.tasks.add_task(self.task)
+        
+    def get_available_space(self): return self.stowage.free_space       
+    available_space = property(get_available_space, None, None, "Available storage space" )    
+    
+    def task_work_report(self,task,dt):
+        
+        if task.name.startswith('Put Away'):
+            item = task.assigned_to.inventory.search(self.filter)
+            if not item: return
+            remove_amt = min(clutter.gather_rate*dt*item.density,self.available_space*item.density,item.mass)
+            if remove_amt <= 0: return         
+            obj = item.split(remove_amt)
+            self.stowage.add(obj)                         
+            
+    def task_finished(self,task):
+        super(Storage, self).task_finished(task)         
+        if task.name.startswith('Dump Out'):
+            for c in self.stowage.contents:
+                  self.installed.stowage.add(c)
+            self.stowage.contents=[]
+        self.update(0)           
+        
         
 
 class WaterTank(Storage):

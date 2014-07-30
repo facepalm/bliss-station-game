@@ -36,7 +36,7 @@ class Task(object):
         self.touched = 0
         self.description = 'NONE'
         self.status = 'NEW'
-        self.station = station
+        self.station = station if station else self.owner.station if hasattr(self.owner,'station') else None
         self.logger = logging.getLogger(logger.name + '.' + self.name) if logger else logging.getLogger(self.owner.logger.name + '.' + self.name) if (self.owner and hasattr(self.owner,'logger')) else util.generic_logger
         self.loggername = self.logger.name
         

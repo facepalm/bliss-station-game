@@ -56,9 +56,9 @@ class WaterPurifier(Machinery):
             gray_source, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) )           
             pure_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Potable Water' ) )
             if not gray_source or not pure_dest: return            
-            water = gray_source.stowage.remove('Water',min( self.processing_speed*dt, pure_dest.available_space ) )
-            if not water: return
-            self.active = True
+            water = gray_source.stowage.remove('Water',min( self.processing_speed*dt, pure_dest.available_space ) )            
+            if not water: return            
+            self.active = True            
             for w in water:
                 w.quality['Contaminants'] = 0.0
                 w.quality['Salt'] = 0.0

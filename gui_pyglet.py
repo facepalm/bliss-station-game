@@ -219,6 +219,9 @@ class gui():
         for c in stowage.contents:       
             if isinstance(c,Clutter):
                 contentEntries.append(kytten.Label('  '+c.name+': '+str(c.mass)+" kg"))
+                '''contentEntries.append(kytten.Label("    Misc Qualities:"))
+                for q in c.quality.keys():
+                    contentEntries.append(kytten.Label("    "+q+" "+'{:.2f}'.format(c.quality[q])))'''
             elif isinstance(c,Equipment):
                 contentEntries.append(kytten.Label('  '+c.name))    
         return contentEntries
@@ -317,6 +320,7 @@ class gui():
             entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):
             entries.extend(self.clutter_entries(e.stowage)) 
+            entries.append(kytten.Button("Dump", on_click=lambda: e.dump_task()))
         if hasattr(e,'tank'):
             entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
@@ -341,7 +345,7 @@ class gui():
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
-	        width=200, height=150)
+	        width=200, height=450)
 	    ),
 	    window=self.window, batch=self.batch, group=self.fg_group,
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
