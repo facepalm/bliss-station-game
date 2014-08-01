@@ -133,7 +133,7 @@ class ModularModule(BasicModule):
         if gv.config['GRAPHICS'] == 'pyglet':        
             import graphics_pyglet
             if self.sprite: self.sprite.delete()
-            self.sprite = graphics_pyglet.LayeredSprite(name=self.name,start_order = -20)
+            self.sprite = graphics_pyglet.LayeredSprite(name=self.name,start_order = -30)
             x_off = -self.size[0]/2
             for c in self.components:                
                 c.sprite = self.sprite

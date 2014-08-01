@@ -88,6 +88,8 @@ class EquipmentFilter(SearchFilter):
             return not obj.no_more_SCIENCE    
         elif self.target=="By Name":
             return hasattr(obj, 'name') and obj.name == self.subtype
+        elif self.target=="By ID":
+            return hasattr(obj, 'id') and obj.id == self.subtype
             
             
     def target_string(self):        

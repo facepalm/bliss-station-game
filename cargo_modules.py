@@ -54,9 +54,10 @@ class DragonCargoModule(BasicModule):
         #self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
         self.stowage.add(Clutter('General Supplies', 100 ))
         
-        for i in range(15):
+        for i in range(20):
             if self.stowage.free_space > 1.3:
                 self.stowage.add(ExperimentRack())
+            #self.stowage.contents.append(ExperimentRack())
                 
         
 

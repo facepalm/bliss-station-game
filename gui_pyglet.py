@@ -331,7 +331,8 @@ class gui():
             if e.avg_charge >= 0:
                 entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                
             else:
-                entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                            
+                entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )  
+            entries.append(kytten.Label( '({:3.2f} kW max)'.format( module.station.resources.resources['Electricity'].previously_available ) ) )                                
             entries.append(kytten.Label('Available: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
         if isinstance(e,DockingRing):           
             def dockbutton(*args):

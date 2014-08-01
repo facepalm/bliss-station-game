@@ -79,7 +79,7 @@ class Clutter(object):
         if amt <= 0: return None
         curr_amt = min(amt, self.mass)   
         self.mass -= curr_amt
-        return Clutter(self.name, curr_amt, self.density, quality= self.quality.copy())
+        return Clutter(self.name, curr_amt, self.density, quality= self.quality.copy() if self.quality else None)
         
     def merge(self, other):        
         if not isinstance(other, Clutter): assert False, 'Requested merge a nonClutter object. Denied.'

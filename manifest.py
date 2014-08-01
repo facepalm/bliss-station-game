@@ -129,8 +129,8 @@ class Manifest(object):
                     self.item.append(entry)
             if itemtype == 'Equipment': 
                 for e in [m for m in self.module.stowage.contents if isinstance(m,equipment.Equipment)]:
-                    entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=e.name)
-                    entry.filter.target='By Name'
+                    entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=e.id)
+                    entry.filter.target='By ID'
                     self.item.append(entry)      
         else:
             entry = ManifestItem(self, tasktype=tasktype, taskamt=taskamt, itemtype=itemtype, subtype=subtype)

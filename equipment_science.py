@@ -62,7 +62,7 @@ class ExperimentRack(Rack, Experiment):
         
         Experiment.__init__(self) 
         Rack.__init__(self)            
-        self.idle_draw = 1.000 #kW
+        self.idle_draw = 2.0 * random.random() #kW
         
         self.name = "Experiment"
         

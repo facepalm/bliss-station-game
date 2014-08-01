@@ -122,6 +122,7 @@ class Objective(object):
                 for module in modules:    
                     module.manifest = manifest.Manifest(module)
                     module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Clutter', subtype = 'Any')
+                    module.manifest.new_item(tasktype='Unload', taskamt = 'All', itemtype = 'Equipment', subtype = 'Any')
                     module.manifest.new_item(tasktype='Load', taskamt = 'All', itemtype = 'Clutter', subtype = 'Solid Waste')   
             self.completed=True                    
         elif order_token[0] == 'SPLIT':
