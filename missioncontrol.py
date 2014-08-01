@@ -33,6 +33,11 @@ class MissionControl(object):
         
         self.protected_years = 5 #Years set aside in initial plan to build station
         
+        self.last_resupply = -1000000
+        self.last_module = -100000000
+        self.resupply_available = True
+        self.module_available = True
+        
     def __getstate__(self):
         d = dict(self.__dict__)
         del d['logger']
@@ -49,6 +54,12 @@ class MissionControl(object):
         out["Recruit Astronauts(3) (100M)"]=[100000000,self.send_3man_crew]
         out["Resupply Mission (50M)"]=[50000000,self.send_resupply_vessel]  
         out["Add Destiny Module (200M)"]=[200000000,self.send_destiny]
+        return out
+        
+    def get_available_equipment(self):
+        out=[]
+        for i in range(0,5):    
+            out.append(random.choice(util.equipment_targets.keys()))
         return out
         
     def send_resupply_vessel(self, station="", extras=[]):
@@ -85,7 +96,13 @@ class MissionControl(object):
         vessel = VesselPlan( station = newStation, target_station_id = station )
         self.vessel_queue.append( vessel )                                   
         
-        self.player_nasa_funds -= cost      
+        self.player_nasa_funds -= cost 
+        if module is not None:
+            self.last_module = self.time_elapsed
+            self.module_available = False     
+        else:
+            self.last_resupply = self.time_elapsed
+            self.resupply_available = False  
         return newStation
 
     def accept_vessel(self,station=None):        
@@ -140,6 +157,10 @@ class MissionControl(object):
             self.yearly_update()
         self.time_elapsed += dt
         
+        if self.time_elapsed > self.last_module + util.seconds(6,'months') and not self.module_available:
+            self.module_available = True
+        if self.time_elapsed > self.last_resupply + util.seconds(3,'months') and not self.resupply_available:
+            self.resupply_available = True
         
     
         #check vessel queue for active vessel

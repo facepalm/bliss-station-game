@@ -458,7 +458,8 @@ class gui():
         entries=[kytten.Label("Mission Control")]
         entries.append(fundsLabel)
         
-        entries.append(kytten.FoldingSection("Request new mission",kytten.VerticalLayout([missiondrop,kytten.Button("Send!", on_click=send_mission)]),is_open = False))
+        entries.append(kytten.FoldingSection("Request new module",kytten.VerticalLayout([missiondrop,kytten.Button("Send!", on_click=send_mission, disabled=not self.scenario.current_scenario.mission_control.module_available)]),is_open = False))
+        
         entries.append(kytten.Button("Close", on_click=on_cancel))
             
         dialog = kytten.Dialog(

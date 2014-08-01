@@ -114,3 +114,6 @@ class RegenerableCO2Filter(Machinery):
                 self.installed.atmo.inject(air_in)                                        
 
 util.equipment_targets['Toilet'] = UniversalToilet
+util.equipment_targets['CO2Filter'] = RegenerableCO2Filter
+util.equipment_targets['Electrolyzer'] = OxygenElectrolyzer
+util.equipment_targets['Purifier'] = WaterPurifier
