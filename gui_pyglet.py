@@ -423,6 +423,71 @@ class gui():
 	    anchor=kytten.ANCHOR_TOP_RIGHT,
 	    theme=blue_theme, on_escape=on_escape)    
 	    
+	    
+    def create_resupply_mission_dialog(self,inventory=[]):    
+        mass = [0]
+        mass_label = kytten.Label('Current mass: ERR' )
+        cost = [0]
+        cost_label = kytten.Label('Current cost: ERR' )
+        
+        def compute_mass_cost():
+            mass[0]=0
+            cost[0]=0                
+            for i in inventory:
+                if isinstance(i,Equipment) or isinstance(i,Clutter):
+                    mass[0] += i.mass
+                    cost[0] += 1                            
+                    
+        def refresh():
+            #global mass, cost
+            compute_mass_cost()            
+            cost_label.set_text( 'Current cost: {:0.2f}'.format(cost[0]))
+            mass_label.set_text( 'Current mass: {:0.2f}'.format(mass[0]))
+                    
+        refresh()
+                    
+        def inv_search(_id):
+            for i in inventory: #TODO likely a subtyping bug here
+                if isinstance(i,util.equipment_targets[_id]):
+                    return i
+            return None
+                
+        def add_inv(_id,add):
+            i = inv_search(_id)
+            if add:
+                if i is None: inventory.append(util.equipment_targets[_id]())
+            else:
+                if i: inventory.remove(i)
+            refresh()
+            
+        def send_mission():
+            print 'Sending!', inventory
+                
+        mc=self.scenario.current_scenario.mission_control
+        equip_list = mc.get_available_equipment()
+        
+        entries=[]
+        
+        entries.append(cost_label)
+        entries.append(mass_label)
+        entries.append( kytten.Label('--Equipment--') )
+        for e in equip_list:
+            inst = util.equipment_targets[e]()
+            entries.append( kytten.Checkbox( inst.name, id=e, is_checked = inv_search(e), on_click=add_inv ) )
+        
+        entries.append(kytten.Button("Send Resupply", on_click=send_mission))
+        
+    
+        dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=250, height=350)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_CENTER,
+	    theme=blue_theme, on_escape=on_escape)
+	    
     def create_mission_control_dialog(self):          
     
         class GUIMission():
@@ -449,17 +514,20 @@ class gui():
         missions = self.scenario.current_scenario.mission_control.get_available_missions()     
         missiondrop = kytten.Dropdown(sorted([k if funds > missions[k][0] else "-"+k for k in missions.keys() ],key=lambda x:missions[x][1]),on_select=None)
             
+        def resupply_dialog():
+            self.create_resupply_mission_dialog()
+            on_escape(dialog)
+            
         def send_mission():
             mission = missiondrop.selected                
             missions[mission][1]()
             on_escape(dialog)                    
-
-            
-            
+                        
         entries=[kytten.Label("Mission Control")]
         entries.append(fundsLabel)
         
         entries.append(kytten.FoldingSection("Request new module",kytten.VerticalLayout([missiondrop,kytten.Button("Send!", on_click=send_mission, disabled=not self.scenario.current_scenario.mission_control.module_available)]),is_open = False))
+        entries.append(kytten.Button("Request resupply", on_click=resupply_dialog))
         
         entries.append(kytten.Button("Close", on_click=on_cancel))
             
