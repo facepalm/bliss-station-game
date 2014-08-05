@@ -215,15 +215,16 @@ class gui():
         
     def clutter_entries(self,stowage):
         contentEntries = [kytten.Label("Free space: "+'{:.2f}'.format(stowage.free_space)+' m3')]
-        contentEntries.append(kytten.Label("Stored clutter:"))
-        for c in stowage.contents:       
-            if isinstance(c,Clutter):
-                contentEntries.append(kytten.Label('  '+c.name+': '+str(c.mass)+" kg"))
-                '''contentEntries.append(kytten.Label("    Misc Qualities:"))
-                for q in c.quality.keys():
-                    contentEntries.append(kytten.Label("    "+q+" "+'{:.2f}'.format(c.quality[q])))'''
-            elif isinstance(c,Equipment):
-                contentEntries.append(kytten.Label('  '+c.name))    
+        if stowage.contents:
+            contentEntries.append(kytten.Label("Stored:"))
+            for c in stowage.contents:       
+                if isinstance(c,Clutter):
+                    contentEntries.append(kytten.Label('  '+c.name+': {:.2f}'.format(c.mass)+" kg"))
+                    '''contentEntries.append(kytten.Label("    Misc Qualities:"))
+                    for q in c.quality.keys():
+                        contentEntries.append(kytten.Label("    "+q+" "+'{:.2f}'.format(c.quality[q])))'''
+                elif isinstance(c,Equipment):
+                    contentEntries.append(kytten.Label('  '+c.name))    
         return contentEntries
         
     def atmo_entries(self,atmo):

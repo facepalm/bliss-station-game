@@ -122,8 +122,11 @@ class Equipment(object):
             elif task.name == 'Pick Up':                
                 if self.installed: 
                     assert self.uninstall(), 'Unknown error after uninstallation'             
-                module = task.station.get_module_from_loc(task.location)
-                assert module.stowage.remove(self), 'Equipment not found in targeted module'
+                module = task.station.get_module_from_loc(task.location)                
+                if module.stowage.remove(self) is None:
+                    self.logger.warning('This equipment not found in expected location.  Dropping pickup task.')
+                    task.flag('CLOSED')
+                    return
                 task.assigned_to.held=self
                 self.refresh_image()
             elif task.name == 'Put Down':                  
@@ -530,7 +533,7 @@ class WaterTank(Storage):
         self.filter = ClutterFilter(['Potable Water'])
         super(WaterTank, self).__init__()         
         
-        self.stowage.capacity = 0.5
+        self.stowage.capacity = 0.75
         self.name = "Water tank, "+str(self.stowage.capacity)+"m^3"
         
     def refresh_image(self):     

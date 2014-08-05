@@ -1,15 +1,16 @@
 import random
 from equipment_science import Experiment
 
+
 class SciencePath(object):
     def __init__(self,name='Physics'):
         self.name = name
         self.level = {'Knowledge':1, 'Engineering':1, 'Production':1}
         self.progress = {'Knowledge':0, 'Engineering':0, 'Production':0}
         ''' Different types of research needed to produce products:
-        Knowledge: theoretical ideas of how tech can work
-        Engineering: prototypes of tech working.  Expensive as hell one-offs
-        Production: tech can be used freely with no increase in cost '''
+        Knowledge: theoretical ideas of how tech can work.  Increased with experiments.
+        Engineering: prototypes of tech working.  Expensive as hell one-offs.  Increased with prototypes.
+        Production: tech can be used freely with no increase in cost.  Increased with background production. '''
         
         
       
@@ -31,9 +32,17 @@ class Science(object):
         self.field = dict()
         
         #TODO move science into json folder
+        #'pure' sciences - not used for much atm, aside from experiment filler
         self.field['Physics'] = SciencePath('Physics')
         self.field['Biology'] = SciencePath('Biology')
         self.field['Astronomy'] = SciencePath('Astronomy')
+        
+        #'applied' sciences - used for equipment/stuff requirements
+        self.field['Medicine'] = SciencePath('Medicine')        
+        self.field['Materials'] = SciencePath('Materials')
+        self.field['Electronics'] = SciencePath('Electronics')
+        self.field['Thermodynamics'] = SciencePath('Thermodynamics')
+        self.field['Software'] = SciencePath('Software')
 
         self.last_update=0                                
                 

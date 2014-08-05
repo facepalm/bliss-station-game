@@ -169,7 +169,8 @@ class SeedScenario(Scenario):
             
             
         ernie = Human('Ernest',station = station, logger = station.logger)    
-        ernie.needs['WasteCapacityLiquid'].amt=0.1    
+        ernie.needs['WasteCapacityLiquid'].amt=0.1
+        ernie.needs['WasteCapacitySolid'].amt=0.1        
                                   
         self.add_station(station)                          
 

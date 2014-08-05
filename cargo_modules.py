@@ -2,7 +2,7 @@
 
 from generic_module import BasicModule
 from equipment import CBM, SolarPanel, DOCK_EQUIPMENT
-from clutter import Clutter
+from clutter import Clutter, spawn_clutter
 from engines import Merlin_A, Engine, KeroseneTank, OxygenTank
 
 import math
@@ -49,10 +49,10 @@ class DragonCargoModule(BasicModule):
         self.equipment['Oxidizer']= [ np.array([ -1 , -1 , 0 ]), np.array([ math.pi , 0]), 'TANK', OxygenTank().install(self)]        
         
     def setup_simple_resupply(self):
-        self.stowage.add(Clutter('Food', 90.5 )) #one person-year of food
-        self.stowage.add(Clutter('Water',466.4 )) #six person-months of water
+        self.stowage.add(spawn_clutter('Food', 90.5 )) #one person-year of food
+        self.stowage.add(spawn_clutter('Water',466.4 )) #six person-months of water
         #self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
-        self.stowage.add(Clutter('General Supplies', 100 ))
+        self.stowage.add(spawn_clutter('General Supplies', 100 ))
         
         for i in range(20):
             if self.stowage.free_space > 1.3:

@@ -30,22 +30,7 @@ class ClutterFilter(SearchFilter):
         if self.check_storage and isinstance( obj, equipment.Storage ):
             return obj.stowage.search(self)
         if not isinstance(obj,clutter.Clutter): return False
-        if 'Potable Water' in self.target and obj.name == 'Water': 
-            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
-                return obj.quality['Contaminants'] <= 0.01 and obj.quality['Salt'] <= 0.01
-        elif 'Gray Water' in self.target and obj.name == 'Water':             
-            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:               
-                return obj.quality['Contaminants'] <= 0.1 and obj.quality['Salt'] <= 0.1 and obj.quality['Contaminants'] > 0.01 and obj.quality['Salt'] > 0.01
-        elif 'Waste Water' in self.target and obj.name == 'Water': 
-            if 'Contaminants' in obj.quality and 'Salt' in obj.quality:
-                return obj.quality['Contaminants'] > 0.1 or obj.quality['Salt'] > 0.1      
-        elif 'Nonperishable Food' in self.target and obj.name == 'Food': 
-            if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
-                return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05 and obj.quality['Perishability'] <= 0.005
-        elif 'Edible Food' in self.target and obj.name == 'Food': 
-            if 'Contaminants' in obj.quality and 'Spoilage' in obj.quality:
-                return obj.quality['Contaminants'] <= 0.05 and obj.quality['Spoilage'] <= 0.05
-        return clutter.equals(self.target[0], obj.name)
+        return obj.satisfies(self.target[0])
         
     def target_string(self):
         out = ''
