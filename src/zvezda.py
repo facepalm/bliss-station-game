@@ -1,9 +1,9 @@
 
 
 from generic_module import BasicStationModule
-from equipment import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery, Comms
-from lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
-from equipment_computer import DockingComputer, MissionComputer
+from equipment.general import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery, Comms
+from equipment.lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
+from equipment.computer import DockingComputer, MissionComputer
 
 import math
 import numpy as np

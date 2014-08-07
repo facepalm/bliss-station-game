@@ -1,13 +1,13 @@
 
 
 from generic_module import BasicModule
-from equipment import CBM, SolarPanel, DOCK_EQUIPMENT
+from equipment.general import CBM, SolarPanel, DOCK_EQUIPMENT
 from clutter import Clutter, spawn_clutter
-from engines import Merlin_A, Engine, KeroseneTank, OxygenTank
+from equipment.engines import Merlin_A, Engine, KeroseneTank, OxygenTank
 
 import math
 import numpy as np
-from equipment_science import ExperimentRack
+from equipment.science import ExperimentRack
                                       
 class DragonCargoModule(BasicModule):
     """ Modeled after SpaceX's Dragon capsule.  Mostly empty space for cargo. """

@@ -1,6 +1,6 @@
 from generic_module import BasicStationModule
-from equipment import CBM, SolarPanel, DOCK_EQUIPMENT
-from equipment_computer import DockingComputer
+from equipment.general import CBM, SolarPanel, DOCK_EQUIPMENT
+from equipment.computer import DockingComputer
 
 import math
 import numpy as np

@@ -1,5 +1,5 @@
 
-from equipment import Machinery
+from equipment.general import Machinery
 import clutter
 from filtering import ClutterFilter, EquipmentFilter
 import util

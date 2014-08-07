@@ -1,9 +1,8 @@
 from actor import Actor
-from equipment import Storage
+from equipment.general import Storage
 from tasks import Task, TaskTracker
 from needs import Need, need_from_task
-import equipment
-import lifesupport
+from equipment.lifesupport import UniversalToilet
 from filtering import ClutterFilter, Searcher, EquipmentFilter
 import util
 
@@ -104,10 +103,10 @@ class Human(Actor):
                 amt=self.needs[need].amt
                 self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/60.0, self.new_drink_task, self.dehydration_hit,severity='HUMAN_BIOLOGICAL')
                 self.needs[need].amt=amt
-            elif need == 'WasteCapacitySolid' and isinstance(task.target,lifesupport.UniversalToilet):
+            elif need == 'WasteCapacitySolid' and isinstance(task.target,UniversalToilet):
                 task.target.deposit(amt2 = self.needs[need].max_amt - self.needs[need].amt)
                 self.needs[need].set_amt_to_severity('IGNORABLE')     
-            if need in ['WasteCapacityLiquid', 'WasteCapacitySolid'] and isinstance(task.target,lifesupport.UniversalToilet):
+            if need in ['WasteCapacityLiquid', 'WasteCapacitySolid'] and isinstance(task.target,UniversalToilet):
                 task.target.deposit(amt1 = self.needs['WasteCapacityLiquid'].max_amt - self.needs['WasteCapacityLiquid'].amt)
                 self.needs['WasteCapacityLiquid'].set_amt_to_severity('IGNORABLE')  
                                         

@@ -1,5 +1,5 @@
 import random
-from equipment_science import Experiment
+from equipment.science import Experiment
 
 
 class SciencePath(object):

@@ -2,9 +2,9 @@ import pyglet
 import kytten
 import os
 from clutter import Clutter
-from equipment import *
-from equipment_science import *
-from lifesupport import *
+from equipment.general import *
+from equipment.science import *
+from equipment.lifesupport import *
 import math
 
 # Default theme, blue-colored

@@ -1,5 +1,5 @@
 
-from equipment import Equipment, Machinery, Rack, Storage
+from equipment.general import Equipment, Machinery, Rack, Storage
 import clutter
 import util
 import atmospherics

@@ -8,7 +8,7 @@ from tasks import TaskTracker
 from station import Station        
 from actor import Robot
 from human import Human        
-from equipment_science import Experiment, ExperimentRack
+from equipment.science import Experiment, ExperimentRack
 import missioncontrol
 import mission
 import clutter

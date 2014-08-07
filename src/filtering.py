@@ -1,5 +1,5 @@
 import clutter
-import equipment
+import equipment.general
 import needs
 import util
 
@@ -27,7 +27,7 @@ class ClutterFilter(SearchFilter):
         super(ClutterFilter, self).__init__(target=target, **kwargs)              
             
     def compare(self,obj):
-        if self.check_storage and isinstance( obj, equipment.Storage ):
+        if self.check_storage and isinstance( obj, equipment.general.Storage ):
             return obj.stowage.search(self)
         if not isinstance(obj,clutter.Clutter): return False
         return obj.satisfies(self.target[0])
@@ -57,19 +57,19 @@ class EquipmentFilter(SearchFilter):
         self.equipment_targets = util.equipment_targets
         self.check_if_installed = is_installed
         
-    def compare(self,obj):
-        import equipment_science
+    def compare(self,obj):        
+        from equipment.science import Experiment
         if self.check_if_installed and (not hasattr(obj, 'installed') or not obj.installed): return False
-        if self.target == 'Storage' and isinstance( obj, equipment.Storage):
+        if self.target == 'Storage' and isinstance( obj, equipment.general.Storage):
             #print obj, obj.filter.target, self.subtype, self.subtype in obj.filter.target or self.subtype == 'Any'
             return self.subtype in obj.filter.target or self.subtype == 'Any'
         elif self.target in self.equipment_targets: 
             return isinstance( obj, self.equipment_targets [ self.target ] ) 
         elif self.comparison_type == 'Equipment Slot':
             return obj == self.target
-        elif self.subtype == "Dead Science" and isinstance( obj, equipment_science.Experiment):
+        elif self.subtype == "Dead Science" and isinstance( obj, Experiment):
             return obj.no_more_SCIENCE
-        elif self.subtype == "Live Science" and isinstance( obj, equipment_science.Experiment):
+        elif self.subtype == "Live Science" and isinstance( obj, Experiment):
             return not obj.no_more_SCIENCE    
         elif self.target=="By Name":
             return hasattr(obj, 'name') and obj.name == self.subtype

@@ -8,7 +8,7 @@ import numpy as np
 from human import Human
 import random
 import logging
-from equipment_science import Experiment
+from equipment.science import Experiment
 
 
 '''Mission Control organization.  Totally not NASA, you guys.  Totally.'''
