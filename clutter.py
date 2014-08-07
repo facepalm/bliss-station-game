@@ -87,6 +87,31 @@ class Clutter(object):
         
     def satisfies(self, name):
         return equals(name, self.name)    
+
+class MetalClutter(Clutter):
+    def __init__(self, *args, **kwargs):
+        self.subtype = kwargs['subtype'] if 'subtype' in kwargs else 'Aluminum'                
+        self.imgfile = 'images/glitch-assets/molybdenum/molybdenum__x1_iconic_png_1354832628.png'
+        self.quality = {'Purity': 1.0, 'Form':'Ingot' }
+        if 'Scrap' in kwargs['name']: 
+            self.quality['Form'] = 'Scrap'
+        self.name='Metal'
+        Clutter.__init__(self, *args, **kwargs)   
+        
+    def calcDensity(self):
+        if self.subtype == 'Aluminum': return 2700 #kg/m3
+        if self.subtype in ['Iron','Steel']: return 7874
+        if self.subtype in ['Copper']: return 8960
+        if self.subtype in ['Tin']: return 7365
+        if self.subtype in ['Bronze']: return 0.78*8960 + 0.12*7365
+    density = property(calcDensity, None, None, "Metal Density" )   
+        
+    def satisfies(self, name):
+        if name != 'Metal':
+            return self.subtype == name
+        elif 'Scrap' in name:
+            return self.quality['Form'] == 'Scrap' and self.satisfies(name.strip('Scrap '))
+        return equals(name, self.name)
         
 class FoodClutter(Clutter):
     def __init__(self, *args, **kwargs):
@@ -133,6 +158,8 @@ def spawn_clutter(name='Water',mass=1):
         return WaterClutter(name=name,mass=mass)
     elif name in ['Food']:
         return FoodClutter(name=name,mass=mass)
+    elif 'Aluminum' in name:
+        return MetalClutter(name=name,mass=mass)
     return Clutter(name,mass)
     
 class Stowage(object):

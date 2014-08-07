@@ -37,11 +37,11 @@ class Human(Actor):
         self.needs['Water'].severity='CRITICAL'
         
     def new_drink_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method = Searcher(ClutterFilter('Potable Water',check_storage=True),self.station).search )
+        t=Task(''.join(['Satisfy Water']), owner = self, timeout=timeout, task_duration = 30, severity=severity, fetch_location_method = Searcher(ClutterFilter(['Potable Water'],check_storage=True),self.station).search )
         return t
         
     def new_dinner_task(self,timeout,severity):
-        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method = Searcher(ClutterFilter('Edible Food',check_storage=True),self.station).search)
+        t=Task(''.join(['Satisfy Food']), owner = self, timeout=timeout, task_duration = util.seconds(30,'minutes'), severity=severity, fetch_location_method = Searcher(ClutterFilter(['Edible Food'],check_storage=True),self.station).search)
         return t        
         
     def number_1_task(self,timeout,severity):
