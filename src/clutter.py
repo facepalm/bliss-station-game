@@ -49,6 +49,10 @@ class Clutter(object):
         
         self.refresh_image()
         
+    def update(self,dt):
+        if self.mass <= 0:
+            self.sprite.visible=False
+        
     def __getstate__(self):
         d = dict(self.__dict__)
         del d['sprite']
@@ -167,6 +171,7 @@ class Stowage(object):
     def __init__(self, capacity=1):    
         self.capacity=capacity
         self.contents=[]
+        self.internal=False #True if storage is meant to be "hidden"
                         
     def search(self, filter_):
         stuff=[]
