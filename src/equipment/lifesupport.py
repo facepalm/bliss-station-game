@@ -10,8 +10,8 @@ class UniversalToilet(Machinery):
     def __init__(self):   
         super(UniversalToilet, self).__init__() 
         self.tank = clutter.Stowage(1)
-        self.tank.target_1 = ClutterFilter('Waste Water')
-        self.processing_speed = 0.01
+        self.tank.target_1 = ClutterFilter(['Waste Water'])
+        self.processing_speed = 0.001
         self.satisfies['WasteCapacityLiquid'] = 0.5
         self.satisfies['WasteCapacitySolid'] = 0.5
         self.name = "Toilet"
@@ -22,15 +22,14 @@ class UniversalToilet(Machinery):
         self.sprite.add_layer('Toilet',util.load_image("images/14_toilets_40x40.png"))
 
     def deposit(self, amt1=0, amt2=0):
-        if amt1: self.tank.add( clutter.Clutter( "Waste Water", amt1 ) )
-        if amt2: self.tank.add( clutter.Clutter( "Solid Waste", amt2, 714.0 ) )
+        if amt1: self.tank.add( clutter.spawn_clutter( "Waste Water", amt1 ) )
+        if amt2: self.tank.add( clutter.spawn_clutter( "Solid Waste", amt2, 714.0 ) )
         
     def update(self,dt):
         super(UniversalToilet, self).update(dt)   
         p = self.tank.search( self.tank.target_1 )
         if self.installed and p and self.draw_power(0.03,dt):            
             gray_dest, d, d = self.installed.station.search( EquipmentFilter( target='Storage', subtype='Gray Water' ) ) 
-
             if not gray_dest: return   
             self.active = True         
             proc_amt = max( 0, min( gray_dest.available_space, p.mass , self.processing_speed*dt ) )

@@ -154,14 +154,14 @@ class WaterClutter(Clutter):
         return equals(name, self.name)          
         
                      
-def spawn_clutter(name='Water',mass=1):
+def spawn_clutter(name='Water',mass=1, density=1000.0):
     if name in ['Water','Potable Water','Gray Water','Waste Water']:
         return WaterClutter(name=name,mass=mass)
     elif name in ['Food']:
         return FoodClutter(name=name,mass=mass)
     elif 'Aluminum' in name:
         return MetalClutter(name=name,mass=mass)
-    return Clutter(name,mass)
+    return Clutter(name,mass, density)
     
 class Stowage(object):
     def __init__(self, capacity=1):    
@@ -210,6 +210,7 @@ class Stowage(object):
             return False
         if stuff in self.contents: return False
         if isinstance(stuff, Clutter): 
+            stuff.sprite.visible = False
             for v in self.contents:
                 if isinstance(v,Clutter) and v.merge(stuff): 
                     return True
