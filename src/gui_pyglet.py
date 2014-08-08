@@ -17,6 +17,15 @@ blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
 def on_escape(dialog):
     dialog.teardown()
 
+def color(color='DEFAULT'):
+    if color=='red':
+        c = [255, 128, 128, 255]
+    elif color=='green':
+        c = [128, 255, 128, 255]
+    else:
+        c = [255, 255, 255, 255]
+    return c
+
 class gui():
     '''gui layer for game interaction'''
     def __init__(self,window=None):
@@ -326,8 +335,8 @@ class gui():
             entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
             entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage())+'%' )) 
-        if isinstance(e,RegenerableCO2Filter):
-            entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ) ) ) 
+        if isinstance(e,RegenerableCO2Filter):            
+            entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ), color=color('green' if e.last_co2_reading < 10 else 'red' ) ) ) 
         if isinstance(e,Battery):
             if e.avg_charge >= 0:
                 entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                

@@ -25,7 +25,7 @@ class Atmosphere():
             _moles = (101.3*self.volume)/(GAS_R*273)
             self.composition['O2'] = 0.21 * _moles
             self.composition['N2'] = 0.78 * _moles
-            self.composition['CO2'] = 0.004 * _moles
+            self.composition['CO2'] = 0.0004 * _moles
         elif composition=='O2 Tank':
             _moles = (10130*self.volume)/(GAS_R*273)
             self.composition['O2'] = _moles

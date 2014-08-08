@@ -96,7 +96,7 @@ class RegenerableCO2Filter(Machinery):
         self.airflow = 0.001 #m^3 per second
         self.extraction_fraction = 0.5
         self.power_draw = .2 # kW
-        self.pp_trigger = 0.4 #CO2 pp at sea level
+        self.pp_trigger = 0.04 #CO2 pp at sea level
         self.last_co2_reading = 1.0
         self.name = "CO2 Filter"
 

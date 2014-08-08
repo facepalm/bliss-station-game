@@ -98,14 +98,24 @@ class BasicModule():
         if "Equipment" in filter_.comparison_type or 'All' in filter_.comparison_type:
             hits.extend([[self.equipment[e][3], self.node( e ), filter_.compare(self.equipment[e][3]) ]  for e in self.equipment.keys() if self.equipment[e][3]])
             
-            hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
+            s = self.stowage.search( filter_ )
+            if hasattr(s,'local_coords'):
+                snode = self.node( self.nearest_hall_node(s.local_coords) )
+            else:
+                snode = self.filterNode( self.node('Inside') )
+            hits.append( [ s, snode, s != None ] )
             #hits.append( self.exterior_stowage.find_resource( filter_ ) )
 
         if "Equipment Slot" in filter_.comparison_type or 'All' in filter_.comparison_type:
             hits.extend([[self.equipment[e][2], self.node( e ), filter_.compare(self.equipment[e][2]) ]  for e in self.equipment.keys()  if not self.equipment[e][3] and self.player_installable])
  
         if "Clutter" in filter_.comparison_type:
-            hits.append( [ self.stowage.search( filter_ ), self.filterNode( self.node('Inside') ), self.stowage.search( filter_ ) != None ] )
+            s = self.stowage.search( filter_ )
+            if hasattr(s,'local_coords'):
+                snode = self.node( self.nearest_hall_node(s.local_coords) )
+            else:
+                snode = self.filterNode( self.node('Inside') )
+            hits.append( [ s, snode, s != None ] )
             
         random.shuffle(hits)    
         hits.sort(key=lambda tup: tup[2], reverse=True)
@@ -271,13 +281,14 @@ class BasicModule():
         for e in range(1,len(edges)):            
             self.add_edge( self.node( edges[ e - 1 ] ), self.node( edges[ e ] ) )
         
+    def nearest_hall_node(self,coords):
+        all_nodes = [separate_node(n)[1] for n in self.nodes.keys()]
+        hall_nodes = [n for n in all_nodes if not n in self.equipment.keys()]            
+        hall_nodes.sort(key=lambda t: util.vec_dist( self.nodes[self.node( t )] , coords ), reverse=False)
+        return hall_nodes[0]
+        
     def add_equipment(self, eq_node, eq_obj, eq_coords, hall_node=None, eq_orientation=np.array([ 0 , 0]), eq_type='MISC' ):
-        if not hall_node:
-            all_nodes = [separate_node(n)[1] for n in self.nodes.keys()]
-            hall_nodes = [n for n in all_nodes if not n in self.equipment.keys()]            
-            hall_nodes.sort(key=lambda t: util.vec_dist( self.nodes[self.node( t )] , eq_coords ), reverse=False)
-            #print [util.vec_dist( self.nodes[self.node( t )] , eq_coords ) for t in hall_nodes]
-            hall_node = hall_nodes[0]
+        if not hall_node: hall_node = self.nearest_hall_node(eq_coords)
         node_coords = self.nodes[ self.node( hall_node ) ] + ( eq_coords - self.nodes[ self.node( hall_node ) ] ) 
         self.nodes[self.node(eq_node)] = node_coords
         self.add_edge( self.node(hall_node), self.node(eq_node) )
