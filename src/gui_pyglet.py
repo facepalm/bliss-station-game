@@ -336,12 +336,12 @@ class gui():
         if isinstance(e,Experiment):
             entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage())+'%' )) 
         if isinstance(e,RegenerableCO2Filter):            
-            entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ), color=color('green' if e.last_co2_reading < 10 else 'red' ) ) ) 
+            entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ), color=color('green' if e.last_co2_reading < 1.0 else 'red' ) ) ) 
         if isinstance(e,Battery):
-            if e.avg_charge >= 0:
-                entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )                
-            else:
-                entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW') )  
+            if e.avg_charge > 0:
+                entries.append(kytten.Label('Charging: '+'{:3.2f}'.format( e.avg_charge ) +' kW', color=color('green') ) )                
+            elif e.avg_charge < 0:
+                entries.append(kytten.Label('Disharging: '+'{:3.2f}'.format( e.avg_charge ) +' kW', color=color('red') ) )
             entries.append(kytten.Label( '({:3.2f} kW max)'.format( module.station.resources.resources['Electricity'].previously_available ) ) )                                
             entries.append(kytten.Label('Available: '+'{:3.2f}'.format( e.charge ) +' kWh') )            
         if isinstance(e,DockingRing):           

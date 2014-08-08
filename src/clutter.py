@@ -5,13 +5,6 @@ import globalvars as gv
 
 #miscellaneous stuff related to the loose objects one might find floating around the station
 
-material_science = {
-                    'Metal': {'name': 'Any Metal', 'composition': ['1x Aluminum OR Iron' ], 'tech': {}},
-                    'Parts1': {'name':'Basic Parts','composition': ['2x Metal'], 'tech': {'Materials':1}},
-                    'Parts2': {'name':'Mechanical Parts','composition': ['1x Parts','1x Metal'], 'tech': {'Materials':1,'Thermodynamics':1}},
-                    }
-
-
 common_densities =   {  'Oxygen Candles' : 2420.0,
                         'Supplies' : 1000.0 }
 
@@ -112,10 +105,12 @@ class MetalClutter(Clutter):
     density = property(calcDensity, None, None, "Metal Density" )   
         
     def satisfies(self, name):
-        if name != 'Metal':
-            return self.subtype == name
-        elif 'Scrap' in name:
+        if 'Scrap' in name:
             return self.quality['Form'] == 'Scrap' and self.satisfies(name.strip('Scrap '))
+        elif 'Ingot' in name:
+            return self.quality['Form'] == 'Ingot' and self.satisfies(name.rstrip(' Ingot'))
+        elif name != 'Metal':
+            return self.subtype == name
         return equals(name, self.name)
         
 class FoodClutter(Clutter):
@@ -157,6 +152,29 @@ class WaterClutter(Clutter):
             return True            
         return equals(name, self.name)          
         
+        
+class ComplexClutter(Clutter):
+    ''' Clutter comprised of other clutters '''
+    def __init__(self, *args, **kwargs):
+        self.tech={} #min tech required for reaction
+        self.reaction={} #recipe to create this clutter
+        self.composition = [] #list of raw materials making this guy up
+        Clutter.__init__(self, *args, **kwargs)   
+        
+class PartsClutter(ComplexClutter):
+    def __init__(self, *args, **kwargs):
+        self.name='Basic Parts'
+        self.tech = {'Materials':1}
+        self.reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
+        ComplexClutter.__init__(self, *args, **kwargs)   
+
+class MechPartsClutter(ComplexClutter):
+    def __init__(self, *args, **kwargs):
+        self.name='Mechanical Parts'
+        self.tech = {'Materials':1,'Thermodynamics':1}
+        self.reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.67, 'Scrap Metal':0.33}}        
+        ComplexClutter.__init__(self, *args, **kwargs)   
+                        
                      
 def spawn_clutter(name='Water',mass=1, density=1000.0):
     if name in ['Water','Potable Water','Gray Water','Waste Water']:
