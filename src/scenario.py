@@ -172,6 +172,7 @@ class SeedScenario(Scenario):
         ernie.needs['WasteCapacityLiquid'].amt=0.1
         ernie.needs['WasteCapacitySolid'].amt=0.1        
         ernie.needs['Food'].amt=0.1
+        ernie.needs['Water'].amt=0.1                          
                                   
         self.add_station(station)                          
 
