@@ -313,7 +313,7 @@ class BasicModule():
                 loc_xyz = self.getXYZ( 1.0*c.local_coords )
                 c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
                 c.sprite.rotation = (-180/math.pi)*self.orientation[0]
-                c.sprite.draw()         
+                #c.sprite.draw()         
 
 
 class BasicStationModule(BasicModule):

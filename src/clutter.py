@@ -68,6 +68,7 @@ class Clutter(object):
             else:
                 self.imgfile = 'images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'
         self.sprite = util.load_sprite(self.imgfile)
+        self.sprite.batch = util.station_batch
         
     def get_volume(self): return self.mass/self.density
     volume = property(get_volume, None, None, "Clutter volume" )  
