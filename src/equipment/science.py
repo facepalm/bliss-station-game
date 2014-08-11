@@ -46,7 +46,7 @@ class Experiment(Equipment):
         
         if self.no_more_SCIENCE or self.installed is None or not self.powered: return
 
-        if not (self.task and self.active):
+        if not (self.task and self.task.active):
             self.raw_unfiltered_SCIENCE += dt*random.random()
 
         if self.raw_unfiltered_SCIENCE >= self.capacity_for_SCIENCE:
@@ -55,7 +55,7 @@ class Experiment(Equipment):
         if (not self.task or not self.task.active) and random.random() < 0.0005*dt:
             sev = random.random()
             if sev < 0.99:
-                self.task = Task('Science: '+random.choice(['push buttons','twiddle knobs','record numbers','adjust display','tweak results']), owner = self, timeout=util.seconds(3,'hours'), task_duration = util.seconds(2,'minutes'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)    
+                self.task = Task('Science: '+random.choice(['push buttons','twiddle knobs','record numbers','adjust display','tweak results']), owner = self, timeout=None, task_duration = util.seconds(2,'minutes'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)    
             else:
                 self.task = Task(''.join(['Science: extinguish fire!']), owner = self, timeout=util.seconds(30,'minutes'), task_duration = util.seconds(5,'minutes'), severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             
