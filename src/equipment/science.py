@@ -45,7 +45,10 @@ class Experiment(Equipment):
         super(Experiment, self).update(dt)
         
         if self.no_more_SCIENCE or self.installed is None or not self.powered: return
-        self.raw_unfiltered_SCIENCE += dt*random.random()
+
+        if not (self.task and self.active):
+            self.raw_unfiltered_SCIENCE += dt*random.random()
+
         if self.raw_unfiltered_SCIENCE >= self.capacity_for_SCIENCE:
             self.no_more_SCIENCE = True
             
@@ -72,9 +75,7 @@ class Experiment(Equipment):
     def task_failed(self,task):
         super(Experiment, self).task_finished(task) 
         if not task: return
-        if task.name in ['Science: push buttons','Science: twiddle knobs','Science: record numbers','Science: adjust display','Science: tweak results'] and task.target == self:
-            self.raw_unfiltered_SCIENCE *= 0.95
-        elif task.name in ['Science: extinguish fire!']:
+        if task.name in ['Science: extinguish fire!']:
             self.no_more_SCIENCE = True
     
 
