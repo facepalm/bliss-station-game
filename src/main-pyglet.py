@@ -190,8 +190,14 @@ if __name__ == "__main__":
     def on_draw():
         #background.blit_tiled(0, 0, 0, window.width, window.height)
         window.clear()
-        util.universe.draw_background()
         
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glLoadIdentity();        
+        gl.glOrtho(0,640,0,480,0,1);                
+        gl.glMatrixMode(gl.GL_MODELVIEW);
+        
+        util.universe.draw_background()
+              
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();        
         gl.glOrtho(-user_zoom*(window.width//2 - user_x), user_zoom*(window.width//2 + user_x), -user_zoom*(window.height//2 - user_y), user_zoom*(window.height//2 + user_y),0,1)

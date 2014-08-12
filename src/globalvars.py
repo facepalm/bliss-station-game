@@ -23,4 +23,5 @@ def load_config():
 load_config()
 
 scenario = None
+universe = None
 mousedown=False

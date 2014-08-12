@@ -55,6 +55,7 @@ class Scenario(object):
         
         self.mission_control = missioncontrol.MissionControl(self,self.logger)
         self.focus_station = None
+        self.avg_tick = 0
         
         if name=='DEFAULT':
             modDock = UnityModule()                   
@@ -76,11 +77,12 @@ class Scenario(object):
             s.update(dt*gv.config['TIME FACTOR'])       
         self.mission_control.update(dt*gv.config['TIME FACTOR'])
         self.time_elapsed += dt   
+        self.avg_tick = 0.1*dt + 0.9*self.avg_tick
         self.logger.debug("End system tick")
         
     def status_update(self,dt):
         print      
-        util.generic_logger.info('System time:' +util.timestring(int(gv.config['TIME FACTOR']*self.time_elapsed)))
+        util.generic_logger.info('System time:' +util.timestring(int(gv.config['TIME FACTOR']*self.time_elapsed)) + ' Avg tick:'+str(self.avg_tick*gv.config['TIME FACTOR']))
         for a in self.actors.values():
             a.log_status()
 

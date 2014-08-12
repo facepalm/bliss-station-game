@@ -59,7 +59,7 @@ class Science(object):
             print f+" "+str(self.field[f].level['Knowledge'])+"-"+str(self.field[f].level['Engineering'])+"-"+str(self.field[f].level['Production'])
             
     def process_experiment(self,item):
-        if not item.no_more_SCIENCE: return
+        if not isinstance(item,Experiment): return
         
         points = 20 #Tier 1 journal
         if random.random() > 0.05:
@@ -68,7 +68,7 @@ class Science(object):
             else:
                 points = 5 #Tier 2 journal
         
-        self.field[item.field].add_progress('Knowledge',item.level,points*random.random())
+        self.field[item.field].add_progress('Knowledge',item.level,item.raw_unfiltered_SCIENCE/item.capacity_for_SCIENCE*points*random.random())
             
                 
                 

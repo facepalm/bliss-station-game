@@ -100,7 +100,6 @@ class Actor(object):
         if self.task and self.task.task_ended():            
             self.task=None
             return
-        
         #'grab new task'                
         _curr_value = -5 if not self.task else self.task.task_value()
         _new_task = self.my_tasks.fetch_open_task() if not self.station else max(self.my_tasks.fetch_open_task(), self.station.tasks.fetch_open_task())
@@ -109,7 +108,6 @@ class Actor(object):
             if self.task: self.task.drop()
             self.task = _new_task
             self.task.assign(self)
-        
         #'work on task'
         if not self.task: return
         if not self.task.location: 
@@ -118,6 +116,8 @@ class Actor(object):
                 self.task.drop()
                 self.task=None
                 return
+                
+               
         if self.location == self.task.location: 
             #work on task
             self.task.do_work(dt)

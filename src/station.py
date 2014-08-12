@@ -255,12 +255,13 @@ class Station():
     def update(self,dt):
         self.resources.update(dt)
         self.tasks.update(dt)
+        
         #print [[t.name,str(t.touched)] for t in self.tasks.tasks]
         for m in self.modules.keys():
             if m in self.modules: self.modules[m].update(dt)     
-
         for a in self.actors.values():
-            a.update(dt)       
+            a.update(dt)      
+        
             
     def loc_to_xyz(self,loc, percolate=True):
         [ node, name ] = separate_node(loc)

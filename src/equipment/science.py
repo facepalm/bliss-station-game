@@ -33,12 +33,12 @@ class Experiment(Equipment):
         self.idle_draw = 0.200 #kW
         
         self.raw_unfiltered_SCIENCE = 0.0
-        self.capacity_for_SCIENCE = util.seconds(3,'months')
+        self.capacity_for_SCIENCE = random.random()*util.seconds(6,'months')
         self.no_more_SCIENCE = False
         
         self.name = "Experiment"        
-        self.field = 'Physics'
-        self.level = 1
+        self.field = random.choice(util.universe.science.field.keys())
+        self.level = util.universe.science.field[self.field].level['Knowledge']
 
 
     def update(self,dt):            
@@ -47,7 +47,7 @@ class Experiment(Equipment):
         if self.no_more_SCIENCE or self.installed is None or not self.powered: return
 
         if not (self.task and self.task.active):
-            self.raw_unfiltered_SCIENCE += dt*random.random()
+            self.raw_unfiltered_SCIENCE += dt
 
         if self.raw_unfiltered_SCIENCE >= self.capacity_for_SCIENCE:
             self.no_more_SCIENCE = True

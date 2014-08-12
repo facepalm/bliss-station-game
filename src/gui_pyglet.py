@@ -334,6 +334,7 @@ class gui():
         if hasattr(e,'tank'):
             entries.extend(self.clutter_entries(e.tank))   
         if isinstance(e,Experiment):
+            entries.append(kytten.Label( e.field+'{:2.0f}'.format(e.level) ) )
             entries.append(kytten.Label("Science usage: " + '{:3.2f}'.format(100*e.science_percentage())+'%' )) 
         if isinstance(e,RegenerableCO2Filter):            
             entries.append(kytten.Label("Current CO2 level: "+'{:3.2f}'.format( e.last_co2_reading ), color=color('green' if e.last_co2_reading < 1.0 else 'red' ) ) ) 
