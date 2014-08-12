@@ -291,6 +291,7 @@ class Station():
             m.draw(window)
         for a in self.actors:
             self.actors[a].update_location()
+            self.actors[a].sprite.draw()
                     
                                       
 if __name__ == "__main__":

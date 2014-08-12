@@ -18,6 +18,7 @@ import universe
 import globalvars as gv
 import os
 import kytten
+import time
 
 import pickle
 
@@ -68,20 +69,20 @@ def make_solid_image(width,height,color=(128,128,128,128), anchor_x = None, anch
     
 util.make_solid_image = make_solid_image
 
-def load_sprite(filename, anchor_x=None, anchor_y=None):
+def load_sprite(filename, anchor_x=None, anchor_y=None, batch=None):
     gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT ) 
     gl.glTexParameteri( gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT )
     img = pyglet.image.load(filename)#.get_texture(rectangle=True)
     img.anchor_x = anchor_x if anchor_x is not None else img.width // 2
     img.anchor_y = anchor_y if anchor_y is not None else img.height // 2 
-    sprite = CollideSprite(img)
+    sprite = CollideSprite(img, batch=batch)
     
     return sprite
     
 util.load_sprite = load_sprite
 
 def image_to_sprite(image, x=0, y=0, rot=0, batch=None):
-    sprite = CollideSprite(image,x=gv.config['ZOOM']*x,y=gv.config['ZOOM']*y)
+    sprite = CollideSprite(image,x=gv.config['ZOOM']*x,y=gv.config['ZOOM']*y, batch=batch)
     sprite.rotation= -1 * 180/math.pi * rot
     return sprite
     
@@ -95,6 +96,7 @@ util.make_solid_sprite = make_solid_sprite
     
 util.station_batch = pyglet.graphics.Batch()    
 util.actor_batch = pyglet.graphics.Batch()  
+util.default_batch = pyglet.graphics.Batch()  
 util.parent_group = pyglet.graphics.Group() 
                
 
@@ -141,8 +143,8 @@ if __name__ == "__main__":
     if not skip:             
         util.universe = universe.Universe()
         util.universe.generate_background('LEO')
-        #gv.scenario = ScenarioMaster(scenario='STRESSTEST',logger=logger)
-        gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)       
+        gv.scenario = ScenarioMaster(scenario='STRESSTEST',logger=logger)
+        #gv.scenario = ScenarioMaster(scenario='LORKHAN',logger=logger)       
         util.universe.scenario = gv.scenario
                 
         util.autosave()
@@ -203,18 +205,21 @@ if __name__ == "__main__":
         gl.glOrtho(-user_zoom*(window.width//2 - user_x), user_zoom*(window.width//2 + user_x), -user_zoom*(window.height//2 - user_y), user_zoom*(window.height//2 + user_y),0,1)
         gl.glMatrixMode(gl.GL_MODELVIEW);                
         
-        
         for s in util.universe.scenario.get_stations():
             s.draw(window)
-            
-        util.station_batch.draw()
-        util.actor_batch.draw()
+        
+        #start_time = time.clock()
+        #util.station_batch.draw()
+        #print 'time:', time.clock() - start_time
+        #print util.station_batch.group_children.values()
+        #util.actor_batch.draw()
+        #util.default_batch.draw()
         
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();        
         gl.glOrtho(0,window.width,0,window.height,0,1);                
         gl.glMatrixMode(gl.GL_MODELVIEW); 
-        gui.batch.draw()
+        #gui.batch.draw()
         
         
         

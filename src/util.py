@@ -106,6 +106,7 @@ def contact_mission_control():
     
 station_batch = None
 actor_batch = None
+default_batch = None
 parent_group = None     
 
 scenario = None

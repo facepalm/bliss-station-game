@@ -84,7 +84,8 @@ class BasicModule():
         if not gv.config['GRAPHICS']: return                            
                 
         if gv.config['GRAPHICS'] == 'pyglet':           
-            self.sprite = util.make_solid_sprite(int(2*self.size[0]*gv.config['ZOOM']),int(2*self.size[1]*gv.config['ZOOM']),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
+            if self.sprite: self.sprite.delete()
+            self.sprite = util.make_solid_sprite(int(2*self.size[0]*gv.config['ZOOM']),int(2*self.size[1]*gv.config['ZOOM']),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0],batch = util.station_batch)
             self.sprite.owner = self
         elif gv.config['GRAPHICS'] == 'cocos2d':
             self.sprite = util.make_solid_sprite(int(2*self.size[0]*gv.config['ZOOM']),int(2*self.size[1]*gv.config['ZOOM']),(128,128,128,255),None,None,self.location[0],self.location[1], self.orientation[0])
@@ -317,7 +318,7 @@ class BasicModule():
                 self.equipment[e][3].sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.equipment[e][1][0]+self.orientation[0])/math.pi)
                 #self.equipment[e][3].sprite.set_position(zoom*l[0], zoom*l[1])
                 #self.equipment[e][3].sprite.rotation = -180*(self.equipment[e][1][0]+self.orientation[0])/math.pi
-                #self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
+                self.equipment[e][3].sprite.draw()#img.blit(zoom*l[0]+window.width // 2, zoom*l[1]+window.height // 2, 0)
 
         for c in self.stowage.contents:
             if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
@@ -325,7 +326,7 @@ class BasicModule():
                 c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
                 c.sprite.rotation = (-180/math.pi)*self.orientation[0]
                 c.sprite.visible=True
-                #c.sprite.draw()         
+                c.sprite.draw()         
 
 
 class BasicStationModule(BasicModule):

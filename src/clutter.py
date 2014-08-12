@@ -64,6 +64,7 @@ class Clutter(object):
                 self.imgfile = 'images/glitch-assets/loam/loam__x1_40_iconic_png_1354832758.png'
             else:
                 self.imgfile = 'images/glitch-assets/contraband/contraband__x1_1_png_1354836014.png'
+        if self.sprite: self.sprite.delete()
         self.sprite = util.load_sprite(self.imgfile)
         self.sprite.batch = util.station_batch
         

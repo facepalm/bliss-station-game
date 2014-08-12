@@ -205,6 +205,10 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         animation = pyglet.image.Animation([img1,img2])
         
         self.sprite.add_layer('Machinery',animation)                                                 
+        
+    def set_active(self):
+        #TODO figure out why the below line doesn't work
+        self.sprite.layer['Machinery'].image.frames[0].duration=0.5 if self.recently_active else None        
                 
     def update(self,dt):
         super(Machinery, self).update(dt)     
@@ -212,7 +216,8 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if self.active: 
             if not self.recently_active:
                 self.recently_active = True
-                self.refresh_image()
+                #self.refresh_image()
+                self.set_active()
             
             self.operating_time_since_last_maintenance += dt
             if random.random() < (dt/util.seconds(1,'day'))*self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval):
@@ -220,7 +225,8 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         else:
             if self.recently_active:
                 self.recently_active = False
-                self.refresh_image()
+                self.set_active()
+                #self.refresh_image()
             
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):
