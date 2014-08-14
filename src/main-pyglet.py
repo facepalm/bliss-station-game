@@ -219,7 +219,7 @@ if __name__ == "__main__":
         gl.glLoadIdentity();        
         gl.glOrtho(0,window.width,0,window.height,0,1);                
         gl.glMatrixMode(gl.GL_MODELVIEW); 
-        #gui.batch.draw()
+        gui.batch.draw()
         
         
         

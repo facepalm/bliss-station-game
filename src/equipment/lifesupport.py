@@ -45,7 +45,7 @@ class WaterPurifier(Machinery):
     '''Converts gray water into potable water.  Basically an abstracted still'''
     def __init__(self):   
         super(WaterPurifier, self).__init__()          
-        self.processing_speed = 0.001
+        self.processing_speed = 0.0001
         self.name = "Water Purifier"
         
     def update(self,dt):
@@ -93,7 +93,7 @@ class RegenerableCO2Filter(Machinery):
     '''Collects excess (>0.4 kPa) CO2 and ejects it into space.  A bit magic atm, but we can fill in the details later'''
     def __init__(self):
         super(RegenerableCO2Filter, self).__init__()
-        self.airflow = 0.001 #m^3 per second
+        self.airflow = 0.01 #m^3 per second
         self.extraction_fraction = 0.5
         self.power_draw = .2 # kW
         self.pp_trigger = 0.04 #CO2 pp at sea level

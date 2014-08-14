@@ -12,7 +12,7 @@ class Human(Actor):
         self.needs['Food']=Need('Food', self, 0.62, 0.62/86400.0, 0.62/1800.0, self.new_dinner_task, self.hunger_hit,severity='HUMAN_BIOLOGICAL')
         self.needs['Water']=Need('Water', self, 3.52, 3.52/86400.0, 3.52/600.0, self.new_drink_task, self.dehydration_hit,severity='HUMAN_BIOLOGICAL')
         self.needs['WasteCapacitySolid']=Need('WasteCapacitySolid', self, 0.22, 0.22/192800.0, 0.22/300.0, self.number_2_task, self.code_brown)
-        self.needs['WasteCapacityLiquid']=Need('WasteCapacityLiquid', self, 3.87, 3.87/21600.0, 3.87/30.0, self.number_1_task, self.code_yellow)       
+        self.needs['WasteCapacityLiquid']=Need('WasteCapacityLiquid', self, 3.87, 0.9675/21600.0, 3.87/30.0, self.number_1_task, self.code_yellow)       
         
         self.nutrition = [1.0, 1.0, 1.0, 1.0, 1.0]
         self.health = 1.0
