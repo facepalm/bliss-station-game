@@ -52,10 +52,10 @@ class Experiment(Equipment):
         if self.raw_unfiltered_SCIENCE >= self.capacity_for_SCIENCE:
             self.no_more_SCIENCE = True
             
-        if (not self.task or not self.task.active) and random.random() < 0.0005*dt:
+        if (not self.task or not self.task.active) and random.random() < 0.00005*dt:
             sev = random.random()
             if sev < 0.99:
-                self.task = Task('Science: '+random.choice(['push buttons','twiddle knobs','record numbers','adjust display','tweak results']), owner = self, timeout=None, task_duration = util.seconds(2,'minutes'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)    
+                self.task = Task('Science: '+random.choice(['push buttons','twiddle knobs','record numbers','adjust display','tweak results']), owner = self, timeout=None, task_duration = util.seconds(20,'minutes'), severity='MODERATE', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)    
             else:
                 self.task = Task(''.join(['Science: extinguish fire!']), owner = self, timeout=util.seconds(30,'minutes'), task_duration = util.seconds(5,'minutes'), severity='HIGH', fetch_location_method=Searcher(self,self.installed.station).search,logger=self.logger)
             
@@ -73,7 +73,7 @@ class Experiment(Equipment):
         self.sprite.add_layer('Experiment',util.load_image(self.img))
                         
     def task_failed(self,task):
-        super(Experiment, self).task_finished(task) 
+        super(Experiment, self).task_failed(task) 
         if not task: return
         if task.name in ['Science: extinguish fire!']:
             self.no_more_SCIENCE = True

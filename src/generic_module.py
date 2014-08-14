@@ -145,6 +145,9 @@ class BasicModule():
         if name == "Inside": return random.choice(self.nodes.keys())    
         return node
         
+    def mix_neighbor(self,neighbor,amt=1.0):
+        self.atmo.mix( neighbor.atmo, 1.0 )     
+        
     def update(self, dt):
         for e in self.equipment:            
             if self.equipment[e][3]: 
@@ -158,6 +161,11 @@ class BasicModule():
         if self.manifest: 
             satisfaction = self.manifest.check_satisfied()
             #print satisfaction    
+            
+        if random.random() < 0.05:
+            #atmo mix with neighbors
+            for n in self.get_neighbors():
+                self.mix_neighbor(n)
         
     def get_random_dock(self, side_port_allowed=True, unused = True, used = False):
         docks=[]

@@ -54,6 +54,8 @@ class DragonCargoModule(BasicModule):
         #self.stowage.add(Clutter('Oxygen Candles', 30 )) #ten person-months of reserve O2.  One candle = .1 kg
         #self.stowage.add(spawn_clutter('General Supplies', 100 ))
         self.stowage.add(spawn_clutter('Aluminum Ingot', 100 ))
+        self.stowage.add(spawn_clutter('Basic Parts', 10 ))
+        self.stowage.add(spawn_clutter('Mechanical Parts', 10 ))
         
         for i in range(20):
             if self.stowage.free_space > 1.3:

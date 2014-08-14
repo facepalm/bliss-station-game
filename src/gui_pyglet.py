@@ -325,7 +325,8 @@ class gui():
                 
         entries=[kytten.Label("Equipment: " + equip_name)]
         if isinstance(e,Machinery):
-            entries.append(kytten.Label("Hours since last maint:"+'{:3.0f}'.format( e.operating_time_since_last_maintenance/3600.0 ) ) )
+            entries.append(kytten.Label("Last maint (hrs):"+'{:3.0f}'.format( e.operating_time_since_last_maintenance/3600.0 ) ) )
+            entries.append(kytten.Label("Wear:"+'{:0.2f}'.format( e.wear ) ) )
         if isinstance(e,Comms):
             entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):

@@ -189,7 +189,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         #self.maint_timer = random.randrange(util.seconds(6,'months'), util.seconds(2,'years') )
         self.maint_task = None
         self.operating_time_since_last_maintenance = 0
-        self.maintenance_interval = util.seconds(6,'months')
+        self.maintenance_interval = util.seconds(7,'days')
         self.wear = 1.0
         self.broken = False
         self.recently_active=False
@@ -220,7 +220,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
                 self.set_active()
             
             self.operating_time_since_last_maintenance += dt
-            if random.random() < (dt/util.seconds(1,'day'))*self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval):
+            if random.random() < (dt/util.seconds(1,'month'))*self.operating_time_since_last_maintenance/(100*self.wear*self.maintenance_interval):
                 self.broken = True
         else:
             if self.recently_active:
@@ -244,6 +244,7 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if task.name == ''.join(['Maintain ',self.name]) and task.target == self:
             self.maint_task = None
             self.wear -= self.operating_time_since_last_maintenance/(self.wear*self.maintenance_interval) - 1
+            print self.operating_time_since_last_maintenance, self.wear, self.maintenance_interval
             self.wear = max(self.wear,0)
             self.operating_time_since_last_maintenance = 0
         elif task.name == ''.join(['Repair ',self.name]) and task.target == self:

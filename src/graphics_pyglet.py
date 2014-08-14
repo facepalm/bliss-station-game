@@ -7,7 +7,7 @@ class LayeredSprite(object):
         self.layer = dict()
         self.order = start_order
         self.name=name                
-        print 'New sprite', self.name, self.batch,util.default_batch
+        #print 'New sprite', self.name, self.batch,util.default_batch
         
     def add_layer_sprite(self,name,sprite):
         sprite.batch = self.batch

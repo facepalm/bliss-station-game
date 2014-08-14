@@ -110,9 +110,10 @@ class Actor(object):
             if self.task: self.task.drop()
             self.task = _new_task
             self.task.assign(self)
+            self.logger.info("New task:"+self.task.name)
         #'work on task'
         if not self.task: return
-        if not self.task.location: 
+        if not self.task.location:
             self.task.target, self.task.location, d = self.task.fetch_location() #Grab location
             if not self.task.location: 
                 self.task.drop()
@@ -148,7 +149,7 @@ class Actor(object):
         '''moving to new node, exchange air flow'''
         my_mod = self.station.get_module_from_loc( self.location )
         new_mod = self.station.get_module_from_loc( new_loc )
-        my_mod.atmo.mix( new_mod.atmo, 1.0 )             
+        my_mod.mix_neighbor(new_mod, 1.0 )             
        
     def summarize_needs(self, ret_string=False):
         if ret_string:

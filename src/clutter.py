@@ -24,7 +24,7 @@ def equals(type1,type2):
        
     
 class Clutter(object):    
-    def __init__(self, name='Trash', mass=0.1, density=0.1, quality=dict()): 
+    def __init__(self, name='Trash', mass=0.1, density=1000.0, quality=dict()): 
         self.id = util.register(self)   
         if not hasattr(self,'name'): self.name = name
         if not hasattr(self,'mass'): self.mass = mass
@@ -165,16 +165,21 @@ class ComplexClutter(Clutter):
 class PartsClutter(ComplexClutter):
     def __init__(self, *args, **kwargs):
         self.name='Basic Parts'
+        self.imgfile = 'images/glitch-assets/metalmaker_mechanism/metalmaker_mechanism__x1_1_png_1354836814.png'
         self.tech = {'Materials':1}
         self.reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
         ComplexClutter.__init__(self, *args, **kwargs)   
+        self.sprite.scale = 0.4
+        
 
 class MechPartsClutter(ComplexClutter):
     def __init__(self, *args, **kwargs):
         self.name='Mechanical Parts'
+        self.imgfile = 'images/glitch-assets/metalmaker_tooler/metalmaker_tooler__x1_1_png_1354836816.png'
         self.tech = {'Materials':1,'Thermodynamics':1}
         self.reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.67, 'Scrap Metal':0.33}}        
         ComplexClutter.__init__(self, *args, **kwargs)   
+        self.sprite.scale = 0.33
                         
                      
 def spawn_clutter(name='Water',mass=1, density=1000.0):
@@ -184,6 +189,10 @@ def spawn_clutter(name='Water',mass=1, density=1000.0):
         return FoodClutter(name=name,mass=mass)
     elif 'Aluminum' in name:
         return MetalClutter(name=name,mass=mass)
+    elif name in ['Basic Parts']:
+        return PartsClutter(name=name, mass=mass)
+    elif name in ['Mechanical Parts']:
+        return MechPartsClutter(name=name, mass=mass)
     return Clutter(name,mass, density)
     
 class Stowage(object):
