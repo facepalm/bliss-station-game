@@ -155,29 +155,36 @@ class WaterClutter(Clutter):
         
         
 class ComplexClutter(Clutter):
+    tech={} #min tech required for reaction
+    reaction={} #recipe to create this clutter
+        
+    
     ''' Clutter comprised of other clutters '''
     def __init__(self, *args, **kwargs):
-        self.tech={} #min tech required for reaction
-        self.reaction={} #recipe to create this clutter
         self.composition = [] #list of raw materials making this guy up
-        Clutter.__init__(self, *args, **kwargs)   
+        Clutter.__init__(self, *args, **kwargs)                           
+        
+                
         
 class PartsClutter(ComplexClutter):
+    tech = {'Materials':1}
+    reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
+        
+    
     def __init__(self, *args, **kwargs):
         self.name='Basic Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_mechanism/metalmaker_mechanism__x1_1_png_1354836814.png'
-        self.tech = {'Materials':1}
-        self.reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
         ComplexClutter.__init__(self, *args, **kwargs)   
         self.sprite.scale = 0.4
         
 
 class MechPartsClutter(ComplexClutter):
+    tech = {'Materials':1,'Thermodynamics':1}
+    reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.67, 'Scrap Metal':0.33}}                
+    
     def __init__(self, *args, **kwargs):
         self.name='Mechanical Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_tooler/metalmaker_tooler__x1_1_png_1354836816.png'
-        self.tech = {'Materials':1,'Thermodynamics':1}
-        self.reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.67, 'Scrap Metal':0.33}}        
         ComplexClutter.__init__(self, *args, **kwargs)   
         self.sprite.scale = 0.33
                         
@@ -194,6 +201,48 @@ def spawn_clutter(name='Water',mass=1, density=1000.0):
     elif name in ['Mechanical Parts']:
         return MechPartsClutter(name=name, mass=mass)
     return Clutter(name,mass, density)
+    
+def run_clutter_reaction(goal, inputs):    
+    reaction=None
+    if isinstance(goal, Clutter):
+        reaction = goal.reaction
+    else:
+        tmp = spawn_clutter(goal,mass=0)        
+        if hasattr(tmp,'reaction'):
+            reaction=tmp.reaction
+        else:
+            return []
+        
+    used_inputs=dict()
+    reqs = reaction['Input'].keys()
+    net_amt = 1000000000000 #total reaction mass
+    for r in reqs:
+        req_satisfied = False
+        for i in inputs:
+            if i.satisfies(r):
+                req_satisfied = True
+                net_amt = min( net_amt, i.mass/reaction['Input'][r] )
+                used_inputs[r] = i                    
+                inputs.remove(i)
+                break
+        if not req_satisfied:
+            return []
+        
+    #at this point, we can run the reaction
+    comp=[]
+    for r in used_inputs.keys():
+        comp.append( used_inputs[r].split( net_amt * reaction['Input'][r] ) )
+                   
+    out = [self]
+    for r in reaction['Output'].keys():
+        i = spawn_clutter(r, net_amt * self.reaction[ 'Output' ][ r ] ) 
+        out.append(i)
+        if hasattr(i,composition):
+            for c in comp:
+                c.mass *= self.reaction[ 'Output' ][ r ]
+            i.composition = comp            
+    return out
+
     
 class Stowage(object):
     def __init__(self, capacity=1):    
