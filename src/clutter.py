@@ -71,25 +71,35 @@ class Clutter(object):
     def get_volume(self): return self.mass/self.density
     volume = property(get_volume, None, None, "Clutter volume" )  
     
-    def split(self, amt, subtype=None):
+    def split(self, amt):
         if amt <= 0: return None
         curr_amt = min(amt, self.mass)   
         self.mass -= curr_amt
-        return type(self)(name=self.name, mass=curr_amt, density=self.density, quality= self.quality.copy() if self.quality else None)
+        ret = type(self)(name=self.name, mass=curr_amt, density=self.density, quality= self.quality.copy() if self.quality else None)
+        if hasattr(self,'subtype'): ret.subtype = self.subtype
+        return ret
+    
+    def check_merge(self,obj):
+        if not isinstance(obj, Clutter): return False
+        if not equals(self.name,obj.name): return False
+        return True    
         
     def merge(self, other):        
-        if not isinstance(other, Clutter): assert False, 'Requested merge a nonClutter object. Denied.'
-        if not equals(self.name,other.name): return False
+        if not self.check_merge(other): return False
         self.mass += other.mass
+        other.mass = 0
         #TODO merge qualities as well
         return True
         
     def satisfies(self, name):
-        return equals(name, self.name)    
+        return equals(name, self.name)  
+        
+    def __repr__(self):
+        return ''.join([self.name,':',str(self.mass)])  
 
 class MetalClutter(Clutter):
     def __init__(self, *args, **kwargs):
-        self.subtype = kwargs['subtype'] if 'subtype' in kwargs else 'Aluminum'                
+        self.subtype = kwargs['subtype'] if 'subtype' in kwargs else self.extract_subtype(kwargs['name'])                
         self.imgfile = 'images/glitch-assets/molybdenum/molybdenum__x1_iconic_png_1354832628.png'
         self.quality = {'Purity': 1.0, 'Form':'Ingot' }
         if 'Scrap' in kwargs['name']: 
@@ -97,12 +107,31 @@ class MetalClutter(Clutter):
         self.name='Metal'
         Clutter.__init__(self, *args, **kwargs)   
         
+    def check_merge(self,obj):
+        if not isinstance(obj, MetalClutter): return False
+        if self.subtype != obj.subtype: return False
+        if self.quality['Form'] != obj.quality['Form']: return False
+        return True
+        
+    def merge(self,other):
+        oldm, theirm = self.mass, other.mass
+        test = Clutter.merge(self,other)
+        if not test: return
+        self.quality['Purity'] = self.quality['Purity'] * oldm/self.mass + other.quality['Purity'] * theirm/self.mass
+            
+        
+    def extract_subtype(self,name):
+        if 'Steel' in name: return 'Steel'
+        if 'Iron' in name: return 'Iron'
+        return 'Aluminum'
+        
     def calcDensity(self):
-        if self.subtype == 'Aluminum': return 2700 #kg/m3
-        if self.subtype in ['Iron','Steel']: return 7874
-        if self.subtype in ['Copper']: return 8960
-        if self.subtype in ['Tin']: return 7365
+        if self.subtype == 'Aluminum': return 2700.0 #kg/m3
+        if self.subtype in ['Iron','Steel']: return 7874.0
+        if self.subtype in ['Copper']: return 8960.0
+        if self.subtype in ['Tin']: return 7365.0
         if self.subtype in ['Bronze']: return 0.78*8960 + 0.12*7365
+        return 2700.0 #TODO error maybe?
     density = property(calcDensity, None, None, "Metal Density" )   
         
     def satisfies(self, name):
@@ -113,6 +142,9 @@ class MetalClutter(Clutter):
         elif name != 'Metal':
             return self.subtype == name
         return equals(name, self.name)
+        
+    def __repr__(self):
+        return ''.join([self.subtype,' ',self.quality['Form'],':',str(self.mass)])
         
 class FoodClutter(Clutter):
     def __init__(self, *args, **kwargs):
@@ -164,6 +196,23 @@ class ComplexClutter(Clutter):
         self.composition = [] #list of raw materials making this guy up
         Clutter.__init__(self, *args, **kwargs)                           
         
+    def calcDensity(self):
+        if not self.composition: return 1000.0
+        totmass = 0.0
+        dens = 0.0
+        for c in self.composition:
+            totmass += c.mass
+        for c in self.composition:
+            dens += c.density * (c.mass/totmass)
+        return dens
+    density = property(calcDensity, None, None, "Material Density" ) 
+    
+    
+    def split(self, amt):
+        obj = Clutter.split(self,amt)
+        for c in self.composition:
+            obj.composition.append(c.split(amt))        
+        return obj
                 
         
 class PartsClutter(ComplexClutter):
@@ -175,18 +224,18 @@ class PartsClutter(ComplexClutter):
         self.name='Basic Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_mechanism/metalmaker_mechanism__x1_1_png_1354836814.png'
         ComplexClutter.__init__(self, *args, **kwargs)   
-        self.sprite.scale = 0.4
+        if self.sprite: self.sprite.scale = 0.4
         
 
 class MechPartsClutter(ComplexClutter):
     tech = {'Materials':1,'Thermodynamics':1}
-    reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.67, 'Scrap Metal':0.33}}                
+    reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.87, 'Scrap Metal':0.13}}                
     
     def __init__(self, *args, **kwargs):
         self.name='Mechanical Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_tooler/metalmaker_tooler__x1_1_png_1354836816.png'
         ComplexClutter.__init__(self, *args, **kwargs)   
-        self.sprite.scale = 0.33
+        if self.sprite: self.sprite.scale = 0.33
                         
                      
 def spawn_clutter(name='Water',mass=1, density=1000.0):
@@ -194,7 +243,7 @@ def spawn_clutter(name='Water',mass=1, density=1000.0):
         return WaterClutter(name=name,mass=mass)
     elif name in ['Food']:
         return FoodClutter(name=name,mass=mass)
-    elif 'Aluminum' in name:
+    elif 'Aluminum' in name or 'Steel' in name or 'Metal' in name:
         return MetalClutter(name=name,mass=mass)
     elif name in ['Basic Parts']:
         return PartsClutter(name=name, mass=mass)
@@ -202,7 +251,7 @@ def spawn_clutter(name='Water',mass=1, density=1000.0):
         return MechPartsClutter(name=name, mass=mass)
     return Clutter(name,mass, density)
     
-def run_clutter_reaction(goal, inputs):    
+def run_reaction(goal, inputs, cap_vol=10000000000000):    
     reaction=None
     if isinstance(goal, Clutter):
         reaction = goal.reaction
@@ -215,32 +264,47 @@ def run_clutter_reaction(goal, inputs):
         
     used_inputs=dict()
     reqs = reaction['Input'].keys()
-    net_amt = 1000000000000 #total reaction mass
+    net_vol = cap_vol #total reaction mass
+    metal_type = None
     for r in reqs:
         req_satisfied = False
         for i in inputs:
             if i.satisfies(r):
                 req_satisfied = True
-                net_amt = min( net_amt, i.mass/reaction['Input'][r] )
+                if 'Metal' in r: metal_type = i.subtype
+                net_vol = min( net_vol, (i.mass/i.density)/reaction['Input'][r] )
                 used_inputs[r] = i                    
                 inputs.remove(i)
                 break
         if not req_satisfied:
             return []
         
+    out = inputs    
+        
     #at this point, we can run the reaction
     comp=[]
     for r in used_inputs.keys():
-        comp.append( used_inputs[r].split( net_amt * reaction['Input'][r] ) )
+        i = used_inputs[r]
+        print i, i.density, i.density * net_vol * reaction['Input'][r], net_vol
+        comp.append( i.split( i.density * net_vol * reaction['Input'][r] ) )
+        out.append( i )
                    
-    out = [self]
+    
     for r in reaction['Output'].keys():
-        i = spawn_clutter(r, net_amt * self.reaction[ 'Output' ][ r ] ) 
+        i = spawn_clutter(r, net_vol * reaction[ 'Output' ][ r ] ) #using volume as mass for now
+        if 'Metal' in r: i.subtype = metal_type
         out.append(i)
-        if hasattr(i,composition):
+        if hasattr(i,'composition'):
             for c in comp:
-                c.mass *= self.reaction[ 'Output' ][ r ]
+                c.mass *= reaction[ 'Output' ][ r ]
             i.composition = comp            
+        i.mass *= i.density #correcting the placeholder value used above
+        
+    for i in out:
+        for j in out:            
+            if i is j or i.mass == 0 or j.mass == 0: continue
+            print i,j
+            i.merge(j)
     return out
 
     
@@ -321,3 +385,18 @@ class JanitorMon(object):
             obj = task.target.split(remove_amt)
             task.assigned_to.inventory.add(obj)
             
+
+
+                
+if __name__ == "__main__": 
+    gv.config['GRAPHICS'] = None
+    metal = spawn_clutter('Steel Ingots',1000)
+    inter = run_reaction('Basic Parts',[metal],.05)
+    print inter
+    #inter.append(metal)
+    out = run_reaction('Mechanical Parts',inter,.05)
+    print out
+    print sum([m.mass for m in out])
+    for m in out:
+        if hasattr(m,'composition'):
+            print m,':',m.composition
