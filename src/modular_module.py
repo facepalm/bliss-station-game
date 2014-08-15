@@ -3,6 +3,7 @@ from generic_module import BasicModule
 from equipment.general import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery, Comms
 from equipment.lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
 from equipment.computer import DockingComputer, MissionComputer
+from equipment.workshop import WorkshopRack
 
 import math
 import numpy as np
@@ -66,6 +67,20 @@ class DockingHub(ModuleComponent):
     def refresh_image(self, x_off = 0):     
         super(DockingHub, self).refresh_image('images/double_comp.png',x_off)
 
+class WorkshopRing(ModuleComponent):
+    def __init__(self,pos=0):
+        self.name = 'Workshop ring'+str(pos)
+        ModuleComponent.__init__(self,pos)
+        _sampdict = {'port' : [ -0.5, 0, math.pi, 0 ], 'starboard' : [ 0.5 , 0, -math.pi, 0 ], 'nadir' : [0, -0.5, 0, -math.pi]}
+        for _d in _sampdict.keys():
+            self.equipment.append([ ''.join( [ _d , str( pos ) ] ), np.array([ 0 , _sampdict[_d][0] , _sampdict[_d][1] ]) , np.array([ _sampdict[_d][2] , _sampdict[_d][3] ]), 'WORKSHOP', WorkshopRack() ])
+            #self.edges.append( [ ''.join( [ 'hall' , str( pos ) ] ) , ''.join( [ _d , str( pos ) ] ) ] )
+        
+    
+    def refresh_image(self, x_off = 0):     
+        super(WorkshopRing, self).refresh_image('images/rack_comp.png',x_off)
+        
+
                     
 class RackRing(ModuleComponent):
     def __init__(self,pos=0):
@@ -91,10 +106,12 @@ def spawn_component(letter,pos=0):
         return RackRing(pos)
     elif letter in 'O':
         return DockingHub(pos)
+    elif letter in 'w':
+        return WorkshopRing(pos)
 
 
 class ModularModule(BasicModule):
-    def __init__(self,name = "Module", build_str = "{rOrrr}" ):   
+    def __init__(self,name = "Module", build_str = "{rOrrwr}" ):   
         self.component_string = build_str
         self.components=[]
         self.name=name
