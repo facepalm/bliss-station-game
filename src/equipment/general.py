@@ -566,6 +566,9 @@ class FoodStorageRack(Storage,Rack):
     
 
 class GenericStorageRack(Storage,Rack):
+    tech = {'Materials':1}
+    recipe = {'Basic Parts':1.0} #units in m3
+
     def __init__(self):   
         Storage.__init__(self)
         Rack.__init__(self)         
@@ -588,5 +591,6 @@ class WaterStorageRack(WaterTank,Rack):
                     
 util.equipment_targets['Battery'] = Battery
 util.equipment_targets['Storage'] = Storage
+util.equipment_targets['Generic Storage Rack'] = GenericStorageRack
 util.equipment_targets['Comms'] = Comms
 

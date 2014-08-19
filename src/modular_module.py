@@ -3,7 +3,7 @@ from generic_module import BasicModule
 from equipment.general import SolarPanel, DOCK_EQUIPMENT, WaterTank, CBM, Window, Battery, Comms
 from equipment.lifesupport import UniversalToilet, WaterPurifier, OxygenElectrolyzer, RegenerableCO2Filter
 from equipment.computer import DockingComputer, MissionComputer
-from equipment.workshop import WorkshopRack
+from equipment.workshop import WorkbenchRack
 
 import math
 import numpy as np
@@ -71,9 +71,9 @@ class WorkshopRing(ModuleComponent):
     def __init__(self,pos=0):
         self.name = 'Workshop ring'+str(pos)
         ModuleComponent.__init__(self,pos)
-        _sampdict = {'port' : [ -0.5, 0, math.pi, 0 ], 'starboard' : [ 0.5 , 0, -math.pi, 0 ], 'nadir' : [0, -0.5, 0, -math.pi]}
+        _sampdict = { 'nadir' : [0, -0.5, 0, -math.pi]}
         for _d in _sampdict.keys():
-            self.equipment.append([ ''.join( [ _d , str( pos ) ] ), np.array([ 0 , _sampdict[_d][0] , _sampdict[_d][1] ]) , np.array([ _sampdict[_d][2] , _sampdict[_d][3] ]), 'WORKSHOP', WorkshopRack() ])
+            self.equipment.append([ ''.join( [ _d , str( pos ) ] ), np.array([ 0 , _sampdict[_d][0] , _sampdict[_d][1] ]) , np.array([ _sampdict[_d][2] , _sampdict[_d][3] ]), 'WORKSHOP', WorkbenchRack() ])
             #self.edges.append( [ ''.join( [ 'hall' , str( pos ) ] ) , ''.join( [ _d , str( pos ) ] ) ] )
         
     

@@ -42,6 +42,9 @@ class UniversalToilet(Machinery):
             self.active = False         
         
 class WaterPurifier(Machinery):
+    tech = {'Materials':2}
+    recipe = {'Mechanical Parts':1.0} #units in m3
+
     '''Converts gray water into potable water.  Basically an abstracted still'''
     def __init__(self):   
         super(WaterPurifier, self).__init__()          

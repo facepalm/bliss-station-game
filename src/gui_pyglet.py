@@ -5,6 +5,7 @@ from clutter import Clutter
 from equipment.general import *
 from equipment.science import *
 from equipment.lifesupport import *
+from equipment.workshop import *
 import math
 
 # Default theme, blue-colored
