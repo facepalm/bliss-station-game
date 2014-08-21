@@ -37,15 +37,20 @@ class CollideSprite(pyglet.sprite.Sprite):
         y += user_y
         x *= user_zoom
         y *= user_zoom
-        #TODO transform (x,y) to image coordinate space (rotate about .anchor)
+        
         theta = math.pi * (self.rotation) / (180.0)
         x -= self.x
         y -= self.y              
         x1 = math.cos(theta)*x - math.sin(theta)*y
         y1 = math.sin(theta)*x + math.cos(theta)*y
+        
         #print self.image.anchor_x
-        x1 += self.image.anchor_x if not isinstance (self.image,pyglet.image.Animation) else self.image.frames[0].image.anchor_x
-        y1 += self.image.anchor_y if not isinstance (self.image,pyglet.image.Animation) else self.image.frames[0].image.anchor_y
+        if not isinstance (self.image,pyglet.image.Animation):
+            x1 += self.image.anchor_x*self.scale  
+            y1 += self.image.anchor_y*self.scale 
+        else:
+            x1 += self.image.frames[0].image.anchor_x*self.scale 
+            y1 += self.image.frames[0].image.anchor_y*self.scale
         if x1 >= 0 and x1 <= self.width:
             if y1 >= 0 and y1 <= self.height:                
                 return True

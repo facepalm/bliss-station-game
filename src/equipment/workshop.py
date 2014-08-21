@@ -27,7 +27,12 @@ class Workshop(Equipment):
         super(Workshop, self).refresh_image() 
         if self.sprite is None: return        
         self.sprite.add_layer('Workshop',util.load_image(self.img))
-        self.sprite.layer['Workshop'].scale = 0.8                            
+        self.sprite.layer['Workshop'].scale = 0.8          
+        
+    def append_fetch_task(self,item):
+        filt = ClutterFilter([item],check_storage=True)
+        self.task.prepend_task(Task(name = ''.join(['Prep ',item]), severity = "MODERATE", task_duration = 120, fetch_location_method = Searcher( SearchFilter( self ), self.installed.station ).search, owner=self,logger=self.logger))
+        self.task.prepend_task(Task(name = ''.join(['Pick Up ',item]), severity = "MODERATE", task_duration = 120, fetch_location_method=Searcher(filt,self.installed.station).search, owner=clutter.JanitorMon(filt.target),logger=self.logger))                  
     
 
 class WorkbenchRack(Rack, Workshop):
@@ -47,13 +52,7 @@ class WorkbenchRack(Rack, Workshop):
     def update(self,dt):            
         Workshop.update(self,dt)
         Rack.update(self,dt)              
-        
-    def append_fetch_task(self,item):
-        filt = ClutterFilter([item])
-        self.task.prepend_task(Task(name = ''.join(['Prep ',item]), severity = "MODERATE", task_duration = 120, fetch_location_method = Searcher( SearchFilter( self ), self.installed.station ).search, owner=self,logger=self.logger))
-        self.task.prepend_task(Task(name = ''.join(['Pick Up ',item]), severity = "MODERATE", task_duration = 120, fetch_location_method=Searcher(filt,self.installed.station).search, owner=clutter.JanitorMon(filt.target),logger=self.logger))
-        
-        
+                            
     def build_equipment_task(self, equip, recipe_num = 0):
         if not equip or not hasattr(equip,'recipe') or not equip.recipe: return False
         if self.status != 'idle': return False
@@ -88,9 +87,9 @@ class WorkbenchRack(Rack, Workshop):
         if task.name.startswith('Assemble item') and not self.ready_goal:
             for r in self.recipe_goal['components'].keys():
                 filt = ClutterFilter([r])
-                item = self.local_parts.search(filt)
-                if not item or item.mass/item.density < self.recipe_goal['components'][r]:
-                    print item
+                vol = self.local_parts.search_info(filt)[1]
+                if vol < self.recipe_goal['components'][r]:
+                    self.logger.info("Delaying assembly!  Reason: "+r)
                     task.drop()
                     return
             self.ready_goal = True
@@ -103,9 +102,9 @@ class WorkbenchRack(Rack, Workshop):
             #find local volume of item, reopen task if need be.
             item_name = task.name.rsplit('Prep ')[-1]
             filt = ClutterFilter([item_name])
-            item = self.local_parts.search(filt)
-            if not item or item.mass/item.density < self.recipe_goal['components'][item_name]: 
-                self.logger.info('Ingredient volume too low, reopening: '+item_name+ str(item.mass/item.density))
+            vol = self.local_parts.search_info(filt)[1]
+            if vol < self.recipe_goal['components'][item_name]: 
+                self.logger.info('Ingredient volume too low, reopening: '+item_name+ str(vol))
                 self.append_fetch_task(item_name)
         if task.name.startswith('Assemble item') and self.ready_goal:
             new_equip = self.equip_goal()
@@ -115,6 +114,7 @@ class WorkbenchRack(Rack, Workshop):
                 new_item = item.split(self.recipe_goal['components'][r] * item.density)
                 new_equip.components.append(new_item)
             self.installed.stowage.add(new_equip)
+            self.local_parts.dump_into(self.installed.stowage)
             self.status = 'idle'
             #self.task = None
                 

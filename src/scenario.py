@@ -9,7 +9,6 @@ from station import Station
 from actor import Robot
 from human import Human        
 from equipment.science import Experiment, ExperimentRack
-import equipment.general
 import missioncontrol
 import mission
 import clutter
@@ -171,7 +170,7 @@ class SeedScenario(Scenario):
             
         modComp = ModularModule()
         station.dock_module(None,None,modComp, None, True)                            
-        modComp.equipment['nadir5'][3].build_equipment_task(equipment.general.GenericStorageRack)
+        modComp.equipment['nadir5'][3].build_equipment_task(util.equipment_targets['Purifier'])
             
             
         ernie = Human('Ernest',station = station, logger = station.logger)    

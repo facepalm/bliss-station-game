@@ -39,7 +39,7 @@ class Clutter(object):
                     self.quality[q] = self.mass / len(self.quality.keys())
         if self.name in common_subtypes: self.name = common_subtypes[self.name]
         if not hasattr(self,'density'): self.density = common_densities[self.name] if self.name in common_densities.keys() else density
-        
+        if not hasattr(self,'density_multiplier'): self.density_multiplier = 1.0
         self.refresh_image()
         
     def update(self,dt):
@@ -194,17 +194,18 @@ class ComplexClutter(Clutter):
     ''' Clutter comprised of other clutters '''
     def __init__(self, *args, **kwargs):
         self.composition = [] #list of raw materials making this guy up
-        Clutter.__init__(self, *args, **kwargs)                           
+        Clutter.__init__(self, *args, **kwargs) 
+                                  
         
     def calcDensity(self):
-        if not self.composition: return 1000.0
+        if not self.composition: return 1000.0*self.density_multiplier
         totmass = 0.0
         dens = 0.0
         for c in self.composition:
             totmass += c.mass
         for c in self.composition:
             dens += c.density * (c.mass/totmass)
-        return dens
+        return dens * self.density_multiplier
     density = property(calcDensity, None, None, "Material Density" ) 
     
     
@@ -223,6 +224,7 @@ class PartsClutter(ComplexClutter):
     def __init__(self, *args, **kwargs):
         self.name='Basic Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_mechanism/metalmaker_mechanism__x1_1_png_1354836814.png'
+        self.density_multiplier = 0.5
         ComplexClutter.__init__(self, *args, **kwargs)   
         if self.sprite: self.sprite.scale = 0.4
         
@@ -234,8 +236,12 @@ class MechPartsClutter(ComplexClutter):
     def __init__(self, *args, **kwargs):
         self.name='Mechanical Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_tooler/metalmaker_tooler__x1_1_png_1354836816.png'
+        self.density_multiplier = 0.25
         ComplexClutter.__init__(self, *args, **kwargs)   
-        if self.sprite: self.sprite.scale = 0.33
+        if self.sprite: 
+            self.sprite.scale = 0.33          
+            #self.sprite.image.anchor_x *= 0.33
+            #self.sprite.image.anchor_y *= 0.33
                         
                      
 def spawn_clutter(name='Water',mass=1, density=1000.0):
@@ -321,6 +327,15 @@ class Stowage(object):
             return stuff[0]
         return None
         
+    def search_info(self, filter_):
+        mass,vol = 0,0
+        stuff=[]
+        stuff.extend( [ v for v in self.contents if filter_.compare( v ) ] )
+        for s in stuff:    
+            mass += s.mass
+            vol += s.mass/s.density
+        return mass,vol        
+        
     def update(self, dt):
         for c in self.contents:
             if hasattr(c,'update'): c.update(dt)
@@ -368,7 +383,14 @@ class Stowage(object):
         for i in self.contents:
             used_space += i.volume
         return self.capacity - used_space        
-    free_space = property(get_free_space, None, None, "Available storage space" )                  
+    free_space = property(get_free_space, None, None, "Available storage space" )    
+    
+    def dump_into(self,other):
+        if not isinstance(other,Stowage): return False
+        for i in self.contents:
+            if not other.add(i): return False            
+            self.remove(i)
+        return True
         
     
 class JanitorMon(object):
