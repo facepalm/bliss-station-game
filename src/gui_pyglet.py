@@ -301,6 +301,26 @@ class gui():
 	    
 	    
 	    
+	def create_workshop_dialog(self,module=None, equip=None):
+	    if module is None or equip is None: return
+	    entries=[kytten.Label("Workshop menu")]
+	    
+	    #if isinstance(e,WorkbenchRack):
+        #    entries.append(kytten.Button("", on_click=on_miss_ctrl))
+        
+	    
+	    dialog = kytten.Dialog(
+        kytten.Frame(
+            kytten.Scrollable(
+            kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
+	        width=200, height=450)
+	    ),
+	    window=self.window, batch=self.batch, group=self.fg_group,
+	    anchor=kytten.ANCHOR_TOP_RIGHT,
+	    theme=blue_theme, on_escape=on_escape)
+	    
+	    
+	    
     def create_equipment_dialog(self, module=None, equip_name=''):
         if module is None or not equip_name: return
 

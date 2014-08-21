@@ -158,7 +158,7 @@ if __name__ == "__main__":
         window.dispatch_event('on_update', dt)
     pyglet.clock.schedule(update)
 
-    @window.event
+    #@window.event
     def on_mouse_scroll(x, y, scroll_x, scroll_y):
         flick_zoom(scroll_y)
         
@@ -180,13 +180,14 @@ if __name__ == "__main__":
         user_zoom = min( big_cap , max( sml_cap , user_zoom ) )        
         flick_zoom(tot + (1 if tot < 0 else -1))
      
-    @window.event       
+    #@window.event       
     def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
         if buttons & mouse.LEFT:
             global user_x
             global user_y
             user_x -= dx
             user_y -= dy
+            return pyglet.event.EVENT_HANDLED
 
     @window.event
     def on_draw():
@@ -228,7 +229,9 @@ if __name__ == "__main__":
     clock.schedule_interval(util.universe.scenario.system_tick,0.0250)
     clock.schedule_interval(util.universe.update,0.02)
     
+    window.push_handlers(on_mouse_drag, on_mouse_scroll)
     window.push_handlers(gui)
+    
     
     window.set_visible()
     pyglet.app.run()

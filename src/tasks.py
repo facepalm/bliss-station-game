@@ -183,6 +183,13 @@ class TaskSequence(Task):
             self.task_list.append([task, required])
         else:
             self.task_list = [[task, required]]
+            
+    def prepend_task(self,task,required=False):
+        if self.task_list:      
+            self.task_list.insert(0,[task, required])
+        else:
+            self.task_list = [[task, required]]
+                    
         
 class TaskTracker():
     def __init__(self):

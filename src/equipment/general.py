@@ -16,6 +16,8 @@ DOCK_EQUIPMENT = ['CBM']
 class Equipment(object):
     def __init__(self, installed=None, logger=None, name='UnspecifiedEquipment'):
         self.id=util.register(self)
+
+        self.components = [] #list of items used to build this equipment
             
         self.installed=None #pointer to module if installed, none if loose
         self.mass=100
@@ -566,8 +568,8 @@ class FoodStorageRack(Storage,Rack):
     
 
 class GenericStorageRack(Storage,Rack):
-    tech = {'Materials':1}
-    recipe = {'Basic Parts':1.0} #units in m3
+    
+    recipe = [ {'tech':{'Materials':1}, 'components':{'Basic Parts':1.0} } ]
 
     def __init__(self):   
         Storage.__init__(self)
