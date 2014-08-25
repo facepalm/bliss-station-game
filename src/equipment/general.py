@@ -218,8 +218,8 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         if self.active: 
             if not self.recently_active:
                 self.recently_active = True
-                #self.refresh_image()
-                self.set_active()
+                self.refresh_image()
+                #self.set_active()
             
             self.operating_time_since_last_maintenance += dt
             if random.random() < (dt/util.seconds(1,'month'))*self.operating_time_since_last_maintenance/(100*self.wear*self.maintenance_interval):
@@ -227,8 +227,8 @@ class Machinery(Equipment): #ancestor class for things that need regular mainten
         else:
             if self.recently_active:
                 self.recently_active = False
-                self.set_active()
-                #self.refresh_image()
+                #self.set_active()
+                self.refresh_image()
             
         if self.broken:
             if not self.maint_task or self.maint_task.name != ''.join(['Repair ',self.name]):

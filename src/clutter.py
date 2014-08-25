@@ -24,6 +24,8 @@ def equals(type1,type2):
        
     
 class Clutter(object):    
+    density_multiplier = 1.0
+
     def __init__(self, name='Trash', mass=0.1, density=1000.0, quality=dict()): 
         self.id = util.register(self)   
         if not hasattr(self,'name'): self.name = name
@@ -39,7 +41,6 @@ class Clutter(object):
                     self.quality[q] = self.mass / len(self.quality.keys())
         if self.name in common_subtypes: self.name = common_subtypes[self.name]
         if not hasattr(self,'density'): self.density = common_densities[self.name] if self.name in common_densities.keys() else density
-        if not hasattr(self,'density_multiplier'): self.density_multiplier = 1.0
         self.refresh_image()
         
     def update(self,dt):
@@ -219,12 +220,12 @@ class ComplexClutter(Clutter):
 class PartsClutter(ComplexClutter):
     tech = {'Materials':1}
     reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
-        
+    density_multiplier = 0.5
     
     def __init__(self, *args, **kwargs):
         self.name='Basic Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_mechanism/metalmaker_mechanism__x1_1_png_1354836814.png'
-        self.density_multiplier = 0.5
+        
         ComplexClutter.__init__(self, *args, **kwargs)   
         if self.sprite: self.sprite.scale = 0.4
         
@@ -232,11 +233,12 @@ class PartsClutter(ComplexClutter):
 class MechPartsClutter(ComplexClutter):
     tech = {'Materials':1,'Thermodynamics':1}
     reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.87, 'Scrap Metal':0.13}}                
+    density_multiplier = 0.25
     
     def __init__(self, *args, **kwargs):
         self.name='Mechanical Parts'
         self.imgfile = 'images/glitch-assets/metalmaker_tooler/metalmaker_tooler__x1_1_png_1354836816.png'
-        self.density_multiplier = 0.25
+        
         ComplexClutter.__init__(self, *args, **kwargs)   
         if self.sprite: 
             self.sprite.scale = 0.33          
@@ -259,14 +261,17 @@ def spawn_clutter(name='Water',mass=1, density=1000.0):
     
 def run_reaction(goal, inputs, cap_vol=10000000000000):    
     reaction=None
+    dens_mult=1.0
     if isinstance(goal, Clutter):
         reaction = goal.reaction
+        dens_mult = goal.density_multiplier
     else:
         tmp = spawn_clutter(goal,mass=0)        
         if hasattr(tmp,'reaction'):
             reaction=tmp.reaction
+            dens_mult = tmp.density_multiplier
         else:
-            return []
+            return inputs
         
     used_inputs=dict()
     reqs = reaction['Input'].keys()
@@ -278,12 +283,12 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
             if i.satisfies(r):
                 req_satisfied = True
                 if 'Metal' in r: metal_type = i.subtype
-                net_vol = min( net_vol, (i.mass/i.density)/reaction['Input'][r] )
+                net_vol = min( net_vol, (i.mass/i.density)/(reaction['Input'][r]*dens_mult) )
                 used_inputs[r] = i                    
                 inputs.remove(i)
                 break
         if not req_satisfied:
-            return []
+            return inputs
         
     out = inputs    
         
@@ -291,8 +296,7 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
     comp=[]
     for r in used_inputs.keys():
         i = used_inputs[r]
-        print i, i.density, i.density * net_vol * reaction['Input'][r], net_vol
-        comp.append( i.split( i.density * net_vol * reaction['Input'][r] ) )
+        comp.append( i.split( i.density * net_vol * reaction['Input'][r] * dens_mult ) )
         out.append( i )
                    
     
@@ -302,7 +306,7 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
         out.append(i)
         if hasattr(i,'composition'):
             for c in comp:
-                c.mass *= reaction[ 'Output' ][ r ]
+                c.mass *= reaction[ 'Output' ][ r ] * dens_mult
             i.composition = comp            
         i.mass *= i.density #correcting the placeholder value used above
         
