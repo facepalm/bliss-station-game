@@ -201,7 +201,7 @@ if __name__ == "__main__":
         
         gl.glMatrixMode(gl.GL_PROJECTION);
         gl.glLoadIdentity();        
-        gl.glOrtho(0,640,0,480,0,1);                
+        gl.glOrtho(0,480,0,360,0,1);                
         gl.glMatrixMode(gl.GL_MODELVIEW);
         
         util.universe.draw_background()
