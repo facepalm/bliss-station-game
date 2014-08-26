@@ -98,13 +98,28 @@ class Clutter(object):
     def __repr__(self):
         return ''.join([self.name,':',str(self.mass)])  
 
+    def extract_subtype(self,name):
+        if not hasattr(self,'possible_subtypes') or not self.possible_subtypes: return None
+        for p in self.possible_subtypes.keys():
+            if p in name: return p
+        return self.possible_subtypes.keys()[0]
+        
+    def calcSubtypeDensity(self):
+        if not (hasattr(self,'subtype') and hasattr(self,'possible_subtypes') and self.possible_subtypes): return 1000.0
+        if self.subtype in self.possible_subtypes.keys():
+            return self.possible_subtypes[self.subtype]
+
 class MetalClutter(Clutter):
+    possible_subtypes = {'Steel':7874.0,'Iron':7874,'Aluminum':2700,'Bronze':7872.6,'Tin':7365}
+
     def __init__(self, *args, **kwargs):
-        self.subtype = kwargs['subtype'] if 'subtype' in kwargs else self.extract_subtype(kwargs['name'])                
-        self.imgfile = 'images/glitch-assets/molybdenum/molybdenum__x1_iconic_png_1354832628.png'
+        if not hasattr(self,'subtype'): self.subtype = kwargs['subtype'] if 'subtype' in kwargs else self.extract_subtype(kwargs['name'])                
+        if not hasattr(self,'imgfile'): self.imgfile = 'images/glitch-assets/molybdenum/molybdenum__x1_iconic_png_1354832628.png'
         self.quality = {'Purity': 1.0, 'Form':'Ingot' }
         if 'Scrap' in kwargs['name']: 
             self.quality['Form'] = 'Scrap'
+        elif 'Wire' in kwargs['name']: 
+            self.quality['Form'] = 'Wire'
         self.name='Metal'
         Clutter.__init__(self, *args, **kwargs)   
         
@@ -118,21 +133,10 @@ class MetalClutter(Clutter):
         oldm, theirm = self.mass, other.mass
         test = Clutter.merge(self,other)
         if not test: return
-        self.quality['Purity'] = self.quality['Purity'] * oldm/self.mass + other.quality['Purity'] * theirm/self.mass
-            
-        
-    def extract_subtype(self,name):
-        if 'Steel' in name: return 'Steel'
-        if 'Iron' in name: return 'Iron'
-        return 'Aluminum'
+        self.quality['Purity'] = self.quality['Purity'] * oldm/self.mass + other.quality['Purity'] * theirm/self.mass                    
         
     def calcDensity(self):
-        if self.subtype == 'Aluminum': return 2700.0 #kg/m3
-        if self.subtype in ['Iron','Steel']: return 7874.0
-        if self.subtype in ['Copper']: return 8960.0
-        if self.subtype in ['Tin']: return 7365.0
-        if self.subtype in ['Bronze']: return 0.78*8960 + 0.12*7365
-        return 2700.0 #TODO error maybe?
+        return self.calcSubtypeDensity()            
     density = property(calcDensity, None, None, "Metal Density" )   
         
     def satisfies(self, name):
@@ -140,6 +144,8 @@ class MetalClutter(Clutter):
             return self.quality['Form'] == 'Scrap' and self.satisfies(name.strip('Scrap '))
         elif 'Ingot' in name:
             return self.quality['Form'] == 'Ingot' and self.satisfies(name.rstrip(' Ingot'))
+        elif 'Wire' in name:
+            return self.quality['Form'] == 'Wire' and self.satisfies(name.rstrip(' Wire'))        
         elif name != 'Metal':
             return self.subtype == name
         return equals(name, self.name)
@@ -185,8 +191,34 @@ class WaterClutter(Clutter):
         elif name == 'Waste Water' and not self.satisfies('Gray Water') and not self.satisfies('Potable Water'):
             return True            
         return equals(name, self.name)          
+
+class Plastic(Clutter):
+    def __init__(self, *args, **kwargs):
+        self.density = 500.0 #kg/m3
+        self.imgfile = 'images/glitch-assets/molybdenum/plastic.png'
+        self.quality = {'Oxidation' : 0.0 } #TODO replace with whatever process causes plastics to just crumble over time
+        self.name='Plastic'
+        Clutter.__init__(self, *args, **kwargs)        
         
+class PreciousMetal(MetalClutter):
+    subtypes = {'Silver':8000.0, 'Gold':10000.0,'Copper':8960.0,'Platinum':8000.0}
+    
+    def __init__(self, *args, **kwargs):
+        self.subtype = kwargs['subtype'] if 'subtype' in kwargs else self.extract_subtype(kwargs['name'])                        
+        self.imgfile = 'images/glitch-assets/molybdenum/molybdenum__x1_iconic_png_1354832628.png' #TODO find/make better image        
+        Metal.__init__(self, *args, **kwargs)           
+        self.name='PreciousMetal'
         
+    def check_merge(self,obj):
+        if not isinstance(obj, PreciousMetal): return False
+        return MetalClutter.check_merge(self,obj)                           
+        
+    def satisfies(self, name):
+        if name == 'PreciousMetal':
+            return equals(name, self.name)    
+        else:
+            return MetalClutter.satisfies(self,name)
+                
 class ComplexClutter(Clutter):
     tech={} #min tech required for reaction
     reaction={} #recipe to create this clutter
