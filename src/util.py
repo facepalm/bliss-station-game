@@ -18,6 +18,12 @@ equipment_targets = dict()
 GLOBAL_X=0
 GLOBAL_Y=0
 
+def radian(deg):
+    return 3.14159*deg/180
+
+def degree(rad):
+    return 180*rad/3.14159
+
 def register(obj, oid=''):
     new_id = oid if oid else str(uuid.uuid4())
     try:

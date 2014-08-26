@@ -1,5 +1,6 @@
 import pyglet
 import util
+from math import cos, sin
 
 class LayeredSprite(object):
     def __init__(self,name='GenericSprite',batch=None, start_order=0):
@@ -31,8 +32,13 @@ class LayeredSprite(object):
         for l in self.layer.values():
             #if 'Module' is self.name:
             #    print x,y,rot, l.image.anchor_x,l.image.anchor_y
-            l.x = x
-            l.y = y    
+            theta = -util.radian(self.rotation)
+            if hasattr(self,'_offset'):
+                l.x = x + self._offset[0]*cos(theta) + self._offset[1]*sin(theta)
+                l.y = y + self._offset[0]*sin(theta) + self._offset[1]*cos(theta)               
+            else:
+                l.x = x
+                l.y = y    
             l.rotation = rot
             
     def set_position(self,*args,**kwargs):
@@ -47,5 +53,7 @@ class LayeredSprite(object):
             if l.visible and l.contains(x,y):
                 return True
         return False            
+                      
+    rotation = property(lambda x: x.layer.values()[0].rotation, None, None, "Material Density" )                       
                       
                         

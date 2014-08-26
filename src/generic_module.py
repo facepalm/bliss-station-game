@@ -317,7 +317,7 @@ class BasicModule():
         if hasattr(self.sprite, 'update_sprite'):
             l=self.location
             self.sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.orientation[0])/math.pi)
-        self.sprite.draw()
+        if self.sprite: self.sprite.draw()
         
         for e in self.equipment.keys():
             if self.equipment[e][3] and self.equipment[e][3].visible:
@@ -332,7 +332,7 @@ class BasicModule():
             if hasattr(c,'sprite') and hasattr(c,'local_coords') and c.sprite:
                 loc_xyz = self.getXYZ( 1.0*c.local_coords )
                 c.sprite.set_position(zoom*loc_xyz[0],zoom*loc_xyz[1])
-                c.sprite.rotation = (-180/math.pi)*self.orientation[0]
+                #c.sprite.rotation = (-180/math.pi)*self.orientation[0]
                 c.sprite.visible=True
                 c.sprite.draw()         
 

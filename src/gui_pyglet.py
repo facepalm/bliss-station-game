@@ -7,6 +7,7 @@ from equipment.science import *
 from equipment.lifesupport import *
 from equipment.workshop import *
 import math
+from modular_module import ModularModule
 
 # Default theme, blue-colored
 blue_theme = kytten.Theme(os.path.join(os.getcwd(), 'theme'), override={
@@ -46,7 +47,7 @@ class gui():
                     self.create_actor_dialog(a)
                     return True
             for m in station.modules.values():
-                if m.sprite.contains(x,y):
+                if isinstance(m,ModularModule) and m.check_collision(x,y) or ( m.sprite is not None and m.sprite.contains(x,y) ):
                     for e in m.equipment.keys():
                         if m.equipment[e][3] and m.equipment[e][3].sprite.contains(x,y):
                             self.create_equipment_dialog(m,e)

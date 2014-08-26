@@ -17,17 +17,30 @@ class ModuleComponent(object):
     def __init__(self,pos = 0):
         self.size = np.array([ 1 , 4.27 , 4.27 ])
         self.sprite = None
+        self.module = None
         self.nodes = []
         self.equipment = []
         self.edges = []
         self.nodes.append(['hall'+str(pos),[0,0,0]])
         self.entry_node = 'hall'+str(pos)
         self.exit_node = 'hall'+str(pos)
+        if not hasattr(self,'name'): self.name = 'GenericComponent'
                 
     def refresh_image(self, imgfile, x_off = 0):     
-        if self.sprite is None: return
-        img = util.load_image(imgfile,anchor_x= int(-gv.config['ZOOM'] * 2 * x_off ))                
-        self.sprite.add_layer(self.name,img)
+        if self.sprite: self.sprite.delete()
+        import graphics_pyglet
+        self.sprite = graphics_pyglet.LayeredSprite(name=self.name,start_order = -30)
+        img = util.load_image(imgfile )
+        self.sprite.add_layer(self.name,img)    
+        self.sprite._offset = [gv.config['ZOOM'] * 2 * x_off, 0]
+        #,anchor_x= int(
+        #if self.sprite is None: return
+        #
+    
+    def draw(self,window):
+        #off_x = self.sprite.x 
+        #self.sprite.update_sprite()
+        self.sprite.draw()        
         
     def __getstate__(self):
         d = dict(self.__dict__)
@@ -111,13 +124,15 @@ def spawn_component(letter,pos=0):
 
 
 class ModularModule(BasicModule):
-    def __init__(self,name = "Module", build_str = "{rOrrwr}" ):   
+    def __init__(self,name = "Module", build_str = "{Orrrwrrr}" ):   
         self.component_string = build_str
         self.components=[]
         self.name=name
         for ec,c in enumerate(self.component_string):
             newc = spawn_component(c,ec)
-            if not newc is None: self.components.append(newc)    
+            if newc is not None: 
+                newc.module = self
+                self.components.append(newc)    
         self.refresh_size()
         BasicModule.__init__(self)
         x_off = -self.size[0]/2
@@ -150,10 +165,28 @@ class ModularModule(BasicModule):
         if gv.config['GRAPHICS'] == 'pyglet':        
             import graphics_pyglet
             if self.sprite: self.sprite.delete()
-            self.sprite = graphics_pyglet.LayeredSprite(name=self.name,start_order = -30)
+            self.sprite = None#graphics_pyglet.LayeredSprite(name=self.name,start_order = -30)
             x_off = -self.size[0]/2
             for c in self.components:                
-                c.sprite = self.sprite
+                #c.sprite = self.sprite
+                x_off += c.size[0] / 2.0
                 c.refresh_image(x_off)
-                x_off += c.size[0]
+                x_off += c.size[0] / 2.0
             
+    def check_collision(self,x,y):
+        for c in self.components:
+            if c.sprite and c.sprite.contains(x,y): return True
+        return False        
+            
+    def draw(self,window):
+        zoom=gv.config['ZOOM']
+        for c in self.components:
+            l=self.location
+            c.sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.orientation[0])/math.pi)
+            c.draw(window)
+        #self.img.blit(zoom*self.location[0]+window.width // 2, zoom*self.location[1]+window.height // 2, 0)
+        #if self.sprite and hasattr(self.sprite, 'update_sprite'):
+        #    l=self.location
+        #    self.sprite.update_sprite(zoom*l[0], zoom*l[1],-180*(self.orientation[0])/math.pi)
+        BasicModule.draw(self,window)
+                    
