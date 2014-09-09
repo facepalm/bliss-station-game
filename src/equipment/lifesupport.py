@@ -42,7 +42,8 @@ class UniversalToilet(Machinery):
             self.active = False         
         
 class WaterPurifier(Machinery):    
-    recipe = [ {'tech':{'Materials':2}, 'components':{'Mechanical Parts':1.0} } ]
+    reaction = {'Input': {'Mechanical Parts':1.0}, 'Output':{'Purifier':1}, 'Tech':{'Materials':2}, 'Reactor':['Workbench'], 'Type':'Discrete'}  
+    fancy_name = 'Water Purifier'
 
     '''Converts gray water into potable water.  Basically an abstracted still'''
     def __init__(self):   

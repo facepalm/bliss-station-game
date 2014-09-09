@@ -251,7 +251,7 @@ class ComplexClutter(Clutter):
         
 class PartsClutter(ComplexClutter):
     tech = {'Materials':1}
-    reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}}        
+    reaction = {'Input': {'Metal Ingot':1.0}, 'Output':{'Basic Parts':0.9, 'Scrap Metal':0.1}, 'Tech':{'Materials':1}, 'Reactor':['Machine Shop'], 'Type':'Continuous'}        
     density_multiplier = 0.5
     
     def __init__(self, *args, **kwargs):
@@ -264,7 +264,7 @@ class PartsClutter(ComplexClutter):
 
 class MechPartsClutter(ComplexClutter):
     tech = {'Materials':1,'Thermodynamics':1}
-    reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.87, 'Scrap Metal':0.13}}                
+    reaction = {'Input': {'Basic Parts':0.5,'Metal Ingot':0.5}, 'Output':{'Mechanical Parts':0.87, 'Scrap Metal':0.13}, 'Tech':{'Materials':1,'Thermodynamics':1}, 'Reactor':['Machine Shop'], 'Type':'Continuous'}                
     density_multiplier = 0.25
     
     def __init__(self, *args, **kwargs):

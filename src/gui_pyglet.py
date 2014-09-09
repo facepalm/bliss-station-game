@@ -302,15 +302,16 @@ class gui():
 	    
 	    
 	    
-	def create_workshop_dialog(self,module=None, equip=None):
-	    if module is None or equip is None: return
-	    entries=[kytten.Label("Workshop menu")]
+    def create_workshop_dialog(self,module=None, equip=None):
+        if module is None or equip is None: return
+        entries=[kytten.Label("Workshop menu")]
 	    
 	    #if isinstance(e,WorkbenchRack):
         #    entries.append(kytten.Button("", on_click=on_miss_ctrl))
-        
+        entr = equip.generate_dialog_options()
+        print entr
 	    
-	    dialog = kytten.Dialog(
+        dialog = kytten.Dialog(
         kytten.Frame(
             kytten.Scrollable(
             kytten.VerticalLayout(entries, align=kytten.HALIGN_LEFT),
@@ -344,11 +345,15 @@ class gui():
         def uninstall():    
             e.uninstall_task()
             on_escape(dialog)            
+            
                 
         entries=[kytten.Label("Equipment: " + equip_name)]
         if isinstance(e,Machinery):
             entries.append(kytten.Label("Last maint (hrs):"+'{:3.0f}'.format( e.operating_time_since_last_maintenance/3600.0 ) ) )
             entries.append(kytten.Label("Wear:"+'{:0.2f}'.format( e.wear ) ) )
+        if isinstance(e,Workshop):            
+            self.create_workshop_dialog(module, e)            
+            return
         if isinstance(e,Comms):
             entries.append(kytten.Button("Contact NASA", on_click=on_miss_ctrl))
         if isinstance(e,Storage):
