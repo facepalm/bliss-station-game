@@ -307,7 +307,7 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
         
     used_inputs=dict()
     reqs = reaction['Input'].keys()
-    net_vol = cap_vol #total reaction mass
+    net_vol = cap_vol * dens_mult #total reaction mass
     metal_type = None
     for r in reqs:
         req_satisfied = False
@@ -315,7 +315,7 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
             if i.satisfies(r):
                 req_satisfied = True
                 if 'Metal' in r: metal_type = i.subtype
-                net_vol = min( net_vol, (i.mass/i.density)/(reaction['Input'][r]*dens_mult) )
+                net_vol = min( net_vol, (i.mass/i.density)/(reaction['Input'][r] ) )
                 used_inputs[r] = i                    
                 inputs.remove(i)
                 break
@@ -325,30 +325,37 @@ def run_reaction(goal, inputs, cap_vol=10000000000000):
     out = inputs    
         
     #at this point, we can run the reaction
-    comp=[]
+    comp=[]    
     for r in used_inputs.keys():
         i = used_inputs[r]
-        comp.append( i.split( i.density * net_vol * reaction['Input'][r] * dens_mult ) )
+        comp.append( i.split( i.density * net_vol * reaction['Input'][r] ) )
         out.append( i )
                    
-    
-    for r in reaction['Output'].keys():
-        i = spawn_clutter(r, net_vol * reaction[ 'Output' ][ r ] ) #using volume as mass for now
+    comp_mass = 0
+    for c in comp:
+        comp_mass += c.mass
+        
+    for r in reaction['Output'].keys(): #INPUT is volume, OUTPUT is mass        
+        i = spawn_clutter(r, comp_mass * reaction[ 'Output' ][ r ] ) 
         if 'Metal' in r: i.subtype = metal_type
         out.append(i)
         if hasattr(i,'composition'):
             for c in comp:
-                c.mass *= reaction[ 'Output' ][ r ] * dens_mult
+                c.mass *= reaction[ 'Output' ][ r ]
             i.composition = comp            
-        i.mass *= i.density #correcting the placeholder value used above
+        #i.mass *= i.density #correcting the placeholder value used above
         
     for i in out:
         for j in out:            
             if i is j or i.mass == 0 or j.mass == 0: continue
-            print i,j
+            #print i,j
             i.merge(j)
+    for i in out:
+        if i.mass == 0: out.remove(i)        
     return out
 
+def generate_earth_purchase_clutter_dialog():
+    pass
     
 class Stowage(object):
     def __init__(self, capacity=1):    
@@ -450,8 +457,9 @@ if __name__ == "__main__":
     gv.config['GRAPHICS'] = None
     metal = spawn_clutter('Steel Ingots',1000)
     inter = run_reaction('Basic Parts',[metal],.05)
-    print inter
+    print [[i,i.mass/i.density] for i in inter]
     #inter.append(metal)
+    print sum([m.mass for m in inter])
     out = run_reaction('Mechanical Parts',inter,.05)
     print out
     print sum([m.mass for m in out])

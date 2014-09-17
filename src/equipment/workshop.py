@@ -25,6 +25,8 @@ class Workshop(Equipment):
         self.reaction_goal = None
         self.ready_goal = False
         
+        self.repeat = False
+        
 
     def update(self,dt):            
         super(Workshop, self).update(dt)
@@ -92,7 +94,7 @@ class WorkbenchRack(Rack, Workshop):
         out=[]
         for e in util.equipment_targets.keys():
             eq = util.equipment_targets[e]
-            if hasattr(eq,'reaction'):
+            if hasattr(eq,'reaction') and eq.reaction['Reactor'] == self.configuration:
                 if hasattr(eq,'fancy_name'):
                     out.append([e,eq.fancy_name])
                 else:
@@ -146,7 +148,8 @@ class WorkbenchRack(Rack, Workshop):
             self.installed.stowage.add(new_equip)
             self.local_parts.dump_into(self.installed.stowage)
             self.status = 'idle'
-            #self.task = None           
+            if self.repeat: self.build_equipment_task(self.equip_goal)
+
             
 
 class MachineShop(Rack, Workshop):
@@ -179,7 +182,6 @@ class MachineShop(Rack, Workshop):
         self.reaction_goal = reaction
         self.ready_goal = False
         
-        self.repeat = False #if True, workshop will endlessly repeat until turned off
         #TODO check tech levels
         
         self.task = TaskSequence(name = ''.join(['Build ',reaction['Output'].keys()[0]]), severity = "MODERATE",logger=self.logger)
@@ -193,7 +195,6 @@ class MachineShop(Rack, Workshop):
     def task_work_report(self,task,dt):
         Workshop.task_work_report(self,task,dt)         
         #Rack.task_work_report(self,task,dt)
-        
         if task.name.startswith('Craft resource') and not self.ready_goal:
             for r in self.reaction_goal['Input'].keys():
                 filt = ClutterFilter([r])
@@ -212,5 +213,6 @@ class MachineShop(Rack, Workshop):
         if task.name.startswith('Craft resource') and self.ready_goal:
             self.local_parts.dump_into(self.installed.stowage)
             self.status = 'idle'
+            if self.repeat: self.craft_parts_task(self.reaction_goal)
             #self.task = None                        
 
